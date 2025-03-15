@@ -1,0 +1,244 @@
+{% extends 'simulation/simulation_base.html' %}
+
+{% block content %}
+<div class="flex flex-col gap-8">
+    <!-- Statistics Overview -->
+    <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10">
+        <h1 class="text-2xl font-bold text-[#F6F6F5] mb-4">Portfolio Statistics</h1>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="p-4 rounded-lg bg-white/5 border border-white/10">
+                <h3 class="text-sm text-[#F6F6F5]/60 mb-1">Total Portfolio Value</h3>
+                <p class="text-2xl font-bold text-[#BFE953]">${{ total_value|floatformat:2 }}</p>
+            </div>
+            <div class="p-4 rounded-lg bg-white/5 border border-white/10">
+                <h3 class="text-sm text-[#F6F6F5]/60 mb-1">Total Profit/Loss</h3>
+                <p class="text-2xl font-bold {% if total_profit_loss >= 0 %}text-[#BFE953]{% else %}text-red-500{% endif %}">
+                    ${{ total_profit_loss|floatformat:2 }}
+                </p>
+            </div>
+            <div class="p-4 rounded-lg bg-white/5 border border-white/10">
+                <h3 class="text-sm text-[#F6F6F5]/60 mb-1">Return on Investment</h3>
+                <p class="text-2xl font-bold {% if total_roi >= 0 %}text-[#BFE953]{% else %}text-red-500{% endif %}">
+                    {{ total_roi|floatformat:2 }}%
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Portfolio Value Over Time -->
+        <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10 h-[400px]">
+            <h2 class="text-xl font-bold text-[#F6F6F5] mb-4">Portfolio Value Over Time</h2>
+            <div class="relative h-[300px] w-full">
+                <canvas id="portfolioValueChart" class="!h-full !w-full box-border"></canvas>
+            </div>
+        </div>
+
+        <!-- Profit/Loss Distribution -->
+        <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10 h-[400px]">
+            <h2 class="text-xl font-bold text-[#F6F6F5] mb-4">Profit/Loss by Stock</h2>
+            <div class="relative h-[300px] w-full">
+                <canvas id="profitLossChart" class="!h-full !w-full box-border"></canvas>
+            </div>
+        </div>
+
+        <!-- Transaction History -->
+        <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10 h-[400px]">
+            <h2 class="text-xl font-bold text-[#F6F6F5] mb-4">Transaction History</h2>
+            <div class="relative h-[300px] w-full">
+                <canvas id="transactionChart" class="!h-full !w-full box-border"></canvas>
+            </div>
+        </div>
+
+        <!-- Asset Allocation -->
+        <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10 h-[400px]">
+            <h2 class="text-xl font-bold text-[#F6F6F5] mb-4">Asset Allocation</h2>
+            <div class="relative h-[300px] w-full">
+                <canvas id="allocationChart" class="!h-full !w-full box-border"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Analysis -->
+    <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold text-[#F6F6F5]">AI Portfolio Analysis</h2>
+            <button id="refreshAnalysis" class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-[#BFE953]/20 text-[#BFE953] hover:bg-[#BFE953]/30 transition-all">
+                <i data-lucide="refresh-cw" class="h-4 w-4"></i>
+                Refresh Analysis
+            </button>
+        </div>
+        <div id="aiAnalysis" class="prose prose-invert max-w-none">
+            <p class="text-[#F6F6F5]/80">Loading AI analysis...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js and Marked.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+    // Configure marked options
+    marked.setOptions({
+        breaks: true,
+        gfm: true
+    });
+
+    // Common chart options
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: {
+                    color: 'rgba(255, 255, 255, 0.6)'
+                }
+            }
+        },
+        scales: {
+            y: {
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                },
+                ticks: {
+                    color: 'rgba(255, 255, 255, 0.6)'
+                }
+            },
+            x: {
+                grid: {
+                    color: 'rgba(255, 255, 255, 0.1)'
+                },
+                ticks: {
+                    color: 'rgba(255, 255, 255, 0.6)'
+                }
+            }
+        }
+    };
+
+    // Portfolio Value Chart
+    const portfolioValueCtx = document.getElementById('portfolioValueChart').getContext('2d');
+    new Chart(portfolioValueCtx, {
+        type: 'line',
+        data: {
+            labels: {{ dates|safe }},
+            datasets: [{
+                label: 'Portfolio Value',
+                data: {{ portfolio_values|safe }},
+                borderColor: '#BFE953',
+                backgroundColor: 'rgba(191, 233, 83, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            ...commonOptions,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Profit/Loss Chart
+    const profitLossCtx = document.getElementById('profitLossChart').getContext('2d');
+    new Chart(profitLossCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ stock_symbols|safe }},
+            datasets: [{
+                label: 'Profit/Loss',
+                data: {{ profit_loss_by_stock|safe }},
+                backgroundColor: {{ profit_loss_colors|safe }},
+            }]
+        },
+        options: {
+            ...commonOptions,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Transaction History Chart
+    const transactionCtx = document.getElementById('transactionChart').getContext('2d');
+    new Chart(transactionCtx, {
+        type: 'line',
+        data: {
+            labels: {{ transaction_dates|safe }},
+            datasets: [{
+                label: 'Buys',
+                data: {{ buy_amounts|safe }},
+                borderColor: '#BFE953',
+                backgroundColor: 'rgba(191, 233, 83, 0.1)',
+                fill: true
+            },
+            {
+                label: 'Sells',
+                data: {{ sell_amounts|safe }},
+                borderColor: '#ef4444',
+                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                fill: true
+            }]
+        },
+        options: commonOptions
+    });
+
+    // Asset Allocation Chart
+    const allocationCtx = document.getElementById('allocationChart').getContext('2d');
+    new Chart(allocationCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ allocation_labels|safe }},
+            datasets: [{
+                data: {{ allocation_data|safe }},
+                backgroundColor: {{ allocation_colors|safe }},
+            }]
+        },
+        options: {
+            ...commonOptions,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            }
+        }
+    });
+
+    // AI Analysis
+    document.getElementById('refreshAnalysis').addEventListener('click', async () => {
+        const aiAnalysis = document.getElementById('aiAnalysis');
+        aiAnalysis.innerHTML = '<p class="text-[#F6F6F5]/80">Refreshing analysis...</p>';
+
+        try {
+            const response = await fetch('/simulation/get-ai-analysis/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                // Parse markdown and apply custom styling
+                const parsedContent = marked.parse(data.response);
+                aiAnalysis.innerHTML = `
+                    <div class="text-[#F6F6F5]/80 [&_strong]:text-[#BFE953] [&_strong]:font-bold">
+                        ${parsedContent}
+                    </div>`;
+            } else {
+                aiAnalysis.innerHTML = `<p class="text-red-500">Error: ${data.error}</p>`;
+            }
+        } catch (error) {
+            aiAnalysis.innerHTML = '<p class="text-red-500">Failed to fetch AI analysis. Please try again.</p>';
+        }
+    });
+
+    // Trigger initial AI analysis
+    document.getElementById('refreshAnalysis').click();
+</script>
+{% endblock %} 

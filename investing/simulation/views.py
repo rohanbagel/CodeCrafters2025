@@ -6,6 +6,17 @@ from django.utils import timezone
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib import messages
 from decimal import Decimal
+import json
+import traceback
+import google.generativeai as genai
+from django.conf import settings
+import logging
+
+# Set up logging
+logger = logging.getLogger(__name__)
+
+# Configure Gemini API
+genai.configure(api_key=settings.GEMINI_API_KEY)
 
 # Create your views here.
 
@@ -319,3 +330,230 @@ def sell_stock(request, symbol):
     except ValueError:
         messages.error(request, 'Please enter a valid quantity.')
         return redirect('simulation:trade_stock', symbol=symbol)
+
+@login_required
+def reset_wallet(request):
+    if request.method == 'POST':
+        try:
+            wallet = UserWallet.objects.get(user=request.user)
+            if wallet.balance > 0:
+                transaction = wallet.reset_balance()
+                messages.success(request, 'Successfully reset your virtual wallet balance to $0.00')
+            else:
+                messages.info(request, 'Your wallet balance is already $0.00')
+        except UserWallet.DoesNotExist:
+            messages.error(request, 'Wallet not found. Please contact support.')
+        except Exception as e:
+            messages.error(request, f'An error occurred: {str(e)}')
+    
+    return redirect('simulation:add_cash')
+
+@login_required
+def statistics(request):
+    wallet = UserWallet.objects.get(user=request.user)
+    
+    # Get all transactions ordered by date
+    stock_transactions = StockTransaction.objects.filter(wallet=wallet).order_by('created_at')
+    
+    # Calculate portfolio value over time
+    dates = []
+    portfolio_values = []
+    running_cash_balance = wallet.balance  # Start with current balance
+    stock_holdings = {}  # Keep track of stock holdings: {symbol: {quantity, price}}
+    
+    # Process stock transactions chronologically
+    for trans in stock_transactions:
+        symbol = trans.stock.symbol
+        
+        if symbol not in stock_holdings:
+            stock_holdings[symbol] = {'quantity': 0, 'price': 0}
+        
+        if trans.transaction_type == 'BUY':
+            # Update cash balance
+            running_cash_balance += trans.total_amount  # Add back the purchase amount
+            
+            # Update average price and quantity for buys
+            current_value = stock_holdings[symbol]['quantity'] * stock_holdings[symbol]['price']
+            new_value = trans.quantity * trans.price_per_share
+            new_quantity = stock_holdings[symbol]['quantity'] + trans.quantity
+            
+            if new_quantity > 0:
+                stock_holdings[symbol]['price'] = (current_value + new_value) / new_quantity
+            stock_holdings[symbol]['quantity'] = new_quantity
+        else:  # SELL
+            # Update cash balance
+            running_cash_balance -= trans.total_amount  # Subtract the sell proceeds
+            
+            # Update holdings
+            stock_holdings[symbol]['quantity'] -= trans.quantity
+            if stock_holdings[symbol]['quantity'] <= 0:
+                stock_holdings[symbol]['quantity'] = 0
+                stock_holdings[symbol]['price'] = 0
+        
+        # Calculate total portfolio value at this point
+        stock_value = sum(
+            holding['quantity'] * holding['price']
+            for holding in stock_holdings.values()
+        )
+        total_value = running_cash_balance + stock_value
+        
+        dates.append(trans.created_at.strftime('%Y-%m-%d'))
+        portfolio_values.append(float(total_value))
+    
+    # Add current point if there are no transactions
+    if not dates:
+        dates.append(timezone.now().strftime('%Y-%m-%d'))
+        portfolio_values.append(float(wallet.balance))
+    
+    # Calculate profit/loss by stock
+    holdings = StockHolding.objects.filter(wallet=wallet).select_related('stock')
+    stock_symbols = []
+    profit_loss_by_stock = []
+    profit_loss_colors = []
+    
+    for holding in holdings:
+        current_value = holding.quantity * holding.stock.current_price
+        invested_value = holding.quantity * holding.average_price
+        profit_loss = current_value - invested_value
+        
+        stock_symbols.append(holding.stock.symbol)
+        profit_loss_by_stock.append(float(profit_loss))
+        profit_loss_colors.append('#BFE953' if profit_loss >= 0 else '#ef4444')
+    
+    # Calculate transaction history
+    transaction_dates = []
+    buy_amounts = []
+    sell_amounts = []
+    
+    for trans in stock_transactions:
+        transaction_dates.append(trans.created_at.strftime('%Y-%m-%d'))
+        if trans.transaction_type == 'BUY':
+            buy_amounts.append(float(trans.total_amount))
+            sell_amounts.append(0)
+        else:
+            buy_amounts.append(0)
+            sell_amounts.append(float(trans.total_amount))
+    
+    # Calculate asset allocation
+    total_value = sum(holding.quantity * holding.stock.current_price for holding in holdings)
+    allocation_labels = []
+    allocation_data = []
+    allocation_colors = ['#BFE953', '#ef4444', '#3b82f6', '#f59e0b', '#8b5cf6']
+    
+    for i, holding in enumerate(holdings):
+        value = holding.quantity * holding.stock.current_price
+        percentage = (value / total_value * 100) if total_value > 0 else 0
+        allocation_labels.append(holding.stock.symbol)
+        allocation_data.append(float(percentage))
+    
+    # Calculate total profit/loss and ROI
+    total_invested = sum(holding.quantity * holding.average_price for holding in holdings)
+    total_current = sum(holding.quantity * holding.stock.current_price for holding in holdings)
+    total_profit_loss = total_current - total_invested
+    total_roi = ((total_current / total_invested) * 100 - 100) if total_invested > 0 else 0
+    
+    context = {
+        'wallet': wallet,
+        'total_value': total_current,
+        'total_profit_loss': total_profit_loss,
+        'total_roi': total_roi,
+        'dates': dates,
+        'portfolio_values': portfolio_values,
+        'stock_symbols': stock_symbols,
+        'profit_loss_by_stock': profit_loss_by_stock,
+        'profit_loss_colors': profit_loss_colors,
+        'transaction_dates': transaction_dates,
+        'buy_amounts': buy_amounts,
+        'sell_amounts': sell_amounts,
+        'allocation_labels': allocation_labels,
+        'allocation_data': allocation_data,
+        'allocation_colors': allocation_colors,
+    }
+    
+    return render(request, 'simulation/statistics.html', context)
+
+@login_required
+def get_ai_analysis(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Invalid request method'}, status=400)
+    
+    try:
+        # Check if Gemini API key is configured
+        if not hasattr(settings, 'GEMINI_API_KEY') or not settings.GEMINI_API_KEY:
+            return JsonResponse({
+                'success': False,
+                'error': 'Gemini API key not configured',
+                'response': 'The AI analysis feature is currently unavailable. Please configure the Gemini API key.'
+            })
+
+        wallet = UserWallet.objects.get(user=request.user)
+        holdings = StockHolding.objects.filter(wallet=wallet).select_related('stock')
+        
+        # Prepare portfolio data for AI analysis
+        portfolio_data = []
+        total_value = Decimal('0')
+        
+        for holding in holdings:
+            current_value = holding.quantity * holding.stock.current_price
+            invested_value = holding.quantity * holding.average_price
+            profit_loss = current_value - invested_value
+            profit_loss_percentage = (profit_loss / invested_value * 100) if invested_value > 0 else 0
+            
+            portfolio_data.append({
+                'symbol': holding.stock.symbol,
+                'quantity': holding.quantity,
+                'current_price': float(holding.stock.current_price),
+                'average_price': float(holding.average_price),
+                'profit_loss_percentage': float(profit_loss_percentage)
+            })
+            
+            total_value += current_value
+        
+        # If no holdings, return appropriate message
+        if not portfolio_data:
+            return JsonResponse({
+                'success': True,
+                'response': 'Your portfolio is currently empty. Start by buying some stocks to receive AI analysis.'
+            })
+
+        # Prepare prompt for Gemini
+        prompt = f"""As a financial advisor, analyze this investment portfolio and provide insights:
+
+Portfolio Summary:
+Total Value: ${total_value:,.2f}
+Holdings:
+{json.dumps(portfolio_data, indent=2)}
+
+Please provide:
+1. Overall portfolio performance analysis
+2. Risk assessment
+3. Diversification analysis
+4. Specific recommendations for improvement
+5. Market outlook for these holdings
+
+Keep the response concise and focused on actionable insights."""
+
+        try:
+            # Get Gemini's analysis
+            model = genai.GenerativeModel('gemini-1.5-flash-latest')
+            response = model.generate_content(prompt)
+            
+            return JsonResponse({
+                'success': True,
+                'response': response.text
+            })
+        except Exception as e:
+            logger.error(f"Gemini API error: {str(e)}")
+            return JsonResponse({
+                'success': False,
+                'error': 'Error connecting to AI service',
+                'response': 'Unable to generate AI analysis at this time. Please try again later.'
+            })
+        
+    except Exception as e:
+        logger.error(f"Error in AI analysis: {str(e)}")
+        logger.error(traceback.format_exc())
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        })
