@@ -11,6 +11,18 @@ import json
 import finnhub
 import pandas as pd
 from django.core.paginator import Paginator
+from decimal import Decimal
+from simulation.models import UserWallet, WalletTransaction
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+import logging
+import traceback
+
+# Set up logging
+logger = logging.getLogger(__name__)
+
+# Configure the Gemini API
+genai.configure(api_key=settings.GEMINI_API_KEY)
 
 def get_started(request):
     return render(request, 'User/get_started.html')
@@ -100,7 +112,12 @@ def profile(request):
 
         return redirect('profile')
 
-    return render(request, 'User/profile.html')
+    context = {
+        'user': request.user,
+        'profile': profile,
+        'wallet_balance': profile.wallet_balance
+    }
+    return render(request, 'User/profile.html', context)
 
 @login_required
 def market_analytics(request):
@@ -152,8 +169,8 @@ def market_stocks(request):
     # Initialize Finnhub client
     finnhub_client = finnhub.Client(api_key='cvam92hr01qsapma5g6gcvam92hr01qsapma5g70')
     
-    # Get stock symbols from US market
-    stock_symbols = finnhub_client.stock_symbols('US')
+    # Get stock symbols from US market - limit to first 100 stocks for better performance
+    stock_symbols = finnhub_client.stock_symbols('US')[:100]  # Limiting initial data load
     
     # Convert to DataFrame for easier filtering
     df = pd.DataFrame(stock_symbols)
@@ -167,6 +184,8 @@ def market_stocks(request):
     if search_query:
         df = df[df['description'].str.contains(search_query, case=False) | 
                 df['symbol'].str.contains(search_query, case=False)]
+        # Limit search results to 50 for better performance
+        df = df.head(50)
     
     if market_cap_filter != 'all':
         # Add market cap filtering logic here if available from API
@@ -175,24 +194,25 @@ def market_stocks(request):
     if sector_filter != 'all':
         # Add sector filtering logic here if available from API
         pass
-    
+
     # Convert filtered DataFrame back to list of dicts
     stocks = df.to_dict('records')
     
     # Add real-time price data for each stock
-    for stock in stocks[:30]:  # Limit to 30 stocks for performance
+    # Limit to 15 stocks per page for better performance
+    for stock in stocks[:15]:
         try:
             quote = finnhub_client.quote(stock['symbol'])
-            stock['current_price'] = quote['c']
-            stock['price_change'] = quote['d']
-            stock['price_change_percent'] = quote['dp']
+            stock['current_price'] = round(quote['c'], 2) if quote['c'] else 'N/A'
+            stock['price_change'] = round(quote['d'], 2) if quote['d'] else 'N/A'
+            stock['price_change_percent'] = round(quote['dp'], 2) if quote['dp'] else 'N/A'
         except:
             stock['current_price'] = 'N/A'
             stock['price_change'] = 'N/A'
             stock['price_change_percent'] = 'N/A'
     
-    # Pagination
-    paginator = Paginator(stocks, 30)  # Show 30 stocks per page
+    # Pagination - reduce page size to 15 for better performance
+    paginator = Paginator(stocks, 15)  # Show 15 stocks per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
@@ -204,3 +224,185 @@ def market_stocks(request):
     }
     
     return render(request, 'User/market_stocks.html', context)
+
+@login_required
+def update_wallet(request):
+    if request.method == 'POST':
+        try:
+            # Debug print to check if we're hitting this view
+            print("DEBUG: update_wallet view called")
+            
+            # Debug print to see what's in the POST data
+            print("DEBUG: POST data:", request.POST)
+            
+            amount = Decimal(request.POST.get('amount', '0'))
+            print(f"DEBUG: Amount parsed: {amount}")
+            
+            if amount <= 0:
+                print("DEBUG: Amount is <= 0")
+                messages.error(request, 'Please enter a positive amount.')
+            elif amount > 1000000:
+                print("DEBUG: Amount exceeds limit")
+                messages.error(request, 'Maximum deposit limit is $1,000,000.')
+            else:
+                # Get user profile
+                try:
+                    profile = request.user.profile
+                    print(f"DEBUG: Current wallet balance: {profile.wallet_balance}")
+                    
+                    # Update UserProfile wallet balance
+                    old_balance = profile.wallet_balance
+                    profile.wallet_balance += amount
+                    profile.save()
+                    print(f"DEBUG: New wallet balance: {profile.wallet_balance}")
+                    print(f"DEBUG: Balance change: {profile.wallet_balance - old_balance}")
+
+                    # Update or create simulation wallet
+                    simulation_wallet, created = UserWallet.objects.get_or_create(user=request.user)
+                    print(f"DEBUG: Simulation wallet {'created' if created else 'retrieved'}")
+                    print(f"DEBUG: Current simulation wallet balance: {simulation_wallet.balance}")
+                    
+                    simulation_wallet.balance += amount
+                    simulation_wallet.save()
+                    print(f"DEBUG: New simulation wallet balance: {simulation_wallet.balance}")
+
+                    # Create transaction record
+                    transaction = WalletTransaction.objects.create(
+                        wallet=simulation_wallet,
+                        transaction_type='DEPOSIT',
+                        amount=amount,
+                        balance_after=simulation_wallet.balance,
+                        description=f'Deposit from main wallet'
+                    )
+                    print(f"DEBUG: Transaction created: {transaction.id}")
+
+                    messages.success(request, f'Successfully added ${amount:,.2f} to your wallet.')
+                    
+                except UserProfile.DoesNotExist:
+                    print("DEBUG: UserProfile does not exist")
+                    messages.error(request, 'User profile not found. Please contact support.')
+                except Exception as e:
+                    print(f"DEBUG: Error updating profile: {str(e)}")
+                    messages.error(request, f'Error updating profile: {str(e)}')
+                
+        except (ValueError, TypeError) as e:
+            print(f"DEBUG: Value/Type error: {str(e)}")
+            messages.error(request, 'Please enter a valid amount.')
+        except Exception as e:
+            print(f"DEBUG: Unexpected error: {str(e)}")
+            messages.error(request, f'An unexpected error occurred: {str(e)}')
+    else:
+        print("DEBUG: Non-POST request to update_wallet")
+    
+    return redirect('profile')
+
+@login_required
+def update_profile(request):
+    if request.method == 'POST':
+        # Update user information
+        user = request.user
+        user.username = request.POST.get('username')
+        user.email = request.POST.get('email')
+        
+        # Update profile information
+        profile = user.profile
+        profile.phone_number = request.POST.get('phone_number')
+        profile.address = request.POST.get('address')
+
+        try:
+            user.save()
+            profile.save()
+            messages.success(request, 'Profile updated successfully!')
+        except Exception as e:
+            messages.error(request, f'Error updating profile: {str(e)}')
+
+    return redirect('profile')
+
+@login_required
+def update_profile_photo(request):
+    if request.method == 'POST' and request.FILES.get('profile_photo'):
+        profile = request.user.profile
+        profile.profile_photo = request.FILES['profile_photo']
+        try:
+            profile.save()
+            messages.success(request, 'Profile photo updated successfully!')
+        except Exception as e:
+            messages.error(request, f'Error updating profile photo: {str(e)}')
+
+    return redirect('profile')
+
+@require_POST
+def gemini_chat(request):
+    try:
+        # Log the start of the request
+        logger.info("Gemini chat request received")
+        
+        # Parse the request body
+        data = json.loads(request.body)
+        user_message = data.get('message', '')
+        logger.info(f"User message: {user_message}")
+        
+        # Check if Gemini API key is configured
+        if not hasattr(settings, 'GEMINI_API_KEY') or not settings.GEMINI_API_KEY or settings.GEMINI_API_KEY == 'your-gemini-api-key':
+            logger.error("GEMINI_API_KEY not configured properly in settings")
+            return JsonResponse({
+                'success': False,
+                'error': "API key not configured properly",
+                'response': "I'm sorry, the AI service is not properly configured. Please contact the administrator to set up a valid Gemini API key."
+            })
+            
+        try:
+            # Configure the Gemini API
+            genai.configure(api_key=settings.GEMINI_API_KEY)
+            logger.info("Configured Gemini API with key")
+            
+            # Create a Gemini model instance
+            model = genai.GenerativeModel('gemini-1.5-flash-latest')
+            logger.info("Created Gemini model instance")
+            
+            # Add financial context to the prompt
+            prompt = f"""You are a financial assistant with expertise in stock markets, investments, and financial planning.
+            Please provide helpful, accurate information about investments, stocks, market trends, and financial advice.
+            
+            User query: {user_message}
+            """
+            
+            # Generate response from Gemini
+            logger.info("Sending request to Gemini API")
+            response = model.generate_content(prompt)
+            logger.info("Received response from Gemini API")
+            
+            # Return the response
+            return JsonResponse({
+                'success': True,
+                'response': response.text
+            })
+        except Exception as e:
+            logger.error(f"Gemini API error: {str(e)}")
+            
+            # Check for specific API key errors
+            error_message = str(e).lower()
+            if 'api key not valid' in error_message or 'api_key_invalid' in error_message:
+                return JsonResponse({
+                    'success': False,
+                    'error': "Invalid API key",
+                    'response': "I'm sorry, the AI service is using an invalid API key. Please contact the administrator to update the Gemini API key."
+                })
+            else:
+                return JsonResponse({
+                    'success': False,
+                    'error': str(e),
+                    'response': "I'm sorry, there was an error connecting to the AI service. Please try again later."
+                })
+        
+    except Exception as e:
+        # Log the full exception with traceback
+        logger.error(f"Error in gemini_chat: {str(e)}")
+        logger.error(traceback.format_exc())
+        
+        return JsonResponse({
+            'success': False,
+            'error': str(e),
+            'traceback': traceback.format_exc(),
+            'response': "I'm sorry, an error occurred while processing your request. Please try again later."
+        })

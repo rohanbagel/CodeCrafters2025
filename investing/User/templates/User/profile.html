@@ -16,10 +16,13 @@
                             <img src="{% static 'images/default.png' %}" alt="Default Profile Photo" class="w-full h-full object-cover">
                         {% endif %}
                     </div>
-                    <label for="profile_photo" class="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
-                        <i data-lucide="camera" class="w-6 h-6 text-white"></i>
-                    </label>
-                    <input type="file" id="profile_photo" name="profile_photo" class="hidden" form="profile_form" accept="image/*">
+                    <form id="photo_form" action="{% url 'update_profile_photo' %}" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <label for="profile_photo" class="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
+                            <i data-lucide="camera" class="w-6 h-6 text-white"></i>
+                        </label>
+                        <input type="file" id="profile_photo" name="profile_photo" class="hidden" onchange="document.getElementById('photo_form').submit();">
+                    </form>
                 </div>
 
                 <!-- Profile Info -->
@@ -30,20 +33,43 @@
             </div>
         </div>
 
+        {% if messages %}
+        <div class="mb-6">
+            {% for message in messages %}
+                <div class="p-4 rounded-md {% if message.tags == 'success' %}bg-green-500/10 text-green-400{% else %}bg-red-500/10 text-red-400{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Wallet Balance -->
+        <div class="mb-8 rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-[#F6F6F5]">Wallet Balance</h3>
+                <span class="text-2xl font-bold text-[#BFE953]">${{ user.profile.wallet_balance|floatformat:2 }}</span>
+            </div>
+            <form action="{% url 'update_wallet' %}" method="POST" class="flex gap-4">
+                {% csrf_token %}
+                <input type="number" 
+                       name="amount" 
+                       step="0.01" 
+                       min="0" 
+                       placeholder="Enter amount" 
+                       class="flex-1 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-[#F6F6F5] placeholder:text-[#F6F6F5]/40 focus:outline-none focus:ring-1 focus:ring-[#BFE953]"
+                       required>
+                <button type="submit" 
+                        class="inline-flex items-center gap-2 rounded-md bg-[#BFE953] px-4 py-2 text-sm font-medium text-[#0F0F11] hover:bg-[#d6ff63] transition-all">
+                    <i data-lucide="plus" class="h-4 w-4"></i>
+                    Add Funds
+                </button>
+            </form>
+        </div>
+
         <!-- Profile Form -->
-        <form id="profile_form" method="POST" enctype="multipart/form-data" class="bg-white/5 rounded-2xl p-8 backdrop-blur-lg border border-white/10">
+        <form action="{% url 'update_profile' %}" method="POST" class="bg-white/5 rounded-2xl p-8 backdrop-blur-lg border border-white/10">
             {% csrf_token %}
             
-            {% if messages %}
-            <div class="mb-6">
-                {% for message in messages %}
-                    <div class="p-4 rounded-md {% if message.tags == 'success' %}bg-green-500/10 text-green-400{% else %}bg-red-500/10 text-red-400{% endif %}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </div>
-            {% endif %}
-
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Personal Information -->
                 <div class="space-y-4">

@@ -1,204 +1,42 @@
-{% extends 'User/base.html' %}
-{% load static %}
+{% extends 'simulation/simulation_base.html' %}
 
 {% block content %}
-<div class="simulation-container">
-    <!-- Wallet Display -->
-    <div class="wallet-status">
-        <h3>Your Trading Wallet</h3>
-        <div class="balance">
-            <span>Balance:</span>
-            <span id="wallet-balance">${{ wallet.balance|floatformat:2 }}</span>
-        </div>
-    </div>
-
-    <!-- Main Scenario Display -->
-    <div class="scenario-card">
-        <h2 id="scenario-title">{{ current_scenario.title|default:"Welcome to Trading Simulation" }}</h2>
-        <p id="scenario-description">{{ current_scenario.description|default:"Get ready to start your trading journey!" }}</p>
+<div class="flex flex-col gap-8">
+    <!-- Welcome Section -->
+    <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10">
+        <h1 class="text-2xl font-bold text-[#F6F6F5] mb-4">Welcome to ProfitPulse Simulation</h1>
+        <p class="text-[#F6F6F5]/80">Practice trading in a risk-free environment with virtual cash. Learn the markets without risking real money.</p>
         
-        <div class="action-buttons">
-            <button class="btn-buy" onclick="handleAction('buy')">Buy</button>
-            <button class="btn-sell" onclick="handleAction('sell')">Sell</button>
-            <button class="btn-hold" onclick="handleAction('hold')">Hold</button>
+        <!-- Virtual Balance Display -->
+        <div class="mt-6 flex items-center gap-4">
+            <div class="rounded-lg bg-[#BFE953]/10 p-4">
+                <p class="text-sm text-[#BFE953]">Virtual Balance</p>
+                <p class="text-2xl font-bold text-[#BFE953]">${{ wallet.balance|default:"0.00"|floatformat:2 }}</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="{% url 'simulation:add_cash' %}" class="inline-flex items-center gap-2 rounded-lg bg-[#BFE953] px-4 py-2 text-sm font-medium text-[#0F0F11] hover:bg-[#d6ff63] transition-all duration-300">
+                    <i data-lucide="plus-circle" class="h-4 w-4"></i>
+                    Add Virtual Cash
+                </a>
+                <a href="{% url 'simulation:available_stocks' %}" class="inline-flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 text-sm font-medium text-white hover:bg-white/20 transition-all duration-300">
+                    <i data-lucide="trending-up" class="h-4 w-4 text-[#BFE953]"></i>
+                    Available Stocks
+                </a>
+            </div>
         </div>
     </div>
 
-    <!-- Result Modal -->
-    <div id="result-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <h3 id="result-title"></h3>
-            <p id="result-message"></p>
-            <button onclick="closeResultAndShowNext()" class="btn-next">Continue</button>
+    <!-- Coming Soon Banner -->
+    <div class="relative overflow-hidden rounded-xl bg-gradient-to-r from-[#d6ff63]/20 to-[#96c718]/20 p-6 backdrop-blur-lg border border-[#BFE953]/20">
+        <div class="relative z-10">
+            <div class="flex items-center gap-2 text-[#BFE953]">
+                <i data-lucide="sparkles" class="h-5 w-5"></i>
+                <p class="text-sm font-medium">Coming Soon</p>
+            </div>
+            <h2 class="mt-2 text-xl font-bold text-[#F6F6F5]">Advanced Trading Features</h2>
+            <p class="mt-1 text-[#F6F6F5]/80">Real-time market simulation, advanced order types, and portfolio analytics are on the way!</p>
         </div>
+        <div class="absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-[#BFE953]/5 to-transparent"></div>
     </div>
 </div>
-
-<style>
-    .simulation-container {
-        max-width: 800px;
-        margin: 40px auto;
-        padding: 20px;
-    }
-
-    .wallet-status {
-        background: #4a90e2;
-        color: white;
-        padding: 20px;
-        border-radius: 10px;
-        margin-bottom: 30px;
-    }
-
-    .scenario-card {
-        background: white;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        text-align: center;
-    }
-
-    .action-buttons {
-        display: flex;
-        gap: 15px;
-        justify-content: center;
-        margin-top: 30px;
-    }
-
-    .btn-buy, .btn-sell, .btn-hold, .btn-next {
-        padding: 12px 30px;
-        border: none;
-        border-radius: 5px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: transform 0.2s;
-    }
-
-    .btn-buy {
-        background: #2ecc71;
-        color: white;
-    }
-
-    .btn-sell {
-        background: #e74c3c;
-        color: white;
-    }
-
-    .btn-hold {
-        background: #3498db;
-        color: white;
-    }
-
-    .btn-next {
-        background: #2ecc71;
-        color: white;
-    }
-
-    .modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-    }
-
-    .modal-content {
-        background: white;
-        padding: 30px;
-        border-radius: 10px;
-        max-width: 500px;
-        width: 90%;
-        text-align: center;
-    }
-
-    button:hover {
-        transform: translateY(-2px);
-    }
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize CSRF token for AJAX requests
-    const csrftoken = getCookie('csrftoken');
-
-    window.currentScenario = {{ current_scenario.id|default:'null' }};
-    window.nextScenario = null;
-
-    function handleAction(action) {
-        if (!currentScenario) return;
-
-        fetch('{% url "simulation:handle_scenario" %}', {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': csrftoken,
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `scenario_id=${currentScenario}&action=${action}`
-        })
-        .then(response => response.json())
-        .then(data => {
-            const resultModal = document.getElementById('result-modal');
-            const resultTitle = document.getElementById('result-title');
-            const resultMessage = document.getElementById('result-message');
-
-            if (data.success) {
-                resultTitle.textContent = 'Correct!';
-                resultMessage.textContent = `You earned $${data.reward}! New balance: $${data.new_balance}`;
-                document.getElementById('wallet-balance').textContent = `$${data.new_balance}`;
-                
-                if (data.next_scenario) {
-                    window.nextScenario = data.next_scenario;
-                }
-            } else {
-                resultTitle.textContent = 'Try Again';
-                resultMessage.textContent = data.message;
-            }
-            
-            resultModal.style.display = 'flex';
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred. Please try again.');
-        });
-    }
-
-    function closeResultAndShowNext() {
-        const resultModal = document.getElementById('result-modal');
-        resultModal.style.display = 'none';
-
-        if (window.nextScenario) {
-            document.getElementById('scenario-title').textContent = window.nextScenario.title;
-            document.getElementById('scenario-description').textContent = window.nextScenario.description;
-            window.currentScenario = window.nextScenario.id;
-        } else {
-            document.getElementById('scenario-title').textContent = 'Congratulations!';
-            document.getElementById('scenario-description').textContent = 'You have completed all scenarios!';
-            window.currentScenario = null;
-        }
-    }
-
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-    // Make functions globally available
-    window.handleAction = handleAction;
-    window.closeResultAndShowNext = closeResultAndShowNext;
-});
-</script>
 {% endblock %} 

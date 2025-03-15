@@ -1,0 +1,101 @@
+{% extends 'simulation/simulation_base.html' %}
+{% load simulation_filters %}
+
+{% block content %}
+<div class="flex flex-col gap-8">
+    <!-- Stock Details Section -->
+    <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-[#F6F6F5]">{{ stock.name }} ({{ stock.symbol }})</h1>
+                <p class="text-[#F6F6F5]/60">Current Price: <span class="text-[#F6F6F5]">${{ stock.current_price|floatformat:2 }}</span></p>
+            </div>
+            <div class="text-right">
+                <p class="text-sm text-[#F6F6F5]/60">24h Change</p>
+                <p class="text-lg font-medium {% if '-' in stock.price_change %}text-red-500{% else %}text-[#BFE953]{% endif %}">
+                    {{ stock.price_change }}
+                </p>
+            </div>
+        </div>
+
+        {% if messages %}
+        <div class="mb-6">
+            {% for message in messages %}
+            <div class="rounded-lg p-4 mb-4 {% if message.tags == 'success' %}bg-[#BFE953]/20 text-[#BFE953]{% else %}bg-red-500/20 text-red-500{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Buy Form -->
+            <div class="rounded-lg bg-white/5 p-6">
+                <h2 class="text-lg font-bold text-[#F6F6F5] mb-4">Buy {{ stock.symbol }}</h2>
+                <form method="POST" action="{% url 'simulation:buy_stock' stock.symbol %}" class="space-y-4">
+                    {% csrf_token %}
+                    <div>
+                        <label for="buy_quantity" class="block text-sm font-medium text-[#F6F6F5]/80 mb-2">Quantity to Buy</label>
+                        <div class="relative">
+                            <input type="number" name="quantity" id="buy_quantity" min="1"
+                                   class="block w-full rounded-lg border border-white/10 bg-white/5 py-2 px-3 text-[#F6F6F5] placeholder-[#F6F6F5]/40 focus:outline-none focus:ring-2 focus:ring-[#BFE953] focus:border-transparent"
+                                   placeholder="Enter quantity">
+                        </div>
+                        <p class="mt-2 text-sm text-[#F6F6F5]/60">Available Balance: ${{ wallet.balance|floatformat:2 }}</p>
+                    </div>
+                    
+                    <button type="submit" 
+                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-[#0F0F11] bg-[#BFE953] hover:bg-[#d6ff63] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#BFE953] transition-all duration-300">
+                        Buy Stock
+                    </button>
+                </form>
+            </div>
+
+            <!-- Sell Form -->
+            {% if holding %}
+            <div class="rounded-lg bg-white/5 p-6">
+                <h2 class="text-lg font-bold text-[#F6F6F5] mb-4">Sell {{ stock.symbol }}</h2>
+                <form method="POST" action="{% url 'simulation:sell_stock' stock.symbol %}" class="space-y-4">
+                    {% csrf_token %}
+                    <div>
+                        <label for="sell_quantity" class="block text-sm font-medium text-[#F6F6F5]/80 mb-2">Quantity to Sell</label>
+                        <div class="relative">
+                            <input type="number" name="quantity" id="sell_quantity" min="1" max="{{ holding.quantity }}"
+                                   class="block w-full rounded-lg border border-white/10 bg-white/5 py-2 px-3 text-[#F6F6F5] placeholder-[#F6F6F5]/40 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                                   placeholder="Enter quantity">
+                        </div>
+                        <p class="mt-2 text-sm text-[#F6F6F5]/60">Shares Available: {{ holding.quantity }}</p>
+                    </div>
+                    
+                    <button type="submit" 
+                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-[#0F0F11] bg-red-500 hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-300">
+                        Sell Stock
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Current Holdings -->
+    {% if holding %}
+    <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10">
+        <h2 class="text-xl font-bold text-[#F6F6F5] mb-4">Your Holdings</h2>
+        <div class="grid grid-cols-3 gap-4">
+            <div>
+                <p class="text-sm text-[#F6F6F5]/60">Quantity</p>
+                <p class="text-lg font-medium text-[#F6F6F5]">{{ holding.quantity }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-[#F6F6F5]/60">Average Price</p>
+                <p class="text-lg font-medium text-[#F6F6F5]">${{ holding.average_price|floatformat:2 }}</p>
+            </div>
+            <div>
+                <p class="text-sm text-[#F6F6F5]/60">Total Value</p>
+                <p class="text-lg font-medium text-[#F6F6F5]">${{ total_value|default:0|floatformat:2 }}</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %} 
