@@ -24,13 +24,13 @@
         .navbar {
             background-color: #0F0F11;
             color: #F6F6F5;
-            height: 70px;
+            height: 0;
             width: 100%;
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             z-index: 100;
-            display: flex;
+            display: none;
             justify-content: space-between;
             align-items: center;
             padding: 0 25px;
@@ -53,11 +53,11 @@
 
         /* Sidebar styles */
         .sidebar {
-            height: calc(100vh - 70px);
+            height: calc(100vh - 64px);
             width: 270px;
             position: fixed;
+            top: 64px;
             left: 0;
-            top: 70px;
             background: linear-gradient(180deg, #161616 0%, #1c1c1c 100%);
             padding: 0;
             color: white;
@@ -218,9 +218,9 @@
         /* Main content - changed to pure black */
         .main-content {
             margin-left: 270px;
-            margin-top: 70px;
+            margin-top: 0;
             padding: 30px;
-            min-height: calc(100vh - 70px);
+            min-height: calc(100vh - 64px);
             background-color: #000000;
             transition: all 0.3s ease;
         }
@@ -268,6 +268,7 @@
             
             .main-content {
                 margin-left: 70px;
+                margin-top: 0;
             }
         }
 
@@ -513,6 +514,39 @@
 
         .scale-out {
             transform: scale(0);
+        }
+
+        .bot-message code {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        .bot-message pre {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 8px 0;
+            overflow-x: auto;
+        }
+
+        .bot-message pre code {
+            background-color: transparent;
+            padding: 0;
+            display: block;
+            white-space: pre;
+        }
+
+        .bot-message strong {
+            font-weight: 600;
+            color: #BFE953;
+        }
+
+        .bot-message em {
+            font-style: italic;
+            opacity: 0.9;
         }
     </style>
 </head>
@@ -785,7 +819,25 @@
             function addMessage(text, sender) {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${sender}-message`;
-                messageDiv.textContent = text;
+                
+                // Format the text for bot messages
+                if (sender === 'bot') {
+                    // Remove asterisks and format code blocks
+                    let formattedText = text
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')  // Bold text
+                        .replace(/\*(.*?)\*/g, '<em>$1</em>')              // Italic text
+                        .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>') // Code blocks
+                        .replace(/`(.*?)`/g, '<code>$1</code>');           // Inline code
+                    
+                    // Replace newlines with <br> tags
+                    formattedText = formattedText.replace(/\n/g, '<br>');
+                    
+                    messageDiv.innerHTML = formattedText;
+                } else {
+                    // User messages remain unchanged
+                    messageDiv.textContent = text;
+                }
+                
                 chatbotMessages.appendChild(messageDiv);
                 chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
             }
