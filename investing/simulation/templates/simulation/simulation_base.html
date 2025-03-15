@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProfitPulse Simulation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/font/lucide.css" rel="stylesheet">
+</head>
+<body class="flex min-h-screen flex-col bg-[#0F0F11] text-[#F6F6F5]">
+    <!-- Navigation -->
+    <header class="sticky top-0 z-40 w-full border-b border-white/10 bg-gradient-to-r from-[#0a0a0e] via-[#131417] to-[#0a0a0e] backdrop-blur-md">
+        <div class="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
+            <!-- Logo and Title -->
+            <div class="flex items-center gap-3">
+                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#d6ff63] to-[#96c718] shadow-lg shadow-[#BFE953]/30 ring-4 ring-[#BFE953]/20">
+                    <i data-lucide="gamepad-2" class="h-5 w-5 text-[#0F0F11]"></i>
+                </div>
+                <span class="text-xl font-black tracking-tight text-white">
+                    Profit<span class="bg-gradient-to-r from-[#d6ff63] to-[#BFE953] bg-clip-text text-transparent">Pulse</span>
+                    <span class="ml-2 text-sm font-medium text-[#F6F6F5]/60">Simulation</span>
+                </span>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="hidden md:flex items-center gap-6">
+                <a href="{% url 'simulation:home' %}" class="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-white/10">
+                    <i data-lucide="home" class="h-4 w-4 text-[#BFE953]"></i>
+                    Home
+                </a>
+                <a href="{% url 'simulation:add_cash' %}" class="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-white/10">
+                    <i data-lucide="wallet-plus" class="h-4 w-4 text-[#BFE953]"></i>
+                    Add Virtual Cash
+                </a>
+                <a href="{% url 'simulation:transactions' %}" class="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-white/10">
+                    <i data-lucide="history" class="h-4 w-4 text-[#BFE953]"></i>
+                    Transactions
+                </a>
+                <a href="/" class="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-white/10">
+                    <i data-lucide="arrow-left" class="h-4 w-4 text-[#BFE953]"></i>
+                    Exit Simulation
+                </a>
+            </nav>
+
+            <!-- User Menu -->
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="rounded-lg bg-[#BFE953]/10 px-4 py-2">
+                        <p class="text-xs text-[#BFE953]">Virtual Balance</p>
+                        <p class="text-sm font-bold text-[#BFE953]">${{ wallet.balance|default:"0.00"|floatformat:2 }}</p>
+                    </div>
+                    <div class="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center">
+                        <i data-lucide="user" class="h-5 w-5 text-[#BFE953]"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 container mx-auto px-4 sm:px-6 py-8">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 py-6">
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center">
+                <p class="text-sm text-[#F6F6F5]/60">© 2025 ProfitPulse Simulation. All rights reserved.</p>
+                <div class="flex items-center gap-4">
+                    <a href="#" class="text-sm text-[#F6F6F5]/60 hover:text-[#F6F6F5]">Help</a>
+                    <a href="#" class="text-sm text-[#F6F6F5]/60 hover:text-[#F6F6F5]">Privacy</a>
+                    <a href="#" class="text-sm text-[#F6F6F5]/60 hover:text-[#F6F6F5]">Terms</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

@@ -223,7 +223,25 @@
 
     <h1>Investment Dashboard</h1>
     
-    <div class="dashboard-grid">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <div class="bg-[#1A1A1A] p-6 rounded-xl border border-[#262626]">
+            <h3 class="text-sm font-medium text-[#A3A3A3] mb-2">Total Profit</h3>
+            <p class="text-2xl font-bold text-[#F6F6F5]">$24,500</p>
+            <span class="inline-flex items-center text-sm text-[#BFE953] mt-2">
+                <i data-lucide="trending-up" class="h-4 w-4 mr-1"></i>
+                +12.5%
+            </span>
+        </div>
+
+        <div class="bg-[#1A1A1A] p-6 rounded-xl border border-[#262626]">
+            <h3 class="text-sm font-medium text-[#A3A3A3] mb-2">Wallet Balance</h3>
+            <p class="text-2xl font-bold text-[#F6F6F5]">${{ request.user.profile.wallet_balance|default:"0.00" }}</p>
+            <a href="{% url 'profile' %}" class="inline-flex items-center text-sm text-[#BFE953] mt-2 hover:text-[#d6ff63] transition-colors">
+                <i data-lucide="plus-circle" class="h-4 w-4 mr-1"></i>
+                Add Funds
+            </a>
+        </div>
+
         <div class="card">
             <div class="card-header">
                 <span class="card-title">Total Portfolio Value</span>

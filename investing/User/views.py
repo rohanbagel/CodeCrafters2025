@@ -11,6 +11,7 @@ import json
 import finnhub
 import pandas as pd
 from django.core.paginator import Paginator
+from decimal import Decimal
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 import logging
@@ -110,7 +111,12 @@ def profile(request):
 
         return redirect('profile')
 
-    return render(request, 'User/profile.html')
+    context = {
+        'user': request.user,
+        'profile': profile,
+        'wallet_balance': profile.wallet_balance
+    }
+    return render(request, 'User/profile.html', context)
 
 @login_required
 def market_analytics(request):
@@ -217,6 +223,29 @@ def market_stocks(request):
     }
     
     return render(request, 'User/market_stocks.html', context)
+
+@login_required
+def update_wallet(request):
+    if request.method == 'POST':
+        try:
+            amount = Decimal(request.POST.get('amount', '0'))
+            if amount <= 0:
+                messages.error(request, 'Amount must be greater than 0')
+                return redirect('profile')
+                
+            profile = request.user.profile  # Use the related_name to get profile directly
+            profile.wallet_balance += amount
+            profile.save()
+            
+            messages.success(request, f'Successfully added ${amount:,.2f} to your wallet')
+        except (ValueError, TypeError):
+            messages.error(request, 'Invalid amount')
+        except UserProfile.DoesNotExist:
+            messages.error(request, 'User profile not found')
+        except Exception as e:
+            messages.error(request, f'Error updating wallet: {str(e)}')
+    
+    return redirect('profile')
 
 @require_POST
 def gemini_chat(request):
