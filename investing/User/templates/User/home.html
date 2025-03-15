@@ -4,172 +4,220 @@
 
 {% block content %}
     <style>
+        /* Core Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #171717;
+            color: #f8f9fa;
+        }
+
+        h1, h2 {
+            color: #fff;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Card & Grid System */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
+            gap: 1.5rem;
+            margin-top: 2rem;
         }
 
         .card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background: #222222;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
         }
 
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Card Components */
         .card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 1rem;
         }
 
         .card-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #fff;
         }
 
         .card-icon {
-            font-size: 24px;
-            color: #1a1a1a;
+            font-size: 1.5rem;
+            color: #BFE953;
         }
 
         .value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #1a1a1a;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .positive {
+            color: #BFE953;
+        }
+
+        .negative {
+            color: #ff4d4d;
+        }
+
+        /* Chart & Data Sections */
+        .chart-container, .stock-section, .news-section {
+            background: #222222;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            margin-top: 2.5rem;
         }
 
         .chart-container {
             height: 300px;
-            margin-top: 20px;
         }
 
-        /* Stock Market Section Styles */
-        .stock-section {
-            margin-top: 30px;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        /* Stock Grid */
+        .stock-grid, .news-grid {
+            display: grid;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
         }
 
         .stock-grid {
-            display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
         }
 
-        .stock-card {
-            padding: 15px;
-            border: 1px solid #eee;
+        .stock-card, .news-card {
+            background: #2a2a2a;
             border-radius: 8px;
+            padding: 1.25rem;
             transition: all 0.3s ease;
+            border: 1px solid #333;
         }
 
-        .stock-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        .stock-card:hover, .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25);
+            border-color: #BFE953;
         }
 
+        /* Stock Data Display */
         .stock-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 0.75rem;
         }
 
         .stock-symbol {
-            font-weight: bold;
-            font-size: 18px;
+            font-weight: 600;
+            font-size: 1.125rem;
+            color: #fff;
         }
 
         .stock-price {
-            font-size: 24px;
-            font-weight: bold;
-            margin: 10px 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0.75rem 0;
+            color: #fff;
         }
 
         .stock-change {
-            padding: 4px 8px;
+            padding: 0.25rem 0.5rem;
             border-radius: 4px;
-            font-size: 14px;
+            font-size: 0.875rem;
+            font-weight: 500;
         }
 
         .positive {
-            background: #dcfce7;
-            color: #15803d;
+            background: rgba(191, 233, 83, 0.15);
+            color: #BFE953;
         }
 
         .negative {
-            background: #fee2e2;
-            color: #b91c1c;
+            background: rgba(255, 77, 77, 0.15);
+            color: #ff4d4d;
         }
 
-        .news-section {
-            margin-top: 30px;
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .news-grid {
-            display: grid;
-            gap: 20px;
-            margin-top: 20px;
-        }
-
+        /* News Display */
         .news-card {
             display: flex;
-            gap: 20px;
-            padding: 15px;
-            border: 1px solid #eee;
-            border-radius: 8px;
+            gap: 1.5rem;
         }
 
         .news-image {
             width: 120px;
             height: 80px;
             object-fit: cover;
-            border-radius: 4px;
+            border-radius: 6px;
         }
 
         .news-content h3 {
-            margin: 0 0 10px 0;
-            font-size: 16px;
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .news-content h3 a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .news-content h3 a:hover {
+            color: #BFE953;
         }
 
         .news-content p {
-            color: #666;
-            font-size: 14px;
-            line-height: 1.4;
+            color: #aaa;
+            font-size: 0.875rem;
+            line-height: 1.5;
         }
 
+        /* Section Controls */
         .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 1.5rem;
         }
 
         .refresh-button {
-            padding: 8px 16px;
-            background: #1a1a1a;
-            color: white;
-            border: none;
-            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            background: #333;
+            color: #BFE953;
+            border: 1px solid #BFE953;
+            border-radius: 6px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
 
         .refresh-button:hover {
-            background: #333;
+            background: #BFE953;
+            color: #171717;
         }
     </style>
 
@@ -189,7 +237,7 @@
                 <span class="card-title">Today's Profit</span>
                 <i class="fas fa-chart-line card-icon"></i>
             </div>
-            <div class="value" style="color: #22c55e">+$1,245</div>
+            <div class="value positive">+$1,245</div>
         </div>
 
         <div class="card">
@@ -201,14 +249,13 @@
         </div>
     </div>
 
-    <div class="card chart-container">
+    <div class="chart-container">
         <div class="card-header">
             <span class="card-title">Portfolio Performance</span>
         </div>
         <canvas id="portfolioChart"></canvas>
     </div>
 
-    <!-- Stock Market Section -->
     <div class="stock-section">
         <div class="section-header">
             <h2>Live Market Data</h2>
@@ -217,12 +264,9 @@
                 Refresh
             </button>
         </div>
-        <div class="stock-grid" id="stockGrid">
-            <!-- Stock cards will be populated here -->
-        </div>
+        <div class="stock-grid" id="stockGrid"></div>
     </div>
 
-    <!-- Financial News Section -->
     <div class="news-section">
         <div class="section-header">
             <h2>Financial News</h2>
@@ -231,14 +275,12 @@
                 Refresh
             </button>
         </div>
-        <div class="news-grid" id="newsGrid">
-            <!-- News cards will be populated here -->
-        </div>
+        <div class="news-grid" id="newsGrid"></div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Sample chart
+        // Portfolio chart
         const ctx = document.getElementById('portfolioChart').getContext('2d');
         new Chart(ctx, {
             type: 'line',
@@ -247,33 +289,48 @@
                 datasets: [{
                     label: 'Portfolio Value',
                     data: [65000, 75000, 72000, 90000, 85000, 124500],
-                    borderColor: '#1a1a1a',
-                    tension: 0.4
+                    borderColor: '#BFE953',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true,
+                    backgroundColor: 'rgba(191, 233, 83, 0.1)',
+                    pointBackgroundColor: '#BFE953',
+                    pointRadius: 4
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: {
-                        display: false
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        ticks: { color: '#aaa' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#aaa' }
                     }
                 }
             }
         });
 
+        // API variables
         const FINNHUB_API_KEY = '{{ api_key }}';
         const STOCKS = {{ stocks|safe }};
 
-        // Function to format numbers with commas
+        // Format numbers with commas
         function formatNumber(num) {
             return new Intl.NumberFormat('en-US').format(num);
         }
 
-        // Function to update stock data
+        // Update stock data
         async function refreshStockData() {
             const stockGrid = document.getElementById('stockGrid');
-            stockGrid.innerHTML = ''; // Clear existing content
+            stockGrid.innerHTML = '';
 
             for (const stock of STOCKS) {
                 try {
@@ -283,7 +340,7 @@
                     const changeClass = data.d >= 0 ? 'positive' : 'negative';
                     const changeSign = data.d >= 0 ? '+' : '';
 
-                    const stockCard = `
+                    stockGrid.innerHTML += `
                         <div class="stock-card">
                             <div class="stock-header">
                                 <span class="stock-symbol">${stock.symbol}</span>
@@ -295,21 +352,19 @@
                             </div>
                         </div>
                     `;
-                    stockGrid.innerHTML += stockCard;
                 } catch (error) {
                     console.error(`Error fetching data for ${stock.symbol}:`, error);
                 }
             }
         }
 
-        // Function to refresh news
+        // Refresh news
         async function refreshNews() {
             try {
                 const response = await fetch(`https://finnhub.io/api/v1/news?category=general&token=${FINNHUB_API_KEY}`);
                 const news = await response.json();
                 
-                const newsGrid = document.getElementById('newsGrid');
-                newsGrid.innerHTML = news.slice(0, 5).map(item => `
+                document.getElementById('newsGrid').innerHTML = news.slice(0, 5).map(item => `
                     <div class="news-card">
                         <img src="${item.image}" alt="News Image" class="news-image" 
                              onerror="this.src='https://via.placeholder.com/120x80'">
@@ -324,14 +379,12 @@
             }
         }
 
-        // Initial load
-        document.addEventListener('DOMContentLoaded', function() {
+        // Initialize and set auto-refresh
+        document.addEventListener('DOMContentLoaded', () => {
             refreshStockData();
             refreshNews();
+            setInterval(refreshStockData, 10000);
+            setInterval(refreshNews, 300000);
         });
-
-        // Auto-refresh every 10 seconds for stocks and 5 minutes for news
-        setInterval(refreshStockData, 10000);
-        setInterval(refreshNews, 300000);
     </script>
 {% endblock %}
