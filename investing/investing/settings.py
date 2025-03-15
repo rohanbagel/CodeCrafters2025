@@ -26,7 +26,14 @@ SECRET_KEY = 'django-insecure-5yx$ua4@!)jo#1hqq44gaw%-vm*6xu#k&&es#ba$tj2+3*_gw*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [ 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app', 'localhost', '127.0.0.1']
+
+# Add this setting below ALLOWED_HOSTS
+CSRF_TRUSTED_ORIGINS = [
+    'https://fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app',
+    'http://localhost',
+    'http://127.0.0.1'
+]
 
 
 # Application definition
@@ -208,3 +215,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'hxrsh1764@gmail.com'  # Replace with your email
 EMAIL_HOST_PASSWORD = 'oqfm hrdf mwdw mcta'  # Replace with your app password
 DEFAULT_FROM_EMAIL = 'ProfitPulse <hxrsh1764@gmail.com>'
+
+# Add these settings
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
