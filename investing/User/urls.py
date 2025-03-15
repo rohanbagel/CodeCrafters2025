@@ -11,6 +11,7 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('profile/', views.profile, name='profile'),
     path('market-analytics/', views.market_analytics, name='market_analytics'),
+    path('market-stocks/', views.market_stocks, name='market_stocks'),
 ]
 
 if settings.DEBUG:

@@ -1,0 +1,103 @@
+{% extends 'User/base.html' %}
+
+{% block content %}
+<div class="p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-[#F6F6F5]">Market Stocks</h1>
+            <p class="text-[#F6F6F5]/60">Real-time stock market data</p>
+        </div>
+
+        <!-- Filters -->
+        <div class="bg-white/5 rounded-xl p-6 mb-8 backdrop-blur-lg border border-white/10">
+            <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-[#F6F6F5]/60 mb-2">Search</label>
+                    <input type="text" name="search" value="{{ search_query }}" 
+                           class="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-[#F6F6F5] focus:outline-none focus:ring-2 focus:ring-[#BFE953]/50"
+                           placeholder="Search stocks...">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-[#F6F6F5]/60 mb-2">Market Cap</label>
+                    <select name="market_cap" 
+                            class="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-[#F6F6F5] focus:outline-none focus:ring-2 focus:ring-[#BFE953]/50">
+                        <option value="all" {% if market_cap_filter == 'all' %}selected{% endif %}>All</option>
+                        <option value="large" {% if market_cap_filter == 'large' %}selected{% endif %}>Large Cap</option>
+                        <option value="mid" {% if market_cap_filter == 'mid' %}selected{% endif %}>Mid Cap</option>
+                        <option value="small" {% if market_cap_filter == 'small' %}selected{% endif %}>Small Cap</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-[#F6F6F5]/60 mb-2">Sector</label>
+                    <select name="sector" 
+                            class="w-full px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-[#F6F6F5] focus:outline-none focus:ring-2 focus:ring-[#BFE953]/50">
+                        <option value="all" {% if sector_filter == 'all' %}selected{% endif %}>All Sectors</option>
+                        <option value="tech" {% if sector_filter == 'tech' %}selected{% endif %}>Technology</option>
+                        <option value="finance" {% if sector_filter == 'finance' %}selected{% endif %}>Finance</option>
+                        <option value="healthcare" {% if sector_filter == 'healthcare' %}selected{% endif %}>Healthcare</option>
+                    </select>
+                </div>
+
+                <div class="flex items-end">
+                    <button type="submit" 
+                            class="w-full px-4 py-2 rounded-lg bg-[#BFE953] text-[#0F0F11] font-semibold hover:bg-[#d6ff63] transition-colors">
+                        Apply Filters
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Stocks Table -->
+        <div class="bg-white/5 rounded-xl overflow-hidden backdrop-blur-lg border border-white/10">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-white/5">
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-[#F6F6F5]">Symbol</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-[#F6F6F5]">Name</th>
+                            <th class="px-6 py-4 text-right text-sm font-semibold text-[#F6F6F5]">Price</th>
+                            <th class="px-6 py-4 text-right text-sm font-semibold text-[#F6F6F5]">Change</th>
+                            <th class="px-6 py-4 text-right text-sm font-semibold text-[#F6F6F5]">% Change</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                        {% for stock in stocks %}
+                        <tr class="hover:bg-white/5 transition-colors">
+                            <td class="px-6 py-4 text-sm font-medium text-[#BFE953]">{{ stock.symbol }}</td>
+                            <td class="px-6 py-4 text-sm text-[#F6F6F5]">{{ stock.description }}</td>
+                            <td class="px-6 py-4 text-right text-sm text-[#F6F6F5]">${{ stock.current_price }}</td>
+                            <td class="px-6 py-4 text-right text-sm {% if stock.price_change > 0 %}text-green-400{% elif stock.price_change < 0 %}text-red-400{% else %}text-[#F6F6F5]{% endif %}">
+                                {{ stock.price_change }}
+                            </td>
+                            <td class="px-6 py-4 text-right text-sm {% if stock.price_change_percent > 0 %}text-green-400{% elif stock.price_change_percent < 0 %}text-red-400{% else %}text-[#F6F6F5]{% endif %}">
+                                {{ stock.price_change_percent }}%
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="px-6 py-4 bg-white/5 border-t border-white/10">
+                <div class="flex items-center justify-between">
+                    <div class="text-sm text-[#F6F6F5]/60">
+                        Showing page {{ stocks.number }} of {{ stocks.paginator.num_pages }}
+                    </div>
+                    <div class="flex space-x-2">
+                        {% if stocks.has_previous %}
+                        <a href="?page={{ stocks.previous_page_number }}" class="px-4 py-2 text-sm rounded-lg bg-white/5 text-[#F6F6F5] hover:bg-white/10 transition-colors">Previous</a>
+                        {% endif %}
+                        {% if stocks.has_next %}
+                        <a href="?page={{ stocks.next_page_number }}" class="px-4 py-2 text-sm rounded-lg bg-white/5 text-[#F6F6F5] hover:bg-white/10 transition-colors">Next</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
