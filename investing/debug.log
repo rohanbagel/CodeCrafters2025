@@ -78,3 +78,40 @@ INFO 2025-03-15 23:07:11,759 views Created Gemini model instance
 INFO 2025-03-15 23:07:11,760 views Sending request to Gemini API
 INFO 2025-03-15 23:07:13,854 views Received response from Gemini API
 INFO 2025-03-15 23:07:13,854 basehttp "POST /gemini-chat/ HTTP/1.1" 200 1086
+INFO 2025-03-16 00:41:40,917 autoreload Watching for file changes with StatReloader
+INFO 2025-03-16 00:42:26,722 autoreload C:\Users\Shailesh Dalvi\projects\CodeCrafters2025\investing\User\migrations\0007_userprofile_wallet_balance.py changed, reloading.
+INFO 2025-03-16 00:42:28,266 autoreload Watching for file changes with StatReloader
+INFO 2025-03-16 00:42:54,885 autoreload C:\Users\Shailesh Dalvi\projects\CodeCrafters2025\investing\User\migrations\0007_userprofile_wallet_balance.py changed, reloading.
+INFO 2025-03-16 00:42:56,090 autoreload Watching for file changes with StatReloader
+INFO 2025-03-16 00:43:02,577 autoreload Watching for file changes with StatReloader
+INFO 2025-03-16 00:43:28,983 autoreload C:\Users\Shailesh Dalvi\projects\CodeCrafters2025\investing\User\migrations\0007_userprofile_wallet_balance.py changed, reloading.
+INFO 2025-03-16 00:43:30,205 autoreload Watching for file changes with StatReloader
+INFO 2025-03-16 00:44:11,982 autoreload C:\Users\Shailesh Dalvi\projects\CodeCrafters2025\investing\User\migrations\0007_userprofile_wallet_balance.py changed, reloading.
+INFO 2025-03-16 00:44:13,705 autoreload Watching for file changes with StatReloader
+INFO 2025-03-16 00:50:55,616 autoreload Watching for file changes with StatReloader
+INFO 2025-03-16 00:51:00,575 basehttp "GET /risk/dashboard/ HTTP/1.1" 302 0
+INFO 2025-03-16 00:51:00,646 basehttp "GET /accounts/login/?next=/risk/dashboard/ HTTP/1.1" 200 3461
+INFO 2025-03-16 00:51:03,692 basehttp "GET / HTTP/1.1" 200 22009
+INFO 2025-03-16 00:51:08,501 basehttp "GET /signup/ HTTP/1.1" 200 30613
+INFO 2025-03-16 00:51:10,625 basehttp "GET /accounts/google/login/ HTTP/1.1" 200 1416
+INFO 2025-03-16 00:51:12,363 basehttp "POST /accounts/google/login/ HTTP/1.1" 302 0
+INFO 2025-03-16 00:51:16,926 basehttp "GET /accounts/google/login/callback/?state=gEGOmhPlVdLVBk8h&code=4%2F0AQSTgQEpqSErNtQkL1KhwEt8pSmox8w2wUxefY8806qxacrT_QAC8Y91gBhT7jftXBYw4g&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&authuser=0&prompt=none HTTP/1.1" 302 0
+INFO 2025-03-16 00:51:16,942 basehttp "GET /home/ HTTP/1.1" 200 39370
+INFO 2025-03-16 00:51:24,671 basehttp "GET /portfolio/ HTTP/1.1" 200 28866
+INFO 2025-03-16 00:51:39,428 basehttp "GET /market-stocks/ HTTP/1.1" 200 43215
+INFO 2025-03-16 00:51:52,103 basehttp "GET /profile/ HTTP/1.1" 200 39258
+INFO 2025-03-16 00:51:52,135 basehttp "GET /static/images/default.png HTTP/1.1" 304 0
+INFO 2025-03-16 00:52:01,403 basehttp "POST /update-wallet/ HTTP/1.1" 302 0
+INFO 2025-03-16 00:52:01,418 basehttp "GET /profile/ HTTP/1.1" 200 39333
+INFO 2025-03-16 00:52:08,325 basehttp "GET /portfolio/ HTTP/1.1" 200 28874
+INFO 2025-03-16 00:52:25,388 basehttp "GET /market-stocks/ HTTP/1.1" 200 43216
+INFO 2025-03-16 00:52:35,456 basehttp "GET /stock/HEGIF/ HTTP/1.1" 200 31863
+INFO 2025-03-16 00:52:46,928 basehttp "POST /stock/HEGIF/buy/ HTTP/1.1" 302 0
+INFO 2025-03-16 00:52:48,534 basehttp "GET /stock/HEGIF/ HTTP/1.1" 200 32090
+INFO 2025-03-16 00:52:56,321 basehttp "GET /portfolio/ HTTP/1.1" 200 34013
+INFO 2025-03-16 00:53:03,695 basehttp "POST /stock/HEGIF/sell/ HTTP/1.1" 302 0
+INFO 2025-03-16 00:53:05,255 basehttp "GET /stock/HEGIF/ HTTP/1.1" 200 32083
+INFO 2025-03-16 00:53:11,093 basehttp "GET /portfolio/ HTTP/1.1" 200 35107
+INFO 2025-03-16 00:53:17,365 basehttp "GET /market-analytics/ HTTP/1.1" 200 36207
+INFO 2025-03-16 00:53:27,147 basehttp "GET / HTTP/1.1" 200 22009
+INFO 2025-03-16 00:53:33,176 basehttp "GET /risk/dashboard/ HTTP/1.1" 200 35237

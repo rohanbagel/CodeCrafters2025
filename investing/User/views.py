@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import StockPreference, UserProfile
+from .models import StockPreference, UserProfile, StockTransaction
 import requests
 from django.conf import settings
 from django.contrib.auth import login, authenticate, logout
@@ -406,3 +406,164 @@ def gemini_chat(request):
             'traceback': traceback.format_exc(),
             'response': "I'm sorry, an error occurred while processing your request. Please try again later."
         })
+
+@login_required
+def stock_detail(request, symbol):
+    # Initialize Finnhub client
+    finnhub_client = finnhub.Client(api_key='cvam92hr01qsapma5g6gcvam92hr01qsapma5g70')
+    
+    # Get stock details
+    quote = finnhub_client.quote(symbol)
+    company_profile = finnhub_client.company_profile2(symbol=symbol)
+    
+    stock = {
+        'symbol': symbol,
+        'company_name': company_profile.get('name', symbol),
+        'current_price': quote['c'],
+        'price_change': round((quote['c'] - quote['pc']) / quote['pc'] * 100, 2),
+    }
+    
+    return render(request, 'User/stock_detail.html', {'stock': stock})
+
+@login_required
+def buy_stock(request, symbol):
+    if request.method == 'POST':
+        try:
+            quantity = int(request.POST.get('quantity', 0))
+            finnhub_client = finnhub.Client(api_key='cvam92hr01qsapma5g6gcvam92hr01qsapma5g70')
+            quote = finnhub_client.quote(symbol)
+            company_profile = finnhub_client.company_profile2(symbol=symbol)
+            
+            # Convert float to Decimal for precise calculations
+            total_cost = Decimal(str(quantity * quote['c']))
+            
+            profile = request.user.profile
+            if profile.wallet_balance >= total_cost:
+                profile.wallet_balance -= total_cost
+                profile.save()
+                messages.success(request, f'Successfully purchased {quantity} shares of {symbol}')
+
+                # Create transaction record with company name from profile
+                StockTransaction.objects.create(
+                    user=request.user,
+                    symbol=symbol,
+                    company_name=company_profile.get('name', symbol),  # Use company name from profile
+                    transaction_type='BUY',
+                    quantity=quantity,
+                    price=quote['c'],
+                    total_amount=total_cost
+                )
+            else:
+                messages.error(request, 'Insufficient funds in wallet')
+        except Exception as e:
+            messages.error(request, str(e))
+    
+    return redirect('stock_detail', symbol=symbol)
+
+@login_required
+def sell_stock(request, symbol):
+    if request.method == 'POST':
+        try:
+            quantity = int(request.POST.get('quantity', 0))
+            finnhub_client = finnhub.Client(api_key='cvam92hr01qsapma5g6gcvam92hr01qsapma5g70')
+            quote = finnhub_client.quote(symbol)
+            company_profile = finnhub_client.company_profile2(symbol=symbol)
+            
+            # Check if user has enough shares to sell
+            user_transactions = StockTransaction.objects.filter(user=request.user, symbol=symbol)
+            shares_owned = sum(
+                t.quantity if t.transaction_type == 'BUY' else -t.quantity 
+                for t in user_transactions
+            )
+            
+            if shares_owned >= quantity:
+                # Convert float to Decimal
+                total_value = Decimal(str(quantity * quote['c']))
+                
+                profile = request.user.profile
+                profile.wallet_balance += total_value
+                profile.save()
+                messages.success(request, f'Successfully sold {quantity} shares of {symbol}')
+
+                # Create transaction record with company name from profile
+                StockTransaction.objects.create(
+                    user=request.user,
+                    symbol=symbol,
+                    company_name=company_profile.get('name', symbol),  # Use company name from profile
+                    transaction_type='SELL',
+                    quantity=quantity,
+                    price=quote['c'],
+                    total_amount=total_value
+                )
+            else:
+                messages.error(request, f'Insufficient shares. You only have {shares_owned} shares of {symbol}')
+        except Exception as e:
+            messages.error(request, str(e))
+    
+    return redirect('stock_detail', symbol=symbol)
+
+@login_required
+def portfolio(request):
+    holdings = []
+    transactions = []
+    finnhub_client = finnhub.Client(api_key='cvam92hr01qsapma5g6gcvam92hr01qsapma5g70')
+    
+    try:
+        # Get all stock transactions for the user
+        stock_transactions = StockTransaction.objects.filter(user=request.user).order_by('-created_at')
+        
+        # Calculate holdings
+        holdings_dict = {}
+        for transaction in stock_transactions:
+            symbol = transaction.symbol
+            if symbol not in holdings_dict:
+                holdings_dict[symbol] = {
+                    'symbol': symbol,
+                    'company_name': transaction.company_name,
+                    'quantity': 0,
+                    'total_cost': Decimal('0')
+                }
+            
+            # Update quantity and total cost based on transaction type
+            if transaction.transaction_type == 'BUY':
+                holdings_dict[symbol]['quantity'] += transaction.quantity
+                holdings_dict[symbol]['total_cost'] += transaction.total_amount
+            else:  # SELL
+                holdings_dict[symbol]['quantity'] -= transaction.quantity
+                holdings_dict[symbol]['total_cost'] -= transaction.total_amount
+        
+        # Get current prices and calculate profits
+        for symbol, holding in holdings_dict.items():
+            if holding['quantity'] > 0:  # Only show active holdings
+                try:
+                    quote = finnhub_client.quote(symbol)
+                    current_price = Decimal(str(quote['c']))
+                    average_price = holding['total_cost'] / holding['quantity']
+                    total_value = current_price * holding['quantity']
+                    profit_loss = total_value - holding['total_cost']
+                    
+                    holdings.append({
+                        'symbol': symbol,
+                        'company_name': holding['company_name'],
+                        'quantity': holding['quantity'],
+                        'average_price': round(float(average_price), 2),
+                        'current_price': round(float(current_price), 2),
+                        'total_value': round(float(total_value), 2),
+                        'profit_loss': round(float(profit_loss), 2),
+                        'profit_loss_percentage': round(float(profit_loss / holding['total_cost'] * 100), 2) if holding['total_cost'] else 0
+                    })
+                except Exception as e:
+                    print(f"Error fetching quote for {symbol}: {e}")
+        
+        # Get recent transactions (last 10)
+        transactions = stock_transactions[:10]
+        
+    except Exception as e:
+        print(f"Error fetching portfolio data: {e}")
+        messages.error(request, "Error loading portfolio data")
+    
+    context = {
+        'holdings': holdings,
+        'transactions': transactions,
+    }
+    return render(request, 'User/portfolio.html', context)

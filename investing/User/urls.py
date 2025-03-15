@@ -16,6 +16,10 @@ urlpatterns = [
     path('update-wallet/', views.update_wallet, name='update_wallet'),
     path('update-profile/', views.update_profile, name='update_profile'),
     path('update-profile-photo/', views.update_profile_photo, name='update_profile_photo'),
+    path('stock/<str:symbol>/', views.stock_detail, name='stock_detail'),
+    path('stock/<str:symbol>/buy/', views.buy_stock, name='buy_stock'),
+    path('stock/<str:symbol>/sell/', views.sell_stock, name='sell_stock'),
+    path('portfolio/', views.portfolio, name='portfolio'),
 ]
 
 if settings.DEBUG:
