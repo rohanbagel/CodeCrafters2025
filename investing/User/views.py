@@ -2,13 +2,17 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import StockPreference, UserProfile
 import requests
 from django.conf import settings
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 def get_started(request):
     return render(request, 'User/get_started.html')
+
+def logout_view(request):
+    logout(request)
+    return redirect('get_started')
 
 def signup_view(request):
     if request.method == 'POST':
