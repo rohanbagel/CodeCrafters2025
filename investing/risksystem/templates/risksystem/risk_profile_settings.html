@@ -1,0 +1,213 @@
+{% extends 'User/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="content-header">
+        <h1 class="text-2xl font-bold text-[#BFE953] mb-4">Risk Profile Settings</h1>
+        <p class="text-[#F6F6F5]/70 mb-6">Customize your risk parameters and notification preferences</p>
+    </div>
+    
+    <div class="bg-[#1A1A1A] rounded-xl p-6 shadow-lg border border-[#333] mb-8">
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="p-4 mb-4 rounded-lg {% if message.tags == 'success' %}bg-green-900/30 text-green-400 border border-green-800{% else %}bg-red-900/30 text-red-400 border border-red-800{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <div>
+                <h2 class="text-xl font-semibold text-[#F6F6F5] mb-4">Risk Tolerance</h2>
+                <div class="mb-4">
+                    <label for="{{ form.risk_tolerance.id_for_label }}" class="block text-[#F6F6F5]/70 mb-2">
+                        Risk Tolerance Level (1-10)
+                    </label>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-[#F6F6F5]/50">Conservative</span>
+                        <input type="range" min="1" max="10" 
+                               name="{{ form.risk_tolerance.html_name }}" 
+                               id="{{ form.risk_tolerance.id_for_label }}" 
+                               value="{{ form.risk_tolerance.value }}"
+                               class="w-full h-2 bg-[#333] rounded-lg appearance-none cursor-pointer">
+                        <span class="text-sm text-[#F6F6F5]/50">Aggressive</span>
+                    </div>
+                    <div class="text-center mt-2">
+                        <span id="riskToleranceValue" class="text-lg font-medium text-[#BFE953]">{{ form.risk_tolerance.value }}</span>
+                    </div>
+                    {% if form.risk_tolerance.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ form.risk_tolerance.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="border-t border-[#333] pt-6">
+                <h2 class="text-xl font-semibold text-[#F6F6F5] mb-4">Alert Thresholds</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="{{ form.volatility_threshold.id_for_label }}" class="block text-[#F6F6F5]/70 mb-2">
+                            Volatility Threshold (%)
+                        </label>
+                        <div class="relative">
+                            <input type="number" step="0.1" min="0.1" 
+                                   name="{{ form.volatility_threshold.html_name }}" 
+                                   id="{{ form.volatility_threshold.id_for_label }}" 
+                                   value="{{ form.volatility_threshold.value }}"
+                                   class="w-full bg-[#222] border border-[#333] rounded-lg py-3 px-4 text-[#F6F6F5] focus:outline-none focus:border-[#BFE953]">
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <span class="text-[#F6F6F5]/50">%</span>
+                            </div>
+                        </div>
+                        <p class="text-[#F6F6F5]/50 text-sm mt-1">Alert when stock volatility exceeds this percentage</p>
+                        {% if form.volatility_threshold.errors %}
+                            <p class="text-red-500 text-sm mt-1">{{ form.volatility_threshold.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label for="{{ form.price_drop_threshold.id_for_label }}" class="block text-[#F6F6F5]/70 mb-2">
+                            Price Drop Threshold (%)
+                        </label>
+                        <div class="relative">
+                            <input type="number" step="0.1" min="0.1" 
+                                   name="{{ form.price_drop_threshold.html_name }}" 
+                                   id="{{ form.price_drop_threshold.id_for_label }}" 
+                                   value="{{ form.price_drop_threshold.value }}"
+                                   class="w-full bg-[#222] border border-[#333] rounded-lg py-3 px-4 text-[#F6F6F5] focus:outline-none focus:border-[#BFE953]">
+                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                <span class="text-[#F6F6F5]/50">%</span>
+                            </div>
+                        </div>
+                        <p class="text-[#F6F6F5]/50 text-sm mt-1">Alert when stock price drops by this percentage</p>
+                        {% if form.price_drop_threshold.errors %}
+                            <p class="text-red-500 text-sm mt-1">{{ form.price_drop_threshold.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-[#333] pt-6">
+                <h2 class="text-xl font-semibold text-[#F6F6F5] mb-4">Technical Indicators</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="{{ form.rsi_lower_threshold.id_for_label }}" class="block text-[#F6F6F5]/70 mb-2">
+                            RSI Lower Threshold
+                        </label>
+                        <input type="number" min="0" max="100" 
+                               name="{{ form.rsi_lower_threshold.html_name }}" 
+                               id="{{ form.rsi_lower_threshold.id_for_label }}" 
+                               value="{{ form.rsi_lower_threshold.value }}"
+                               class="w-full bg-[#222] border border-[#333] rounded-lg py-3 px-4 text-[#F6F6F5] focus:outline-none focus:border-[#BFE953]">
+                        <p class="text-[#F6F6F5]/50 text-sm mt-1">Alert when RSI falls below this value (oversold)</p>
+                        {% if form.rsi_lower_threshold.errors %}
+                            <p class="text-red-500 text-sm mt-1">{{ form.rsi_lower_threshold.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div>
+                        <label for="{{ form.rsi_upper_threshold.id_for_label }}" class="block text-[#F6F6F5]/70 mb-2">
+                            RSI Upper Threshold
+                        </label>
+                        <input type="number" min="0" max="100" 
+                               name="{{ form.rsi_upper_threshold.html_name }}" 
+                               id="{{ form.rsi_upper_threshold.id_for_label }}" 
+                               value="{{ form.rsi_upper_threshold.value }}"
+                               class="w-full bg-[#222] border border-[#333] rounded-lg py-3 px-4 text-[#F6F6F5] focus:outline-none focus:border-[#BFE953]">
+                        <p class="text-[#F6F6F5]/50 text-sm mt-1">Alert when RSI rises above this value (overbought)</p>
+                        {% if form.rsi_upper_threshold.errors %}
+                            <p class="text-red-500 text-sm mt-1">{{ form.rsi_upper_threshold.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-[#333] pt-6">
+                <h2 class="text-xl font-semibold text-[#F6F6F5] mb-4">AI Exit Strategy</h2>
+                
+                <div class="mb-4">
+                    <div class="flex items-center">
+                        <input type="checkbox" 
+                               name="{{ form.use_ai_exit_strategy.html_name }}" 
+                               id="{{ form.use_ai_exit_strategy.id_for_label }}" 
+                               {% if form.use_ai_exit_strategy.value %}checked{% endif %}
+                               class="w-5 h-5 rounded border-[#333] bg-[#222] text-[#BFE953] focus:ring-[#BFE953] focus:ring-opacity-25">
+                        <label for="{{ form.use_ai_exit_strategy.id_for_label }}" class="ml-2 block text-[#F6F6F5]/70">
+                            Enable AI-powered exit strategies
+                        </label>
+                    </div>
+                    <p class="text-[#F6F6F5]/50 text-sm mt-1 ml-7">Use Gemini AI to analyze your stocks and suggest optimal exit points</p>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="{{ form.ai_confidence_threshold.id_for_label }}" class="block text-[#F6F6F5]/70 mb-2">
+                        AI Confidence Threshold
+                    </label>
+                    <input type="number" step="0.01" min="0.1" max="1.0" 
+                           name="{{ form.ai_confidence_threshold.html_name }}" 
+                           id="{{ form.ai_confidence_threshold.id_for_label }}" 
+                           value="{{ form.ai_confidence_threshold.value }}"
+                           class="w-full bg-[#222] border border-[#333] rounded-lg py-3 px-4 text-[#F6F6F5] focus:outline-none focus:border-[#BFE953]">
+                    <p class="text-[#F6F6F5]/50 text-sm mt-1">Only show AI recommendations with confidence above this threshold (0.1-1.0)</p>
+                    {% if form.ai_confidence_threshold.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ form.ai_confidence_threshold.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="border-t border-[#333] pt-6">
+                <h2 class="text-xl font-semibold text-[#F6F6F5] mb-4">Notification Preferences</h2>
+                
+                <div class="space-y-4">
+                    <div class="flex items-center">
+                        <input type="checkbox" 
+                               name="{{ form.email_alerts.html_name }}" 
+                               id="{{ form.email_alerts.id_for_label }}" 
+                               {% if form.email_alerts.value %}checked{% endif %}
+                               class="w-5 h-5 rounded border-[#333] bg-[#222] text-[#BFE953] focus:ring-[#BFE953] focus:ring-opacity-25">
+                        <label for="{{ form.email_alerts.id_for_label }}" class="ml-2 block text-[#F6F6F5]/70">
+                            Receive email alerts
+                        </label>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <input type="checkbox" 
+                               name="{{ form.in_app_alerts.html_name }}" 
+                               id="{{ form.in_app_alerts.id_for_label }}" 
+                               {% if form.in_app_alerts.value %}checked{% endif %}
+                               class="w-5 h-5 rounded border-[#333] bg-[#222] text-[#BFE953] focus:ring-[#BFE953] focus:ring-opacity-25">
+                        <label for="{{ form.in_app_alerts.id_for_label }}" class="ml-2 block text-[#F6F6F5]/70">
+                            Receive in-app notifications
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-[#333] pt-6 flex justify-end">
+                <a href="{% url 'risk_dashboard' %}" class="bg-[#333] text-[#F6F6F5] font-medium py-3 px-6 rounded-lg hover:bg-[#444] transition duration-300 mr-4">
+                    Cancel
+                </a>
+                <button type="submit" class="bg-[#BFE953] text-[#0F0F11] font-medium py-3 px-6 rounded-lg hover:bg-[#a8d93a] transition duration-300">
+                    Save Settings
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const riskToleranceInput = document.getElementById('{{ form.risk_tolerance.id_for_label }}');
+        const riskToleranceValue = document.getElementById('riskToleranceValue');
+        
+        // Update the displayed value when the slider changes
+        riskToleranceInput.addEventListener('input', function() {
+            riskToleranceValue.textContent = this.value;
+        });
+    });
+</script>
+{% endblock %} 

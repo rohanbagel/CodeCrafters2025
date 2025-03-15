@@ -24,13 +24,13 @@
         .navbar {
             background-color: #0F0F11;
             color: #F6F6F5;
-            height: 70px;
+            height: 0;
             width: 100%;
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             z-index: 100;
-            display: flex;
+            display: none;
             justify-content: space-between;
             align-items: center;
             padding: 0 25px;
@@ -51,89 +51,13 @@
             font-size: 1.7rem;
         }
 
-        .navbar-right {
-            display: flex;
-            align-items: center;
-        }
-
-        .navbar-search {
-            position: relative;
-            margin-right: 25px;
-        }
-
-        .navbar-search input {
-            padding: 10px 15px 10px 40px;
-            border-radius: 25px;
-            border: 1px solid #333;
-            background-color: #222;
-            color: #F6F6F5;
-            width: 220px;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-
-        .navbar-search input:focus {
-            outline: none;
-            border-color: #BFE953;
-            width: 260px;
-            box-shadow: 0 0 0 2px rgba(191, 233, 83, 0.2);
-        }
-
-        .navbar-search i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #999;
-        }
-
-        .navbar-icons {
-            display: flex;
-        }
-
-        .navbar-icons a {
-            color: #F6F6F5;
-            margin-left: 20px;
-            font-size: 1.3rem;
-            position: relative;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 40px;
-            width: 40px;
-            border-radius: 50%;
-        }
-
-        .navbar-icons a:hover {
-            color: #BFE953;
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background-color: #BFE953;
-            color: #0F0F11;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
         /* Sidebar styles */
         .sidebar {
-            height: calc(100vh - 70px);
+            height: calc(100vh - 64px);
             width: 270px;
             position: fixed;
+            top: 64px;
             left: 0;
-            top: 70px;
             background: linear-gradient(180deg, #161616 0%, #1c1c1c 100%);
             padding: 0;
             color: white;
@@ -256,6 +180,15 @@
             z-index: 1;
         }
 
+        .nav-links i[data-lucide] {
+            color: currentColor;
+            margin-right: 14px;
+            width: 22px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
         .nav-links span {
             position: relative;
             z-index: 1;
@@ -285,9 +218,9 @@
         /* Main content - changed to pure black */
         .main-content {
             margin-left: 270px;
-            margin-top: 70px;
+            margin-top: 0;
             padding: 30px;
-            min-height: calc(100vh - 70px);
+            min-height: calc(100vh - 64px);
             background-color: #000000;
             transition: all 0.3s ease;
         }
@@ -317,6 +250,10 @@
                 font-size: 1.3rem;
             }
             
+            .nav-links i[data-lucide] {
+                margin-right: 0;
+            }
+            
             .nav-links span {
                 display: none;
             }
@@ -331,30 +268,7 @@
             
             .main-content {
                 margin-left: 70px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .navbar {
-                padding: 0 15px;
-            }
-            
-            .navbar-search input {
-                width: 180px;
-            }
-            
-            .navbar-search input:focus {
-                width: 200px;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .navbar-search {
-                display: none;
-            }
-            
-            .navbar-logo span {
-                font-size: 1.3rem;
+                margin-top: 0;
             }
         }
 
@@ -377,7 +291,7 @@
         }
 
         /* Transitions and animations */
-        .nav-links li a, .navbar-icons a, .navbar-search input {
+        .nav-links li a {
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
@@ -601,6 +515,39 @@
         .scale-out {
             transform: scale(0);
         }
+
+        .bot-message code {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        .bot-message pre {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 8px 0;
+            overflow-x: auto;
+        }
+
+        .bot-message pre code {
+            background-color: transparent;
+            padding: 0;
+            display: block;
+            white-space: pre;
+        }
+
+        .bot-message strong {
+            font-weight: 600;
+            color: #BFE953;
+        }
+
+        .bot-message em {
+            font-style: italic;
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body class="flex min-h-screen flex-col bg-[#0F0F11] text-[#F6F6F5]">
@@ -632,17 +579,6 @@
             <i class="fas fa-chart-pie"></i>
             <span>ProfitPulse</span>
         </div>
-        <div class="navbar-right">
-            <div class="navbar-search">
-                <i class="fas fa-search"></i>
-                <input type="text" placeholder="Search investments...">
-            </div>
-            <div class="navbar-icons">
-                <a href="#" title="Notifications"><i class="far fa-bell"></i><span class="notification-badge">3</span></a>
-                <a href="#" title="Messages"><i class="far fa-envelope"></i><span class="notification-badge">5</span></a>
-                <a href="#" title="Settings"><i class="fas fa-cog"></i></a>
-            </div>
-        </div>
     </nav>
 
     <!-- Sidebar -->
@@ -651,11 +587,22 @@
             <h2>Investment Portal</h2>
         </div>
         
+        <!-- Replace the Overview section in the sidebar -->
         <div class="nav-category">
             <div class="category-title">Overview</div>
             <ul class="nav-links">
-                <li><a href="{% url 'home' %}"><i class="fas fa-home"></i>Dashboard</a></li>
-                <li><a href="{% url 'market_analytics' %}"><i class="fas fa-chart-line"></i>Market Analytics</a></li>
+                <li>
+                    <a href="{% url 'home' %}">
+                        <i data-lucide="layout-dashboard" class="h-5 w-5"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'market_analytics' %}">
+                        <i data-lucide="bar-chart-2" class="h-5 w-5"></i>
+                        <span>Market Analytics</span>
+                    </a>
+                </li>
             </ul>
         </div>
         
@@ -717,9 +664,10 @@
                     <span>Profile</span>
                 </a>
             </li>
+            <!-- Find and replace the Settings link in the Account section -->
             <li>
                 <a href="#">
-                    <i class="fas fa-cog"></i>
+                    <i data-lucide="settings" class="h-5 w-5"></i>
                     <span>Settings</span>
                 </a>
             </li>
@@ -877,7 +825,25 @@
             function addMessage(text, sender) {
                 const messageDiv = document.createElement('div');
                 messageDiv.className = `message ${sender}-message`;
-                messageDiv.textContent = text;
+                
+                // Format the text for bot messages
+                if (sender === 'bot') {
+                    // Remove asterisks and format code blocks
+                    let formattedText = text
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')  // Bold text
+                        .replace(/\*(.*?)\*/g, '<em>$1</em>')              // Italic text
+                        .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>') // Code blocks
+                        .replace(/`(.*?)`/g, '<code>$1</code>');           // Inline code
+                    
+                    // Replace newlines with <br> tags
+                    formattedText = formattedText.replace(/\n/g, '<br>');
+                    
+                    messageDiv.innerHTML = formattedText;
+                } else {
+                    // User messages remain unchanged
+                    messageDiv.textContent = text;
+                }
+                
                 chatbotMessages.appendChild(messageDiv);
                 chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
             }

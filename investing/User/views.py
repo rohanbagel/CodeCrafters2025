@@ -357,7 +357,7 @@ def gemini_chat(request):
             logger.info("Configured Gemini API with key")
             
             # Create a Gemini model instance
-            model = genai.GenerativeModel('gemini-1.5-flash-latest')
+            model = genai.GenerativeModel('gemini-2.0-flash')
             logger.info("Created Gemini model instance")
             
             # Add financial context to the prompt

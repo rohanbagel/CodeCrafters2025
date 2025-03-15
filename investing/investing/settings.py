@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'User',
     'simulation',
+    'risksystem',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -193,3 +194,17 @@ LOGGING = {
 
 # Gemini AI API settings
 GEMINI_API_KEY = 'AIzaSyASj7__4ETiwPyX_b38CUr5AS9ZoJEMycI'  # Replace with your actual Gemini API key
+
+# Add Finnhub API key
+FINNHUB_API_KEY = 'cvam92hr01qsapma5g6gcvam92hr01qsapma5g70'  # Replace with your actual Finnhub API key
+# Finnhub API settings
+FINNHUB_API_KEY = 'cvasa2hr01qgjh3u8sg0cvasa2hr01qgjh3u8sgg'
+
+# Email settings for alerts
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Or your SMTP server
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'hxrsh1764@gmail.com'  # Replace with your email
+EMAIL_HOST_PASSWORD = 'oqfm hrdf mwdw mcta'  # Replace with your app password
+DEFAULT_FROM_EMAIL = 'ProfitPulse <hxrsh1764@gmail.com>'
