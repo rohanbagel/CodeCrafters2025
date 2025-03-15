@@ -498,6 +498,18 @@
             </li>
         </ul>
         
+        <div class="nav-category">
+            <div class="category-title">Market Stocks</div>
+        </div>
+        <ul class="nav-links">
+            <li>
+                <a href="{% url 'market_stocks' %}" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/5 transition-all {% if request.resolver_match.url_name == 'market_stocks' %}bg-white/5 text-[#BFE953]{% endif %}">
+                    <i data-lucide="trending-up" class="h-5 w-5"></i>
+                    <span>Market Stocks</span>
+                </a>
+            </li>
+        </ul>
+        
         <div class="sidebar-footer">
             <a href="#"><i class="fas fa-question-circle"></i> Help</a>
             <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
