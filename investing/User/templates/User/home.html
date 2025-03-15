@@ -1,0 +1,112 @@
+{% extends 'User/base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <style>
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .card-icon {
+            font-size: 24px;
+            color: #1a1a1a;
+        }
+
+        .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1a1a1a;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin-top: 20px;
+        }
+    </style>
+
+    <h1>Investment Dashboard</h1>
+    
+    <div class="dashboard-grid">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Total Portfolio Value</span>
+                <i class="fas fa-wallet card-icon"></i>
+            </div>
+            <div class="value">$124,500</div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Today's Profit</span>
+                <i class="fas fa-chart-line card-icon"></i>
+            </div>
+            <div class="value" style="color: #22c55e">+$1,245</div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Active Investments</span>
+                <i class="fas fa-briefcase card-icon"></i>
+            </div>
+            <div class="value">12</div>
+        </div>
+    </div>
+
+    <div class="card chart-container">
+        <div class="card-header">
+            <span class="card-title">Portfolio Performance</span>
+        </div>
+        <canvas id="portfolioChart"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Sample chart
+        const ctx = document.getElementById('portfolioChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Portfolio Value',
+                    data: [65000, 75000, 72000, 90000, 85000, 124500],
+                    borderColor: '#1a1a1a',
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    </script>
+{% endblock %}
