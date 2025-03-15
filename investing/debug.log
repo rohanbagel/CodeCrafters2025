@@ -1,0 +1,80 @@
+INFO 2025-03-15 23:03:12,047 autoreload Watching for file changes with StatReloader
+INFO 2025-03-15 23:03:17,466 basehttp "GET /home/ HTTP/1.1" 200 39469
+INFO 2025-03-15 23:03:22,292 views Gemini chat request received
+INFO 2025-03-15 23:03:22,292 views User message: Hi
+INFO 2025-03-15 23:03:22,292 views Successfully imported google.generativeai
+INFO 2025-03-15 23:03:22,293 views Configured Gemini API with key
+INFO 2025-03-15 23:03:22,294 views Created Gemini model instance
+INFO 2025-03-15 23:03:22,295 views Sending request to Gemini API
+ERROR 2025-03-15 23:03:23,029 views Error in gemini_chat: 400 API key not valid. Please pass a valid API key. [reason: "API_KEY_INVALID"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "generativelanguage.googleapis.com"
+}
+, locale: "en-US"
+message: "API key not valid. Please pass a valid API key."
+]
+ERROR 2025-03-15 23:03:23,078 views Traceback (most recent call last):
+  File "C:\Users\Shailesh Dalvi\projects\CodeCrafters2025\investing\User\views.py", line 263, in gemini_chat
+    response = model.generate_content(prompt)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shailesh Dalvi\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\generativeai\generative_models.py", line 331, in generate_content
+    response = self._client.generate_content(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shailesh Dalvi\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\ai\generativelanguage_v1beta\services\generative_service\client.py", line 835, in generate_content
+    response = rpc(
+               ^^^^
+  File "C:\Users\Shailesh Dalvi\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\api_core\gapic_v1\method.py", line 131, in __call__
+    return wrapped_func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shailesh Dalvi\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\api_core\retry\retry_unary.py", line 293, in retry_wrapped_func
+    return retry_target(
+           ^^^^^^^^^^^^^
+  File "C:\Users\Shailesh Dalvi\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\api_core\retry\retry_unary.py", line 153, in retry_target
+    _retry_error_helper(
+  File "C:\Users\Shailesh Dalvi\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\api_core\retry\retry_base.py", line 212, in _retry_error_helper
+    raise final_exc from source_exc
+  File "C:\Users\Shailesh Dalvi\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\api_core\retry\retry_unary.py", line 144, in retry_target
+    result = target()
+             ^^^^^^^^
+  File "C:\Users\Shailesh Dalvi\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\api_core\timeout.py", line 120, in func_with_timeout
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shailesh Dalvi\AppData\Local\Programs\Python\Python312\Lib\site-packages\google\api_core\grpc_helpers.py", line 78, in error_remapped_callable
+    raise exceptions.from_grpc_error(exc) from exc
+google.api_core.exceptions.InvalidArgument: 400 API key not valid. Please pass a valid API key. [reason: "API_KEY_INVALID"
+domain: "googleapis.com"
+metadata {
+  key: "service"
+  value: "generativelanguage.googleapis.com"
+}
+, locale: "en-US"
+message: "API key not valid. Please pass a valid API key."
+]
+
+INFO 2025-03-15 23:03:23,085 basehttp "POST /gemini-chat/ HTTP/1.1" 200 3090
+INFO 2025-03-15 23:04:22,955 autoreload C:\Users\Shailesh Dalvi\projects\CodeCrafters2025\investing\investing\settings.py changed, reloading.
+INFO 2025-03-15 23:04:26,268 autoreload Watching for file changes with StatReloader
+INFO 2025-03-15 23:04:48,668 autoreload C:\Users\Shailesh Dalvi\projects\CodeCrafters2025\investing\User\views.py changed, reloading.
+INFO 2025-03-15 23:04:50,048 autoreload Watching for file changes with StatReloader
+INFO 2025-03-15 23:06:25,514 autoreload C:\Users\Shailesh Dalvi\projects\CodeCrafters2025\investing\investing\settings.py changed, reloading.
+INFO 2025-03-15 23:06:26,943 autoreload Watching for file changes with StatReloader
+INFO 2025-03-15 23:06:28,351 basehttp "GET /home/ HTTP/1.1" 200 38791
+INFO 2025-03-15 23:06:32,548 views Gemini chat request received
+INFO 2025-03-15 23:06:32,549 views User message: Hi
+INFO 2025-03-15 23:06:32,549 views Configured Gemini API with key
+INFO 2025-03-15 23:06:32,549 views Created Gemini model instance
+INFO 2025-03-15 23:06:32,549 views Sending request to Gemini API
+ERROR 2025-03-15 23:06:34,570 views Gemini API error: 404 models/gemini-pro is not found for API version v1beta, or is not supported for generateContent. Call ListModels to see the list of available models and their supported methods.
+INFO 2025-03-15 23:06:34,570 basehttp "POST /gemini-chat/ HTTP/1.1" 200 310
+INFO 2025-03-15 23:06:59,828 autoreload C:\Users\Shailesh Dalvi\projects\CodeCrafters2025\investing\User\views.py changed, reloading.
+INFO 2025-03-15 23:07:03,233 autoreload Watching for file changes with StatReloader
+INFO 2025-03-15 23:07:07,797 basehttp "GET /home/ HTTP/1.1" 200 38791
+INFO 2025-03-15 23:07:11,759 views Gemini chat request received
+INFO 2025-03-15 23:07:11,759 views User message: Hi
+INFO 2025-03-15 23:07:11,759 views Configured Gemini API with key
+INFO 2025-03-15 23:07:11,759 views Created Gemini model instance
+INFO 2025-03-15 23:07:11,760 views Sending request to Gemini API
+INFO 2025-03-15 23:07:13,854 views Received response from Gemini API
+INFO 2025-03-15 23:07:13,854 basehttp "POST /gemini-chat/ HTTP/1.1" 200 1086
