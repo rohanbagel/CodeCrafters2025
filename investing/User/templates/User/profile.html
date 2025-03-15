@@ -1,0 +1,89 @@
+{% extends 'User/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="p-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Profile Header -->
+        <div class="bg-white/5 rounded-2xl p-8 backdrop-blur-lg border border-white/10 mb-8">
+            <div class="flex flex-col md:flex-row items-center gap-8">
+                <!-- Profile Photo -->
+                <div class="relative group">
+                    <div class="w-32 h-32 rounded-full overflow-hidden ring-4 ring-[#BFE953]/20">
+                        {% if user.profile.profile_photo and user.profile.profile_photo.url != '/media/images/default.png' %}
+                            <img src="{{ user.profile.profile_photo.url }}" alt="Profile Photo" class="w-full h-full object-cover">
+                        {% else %}
+                            <img src="{% static 'images/default.png' %}" alt="Default Profile Photo" class="w-full h-full object-cover">
+                        {% endif %}
+                    </div>
+                    <label for="profile_photo" class="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
+                        <i data-lucide="camera" class="w-6 h-6 text-white"></i>
+                    </label>
+                    <input type="file" id="profile_photo" name="profile_photo" class="hidden" form="profile_form" accept="image/*">
+                </div>
+
+                <!-- Profile Info -->
+                <div class="flex-1">
+                    <h1 class="text-3xl font-bold mb-2">{{ user.username }}</h1>
+                    <p class="text-[#F6F6F5]/60 mb-4">{{ user.email }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Form -->
+        <form id="profile_form" method="POST" enctype="multipart/form-data" class="bg-white/5 rounded-2xl p-8 backdrop-blur-lg border border-white/10">
+            {% csrf_token %}
+            
+            {% if messages %}
+            <div class="mb-6">
+                {% for message in messages %}
+                    <div class="p-4 rounded-md {% if message.tags == 'success' %}bg-green-500/10 text-green-400{% else %}bg-red-500/10 text-red-400{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Personal Information -->
+                <div class="space-y-4">
+                    <h2 class="text-xl font-semibold mb-4">Personal Information</h2>
+                    
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-[#F6F6F5]/60 mb-2">Username</label>
+                        <input type="text" id="username" name="username" value="{{ user.username }}" class="w-full px-4 py-2 rounded-md bg-white/5 border border-white/10 text-[#F6F6F5] focus:outline-none focus:ring-2 focus:ring-[#BFE953]/50">
+                    </div>
+
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-[#F6F6F5]/60 mb-2">Email (Optional)</label>
+                        <input type="email" id="email" name="email" value="{{ user.email }}" class="w-full px-4 py-2 rounded-md bg-white/5 border border-white/10 text-[#F6F6F5] focus:outline-none focus:ring-2 focus:ring-[#BFE953]/50">
+                    </div>
+
+                    <div>
+                        <label for="phone_number" class="block text-sm font-medium text-[#F6F6F5]/60 mb-2">Phone Number (Optional)</label>
+                        <input type="tel" id="phone_number" name="phone_number" value="{{ user.profile.phone_number }}" class="w-full px-4 py-2 rounded-md bg-white/5 border border-white/10 text-[#F6F6F5] focus:outline-none focus:ring-2 focus:ring-[#BFE953]/50">
+                    </div>
+                </div>
+
+                <!-- Additional Information -->
+                <div class="space-y-4">
+                    <h2 class="text-xl font-semibold mb-4">Additional Information</h2>
+                    
+                    <div>
+                        <label for="address" class="block text-sm font-medium text-[#F6F6F5]/60 mb-2">Address (Optional)</label>
+                        <input type="text" id="address" name="address" value="{{ user.profile.address }}" class="w-full px-4 py-2 rounded-md bg-white/5 border border-white/10 text-[#F6F6F5] focus:outline-none focus:ring-2 focus:ring-[#BFE953]/50">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Button -->
+            <div class="mt-8 flex justify-end">
+                <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[#d6ff63] to-[#96c718] text-[#0F0F11] font-bold shadow-lg shadow-[#BFE953]/30 hover:shadow-xl hover:shadow-[#BFE953]/40 transition-all duration-300">
+                    <i data-lucide="save" class="w-5 h-5"></i>
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 
