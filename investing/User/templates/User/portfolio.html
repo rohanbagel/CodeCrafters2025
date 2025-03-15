@@ -40,37 +40,6 @@
                     <i data-lucide="x" class="w-6 h-6"></i>
                 </button>
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <!-- Performance Metrics -->
-                <div class="space-y-4">
-                    <div class="bg-white/5 rounded-lg p-4">
-                        <h3 class="text-sm font-medium text-[#F6F6F5]/70 mb-2">Total Value</h3>
-                        <p id="totalValue" class="text-2xl font-bold text-[#BFE953]">$0</p>
-                    </div>
-                    <div class="bg-white/5 rounded-lg p-4">
-                        <h3 class="text-sm font-medium text-[#F6F6F5]/70 mb-2">Total Return</h3>
-                        <p id="totalReturn" class="text-2xl font-bold text-[#BFE953]">0%</p>
-                    </div>
-                </div>
-                
-                <!-- Risk Analysis -->
-                <div class="space-y-4">
-                    <div class="bg-white/5 rounded-lg p-4">
-                        <h3 class="text-sm font-medium text-[#F6F6F5]/70 mb-2">Risk Score</h3>
-                        <div class="flex items-center gap-4">
-                            <div class="flex-1 bg-white/10 rounded-full h-2">
-                                <div id="riskScoreBar" class="bg-[#BFE953] h-full rounded-full"></div>
-                            </div>
-                            <span id="riskScore" class="text-[#F6F6F5]">50%</span>
-                        </div>
-                    </div>
-                    <div class="bg-white/5 rounded-lg p-4">
-                        <h3 class="text-sm font-medium text-[#F6F6F5]/70 mb-2">Risk Analysis</h3>
-                        <p id="riskAnalysis" class="text-[#F6F6F5]/80"></p>
-                    </div>
-                </div>
-            </div>
 
             <!-- Performance Metrics -->
             <div class="bg-white/5 rounded-lg p-4 mb-6">
@@ -335,23 +304,19 @@
             const data = await response.json();
             
             if (!data.success) {
-                throw new Error(data.message || 'Error generating report');
+                throw new Error(data.error || 'Error generating report');
             }
 
             // Update report content
-            document.getElementById('totalValue').textContent = `$${data.report.totalValue}`;
-            document.getElementById('totalReturn').textContent = `${data.report.totalReturn}%`;
-            document.getElementById('riskScore').textContent = `${data.report.riskScore}%`;
-            document.getElementById('riskScoreBar').style.width = `${data.report.riskScore}%`;
-            document.getElementById('riskAnalysis').textContent = data.report.riskAnalysis;
 
+            // Show report section
+            reportSection.classList.remove('hidden');
+            
             // Update performance metrics
             const metricsHtml = data.report.performanceMetrics.map(metric => `
                 <div class="bg-white/5 rounded-lg p-3">
                     <h4 class="text-sm text-[#F6F6F5]/70">${metric.name}</h4>
-                    <p class="text-lg font-bold ${metric.value >= 0 ? 'text-[#BFE953]' : 'text-red-500'}">
-                        ${metric.value}%
-                    </p>
+                    <p class="text-lg font-bold text-[#BFE953]">${metric.value}</p>
                 </div>
             `).join('');
             document.getElementById('performanceMetrics').innerHTML = metricsHtml;
@@ -365,15 +330,12 @@
             `).join('');
             document.getElementById('recommendations').innerHTML = recommendationsHtml;
 
-            // Show report section
-            reportSection.classList.remove('hidden');
-            
             // Refresh Lucide icons
             lucide.createIcons();
 
         } catch (error) {
             console.error('Error:', error);
-            showNotification('Error', error.message, 'error');
+            alert('Error generating report: ' + error.message);
         } finally {
             // Reset button state
             generateReportBtn.disabled = false;
@@ -384,32 +346,6 @@
 
     function closeReport() {
         document.getElementById('reportSection').classList.add('hidden');
-    }
-
-    function showNotification(title, message, type) {
-        const notificationDiv = document.createElement('div');
-        notificationDiv.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg ${
-            type === 'success' ? 'bg-green-500' : 'bg-red-500'
-        } text-white z-50 animate-fade-in-down`;
-        
-        notificationDiv.innerHTML = `
-            <div class="flex items-center gap-2">
-                <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-5 h-5"></i>
-                <div>
-                    <h4 class="font-bold">${title}</h4>
-                    <p class="text-sm">${message}</p>
-                </div>
-            </div>
-        `;
-        
-        document.body.appendChild(notificationDiv);
-        lucide.createIcons();
-        
-        // Remove notification after 5 seconds
-        setTimeout(() => {
-            notificationDiv.classList.add('animate-fade-out');
-            setTimeout(() => notificationDiv.remove(), 300);
-        }, 5000);
     }
 
     // Helper function to get CSRF token
