@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProfitPulse Risk Alert</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .logo {
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .highlight {
+            color: #8BC34A;
+        }
+        .content {
+            padding: 20px 0;
+        }
+        .alert-box {
+            background-color: #f8f9fa;
+            border-left: 4px solid #8BC34A;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .stock-symbol {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .stock-name {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .alert-type {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .volatility {
+            background-color: #FFF9C4;
+            color: #F57F17;
+        }
+        .price-drop {
+            background-color: #FFCDD2;
+            color: #D32F2F;
+        }
+        .rsi {
+            background-color: #BBDEFB;
+            color: #1976D2;
+        }
+        .macd {
+            background-color: #E1BEE7;
+            color: #7B1FA2;
+        }
+        .bollinger {
+            background-color: #C8E6C9;
+            color: #388E3C;
+        }
+        .ai-exit {
+            background-color: #D7CCC8;
+            color: #5D4037;
+        }
+        .price-info {
+            margin-bottom: 15px;
+        }
+        .price {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .message {
+            margin-bottom: 20px;
+        }
+        .cta-button {
+            display: inline-block;
+            background-color: #8BC34A;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #999;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">Profit<span class="highlight">Pulse</span></div>
+            <p>Risk Management Alert System</p>
+        </div>
+        
+        <div class="content">
+            <h2>Risk Alert Notification</h2>
+            <p>Hello {{ user.username }},</p>
+            <p>We've detected a potential risk in one of your tracked stocks:</p>
+            
+            <div class="alert-box">
+                <div class="stock-symbol">{{ alert.stock_symbol }}</div>
+                <div class="stock-name">{{ alert.stock_name }}</div>
+                
+                <div class="alert-type 
+                    {% if 'VOLATILITY' in alert.alert_type %}volatility
+                    {% elif 'PRICE_DROP' in alert.alert_type %}price-drop
+                    {% elif 'RSI' in alert.alert_type %}rsi
+                    {% elif 'MACD' in alert.alert_type %}macd
+                    {% elif 'BOLLINGER' in alert.alert_type %}bollinger
+                    {% elif 'AI_EXIT' in alert.alert_type %}ai-exit{% endif %}">
+                    {{ alert.get_alert_type_display }}
+                </div>
+                
+                {% if alert.current_price %}
+                <div class="price-info">
+                    <span>Current Price: </span>
+                    <span class="price">${{ alert.current_price }}</span>
+                </div>
+                {% endif %}
+                
+                <div class="message">
+                    {{ alert.message }}
+                </div>
+            </div>
+            
+            <p>Please review this alert and take appropriate action based on your investment strategy.</p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="https://profitpulse.com/risk/analyze/{{ alert.stock_symbol }}" class="cta-button">Analyze Risk</a>
+            </div>
+            
+            <p>This alert is based on your personalized risk settings. You can adjust your risk parameters at any time in your account settings.</p>
+        </div>
+        
+        <div class="footer">
+            <p>© 2023 ProfitPulse. All rights reserved.</p>
+            <p>This email was sent to {{ user.email }}</p>
+            <p>
+                <a href="https://profitpulse.com/unsubscribe">Unsubscribe</a> | 
+                <a href="https://profitpulse.com/settings">Manage Email Preferences</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html> 
