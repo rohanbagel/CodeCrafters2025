@@ -3,6 +3,9 @@ from .models import StockPreference
 import requests
 from django.conf import settings
 
+def get_started(request):
+    return render(request, 'User/get_started.html')
+
 # Create your views here.
 
 def home(request):

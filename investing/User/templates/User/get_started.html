@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ProfitPulse</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/font/lucide.css" rel="stylesheet">
+</head>
+<body class="flex min-h-screen flex-col bg-[#0F0F11] text-[#F6F6F5]">
+  <!-- Navigation -->
+  <header class="sticky top-0 z-40 w-full border-b border-white/10 bg-gradient-to-r from-[#0a0a0e] via-[#131417] to-[#0a0a0e] backdrop-blur-md">
+    <div class="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6">
+      <!-- Bold logo section with 3D effect -->
+      <div class="flex items-center gap-3">
+        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#d6ff63] to-[#96c718] shadow-lg shadow-[#BFE953]/30 ring-4 ring-[#BFE953]/20">
+          <i data-lucide="trending-up" class="h-6 w-6 text-[#0F0F11] drop-shadow-sm"></i>
+        </div>
+        <span class="text-2xl font-black tracking-tight text-white drop-shadow-md">Profit<span class="bg-gradient-to-r from-[#d6ff63] to-[#BFE953] bg-clip-text text-transparent">Pulse</span></span>
+      </div>
+      
+      <!-- Bold navigation with pill-shaped backgrounds -->
+      <nav class="hidden md:flex items-center gap-6">
+        <a href="#" class="group flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-bold text-white transition-all duration-300 hover:bg-white/10 hover:shadow-md hover:shadow-[#BFE953]/10 hover:translate-y-[-1px]">
+          <i data-lucide="layout-grid" class="h-4 w-4 text-[#BFE953]"></i>
+          Features
+          <span class="absolute bottom-0 left-0 h-0.5 w-0 bg-gradient-to-r from-[#BFE953] to-[#d6ff63] transition-all duration-300 group-hover:w-full opacity-0"></span>
+        </a>
+        <a href="#" class="group flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-bold text-white transition-all duration-300 hover:bg-white/10 hover:shadow-md hover:shadow-[#BFE953]/10 hover:translate-y-[-1px]">
+          <i data-lucide="lightbulb" class="h-4 w-4 text-[#BFE953]"></i>
+          How It Works
+        </a>
+        <a href="#" class="group flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-bold text-white transition-all duration-300 hover:bg-white/10 hover:shadow-md hover:shadow-[#BFE953]/10 hover:translate-y-[-1px]">
+          <i data-lucide="tag" class="h-4 w-4 text-[#BFE953]"></i>
+          Pricing
+        </a>
+        <a href="#" class="group flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-bold text-white transition-all duration-300 hover:bg-white/10 hover:shadow-md hover:shadow-[#BFE953]/10 hover:translate-y-[-1px]">
+          <i data-lucide="message-circle" class="h-4 w-4 text-[#BFE953]"></i>
+          Testimonials
+        </a>
+      </nav>
+  
+      <!-- Bold CTA buttons with eye-catching effects -->
+      <div class="flex items-center gap-4">
+        <a href="#" class="hidden sm:inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:shadow-md hover:shadow-white/5 hover:translate-y-[-1px]">
+          Log in
+          <i data-lucide="log-in" class="ml-1 h-4 w-4 text-[#BFE953]"></i>
+        </a>
+        <a href="#" class="group inline-flex h-10 items-center justify-center rounded-full bg-gradient-to-r from-[#d6ff63] to-[#96c718] px-6 py-2.5 text-sm font-bold text-[#0F0F11] shadow-lg shadow-[#BFE953]/30 transition-all hover:shadow-xl hover:shadow-[#BFE953]/40 hover:translate-y-[-2px] ring-4 ring-[#BFE953]/20">
+          Sign up
+          <i data-lucide="chevron-right" class="ml-1 h-4 w-4 transition-transform group-hover:translate-x-0.5"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1">
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <div class="container mx-auto px-4 sm:px-6">
+        <div class="grid gap-8 md:grid-cols-2 md:gap-12">
+          <div class="flex flex-col justify-center space-y-6">
+            <h1 class="text-4xl font-bold tracking-tight text-[#F6F6F5] sm:text-5xl xl:text-6xl/none">Smart Investing, Simplified.</h1>
+            <p class="max-w-[600px] text-lg text-[#F6F6F5]/80 md:text-xl">Manage your investments, estimate profits, and grow your wealth with ease.</p>
+            <div class="flex flex-col gap-4 sm:flex-row">
+              <a href="{% url 'home' %}" class="inline-flex h-12 items-center justify-center rounded-md bg-[#BFE953] px-8 text-sm font-medium text-[#0F0F11] shadow transition-all duration-300 hover:bg-[#BFE953]/90 hover:transform hover:-translate-y-0.5">
+                <span>Get Started</span>
+                <i data-lucide="arrow-right" class="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1"></i>
+              </a>
+              <a href="#" class="inline-flex h-12 items-center justify-center rounded-md border border-[#F6F6F5]/10 bg-[#F6F6F5]/5 px-8 text-sm font-medium text-[#F6F6F5] shadow-sm backdrop-blur transition-all duration-300 hover:bg-[#F6F6F5]/10 hover:transform hover:-translate-y-0.5">
+                <span>Explore Features</span>
+                <i data-lucide="chevron-right" class="ml-2 h-4 w-4"></i>
+              </a>
+            </div>
+          </div>
+          <div class="flex items-center justify-center">
+            <div class="relative h-[300px] w-full max-w-[500px] overflow-hidden rounded-lg shadow-xl sm:h-[400px]">
+              <img src="https://images.assetsdelivery.com/thumbnails/swevil/swevil1512/swevil151200263.jpg" alt="Dashboard Preview" class="object-cover h-full w-full">
+              <div class="absolute inset-0 bg-gradient-to-t from-[#0F0F11] via-transparent to-transparent opacity-40"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Optional: Add a subtle gradient overlay at the bottom -->
+      <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#0F0F11] to-transparent"></div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-12 md:py-24 bg-[#F6F6F5]">
+        <div class="container mx-auto px-4 sm:px-6">
+          <div class="mx-auto max-w-2xl text-center">
+            <h2 class="text-3xl font-bold tracking-tight text-[#0F0F11] sm:text-4xl">Why Choose ProfitPulse?</h2>
+            <p class="mt-4 text-lg text-[#0F0F11]/80">Our platform offers everything you need to manage your investments efficiently.</p>
+          </div>
+          <div class="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            <!-- Card 1 -->
+            <div class="group relative flex flex-col items-start gap-4 rounded-xl bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+              <div class="rounded-full bg-[#BFE953]/20 p-3 transition-all duration-300 group-hover:bg-[#BFE953]/30">
+                <i data-lucide="pie-chart" class="h-6 w-6 text-[#BFE953] transition-colors duration-300 group-hover:text-[#0F0F11]"></i>
+              </div>
+              <h3 class="text-xl font-semibold text-[#0F0F11]">Smart Investment Suggestions</h3>
+              <p class="text-sm text-[#0F0F11]/80">AI-powered insights for the best investments.</p>
+              <div class="absolute bottom-0 left-0 h-1 w-0 bg-[#BFE953] transition-all duration-500 group-hover:w-full"></div>
+            </div>
+      
+            <!-- Card 2 -->
+            <div class="group relative flex flex-col items-start gap-4 rounded-xl bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+              <div class="rounded-full bg-[#BFE953]/20 p-3 transition-all duration-300 group-hover:bg-[#BFE953]/30">
+                <i data-lucide="bar-chart-3" class="h-6 w-6 text-[#BFE953] transition-colors duration-300 group-hover:text-[#0F0F11]"></i>
+              </div>
+              <h3 class="text-xl font-semibold text-[#0F0F11]">Profit Estimation</h3>
+              <p class="text-sm text-[#0F0F11]/80">Predict and track your financial growth.</p>
+              <div class="absolute bottom-0 left-0 h-1 w-0 bg-[#BFE953] transition-all duration-500 group-hover:w-full"></div>
+            </div>
+      
+            <!-- Card 3 -->
+            <div class="group relative flex flex-col items-start gap-4 rounded-xl bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+              <div class="rounded-full bg-[#BFE953]/20 p-3 transition-all duration-300 group-hover:bg-[#BFE953]/30">
+                <i data-lucide="trending-up" class="h-6 w-6 text-[#BFE953] transition-colors duration-300 group-hover:text-[#0F0F11]"></i>
+              </div>
+              <h3 class="text-xl font-semibold text-[#0F0F11]">Buy & Sell Seamlessly</h3>
+              <p class="text-sm text-[#0F0F11]/80">Trade stocks, bonds, and insurance effortlessly.</p>
+              <div class="absolute bottom-0 left-0 h-1 w-0 bg-[#BFE953] transition-all duration-500 group-hover:w-full"></div>
+            </div>
+      
+            <!-- Card 4 -->
+            <div class="group relative flex flex-col items-start gap-4 rounded-xl bg-white p-8 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+              <div class="rounded-full bg-[#BFE953]/20 p-3 transition-all duration-300 group-hover:bg-[#BFE953]/30">
+                <i data-lucide="lock" class="h-6 w-6 text-[#BFE953] transition-colors duration-300 group-hover:text-[#0F0F11]"></i>
+              </div>
+              <h3 class="text-xl font-semibold text-[#0F0F11]">Secure Transactions</h3>
+              <p class="text-sm text-[#0F0F11]/80">Robust security for safe investments.</p>
+              <div class="absolute bottom-0 left-0 h-1 w-0 bg-[#BFE953] transition-all duration-500 group-hover:w-full"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+    <!-- How It Works Section -->
+    <section class="py-12 md:py-24 bg-[#BFE953]">
+        <div class="container relative mx-auto px-4 sm:px-6">
+          <div class="mx-auto max-w-4xl text-center">
+            <h2 class="text-3xl font-bold tracking-tight text-[#0F0F11] sm:text-4xl">Your Investment Journey Starts Here</h2>
+            <p class="mt-4 text-lg text-[#0F0F11]/80">Follow these simple steps to start growing your wealth with ProfitPulse.</p>
+          </div>
+          
+          <div class="mt-16 relative">
+            <div class="absolute top-24 left-0 right-0 h-1 bg-[#0F0F11]/10 hidden md:block"></div>
+            
+            <div class="grid gap-8 md:grid-cols-4">
+              <!-- Step 1 -->
+              <div class="group relative flex flex-col items-center text-center">
+                <div class="flex h-20 w-20 items-center justify-center rounded-full bg-white text-[#0F0F11] shadow-lg border-4 border-[#0F0F11]/10 
+                          transition-all duration-300 group-hover:scale-110 group-hover:translate-y-[-8px]">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-plus transition-transform duration-500 group-hover:rotate-12"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="16" x2="22" y1="11" y2="11"/></svg>
+                </div>
+                <h3 class="mt-6 text-xl font-semibold text-[#0F0F11] transition-colors relative">
+                  Sign Up & Set Preferences
+                  <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#0F0F11] transition-all duration-300 group-hover:w-full"></span>
+                </h3>
+                <p class="mt-2 text-sm text-[#0F0F11]/80 max-w-[200px]">Customize your investment goals with our intuitive setup</p>
+              </div>
+      
+              <!-- Step 2 -->
+              <div class="group relative flex flex-col items-center text-center">
+                <div class="flex h-20 w-20 items-center justify-center rounded-full bg-white text-[#0F0F11] shadow-lg border-4 border-[#0F0F11]/10 
+                          transition-all duration-300 group-hover:scale-110 group-hover:translate-y-[-8px]">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-brain-circuit transition-transform duration-500 group-hover:rotate-12"><path d="M12 4.5a2.5 2.5 0 0 0-4.96-.46 2.5 2.5 0 0 0-1.98 3 2.5 2.5 0 0 0-1.32 4.24 3 3 0 0 0 .34 5.58 2.5 2.5 0 0 0 2.96 3.08 2.5 2.5 0 0 0 4.91.05L12 20V4.5Z"/><path d="M16 8V5c0-1.1.9-2 2-2"/><path d="M12 13h4"/><path d="M12 18h6a2 2 0 0 1 2 2v1"/><path d="M12 8h8"/><path d="M20.5 8a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z"/><path d="M16.5 13a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z"/><path d="M20.5 21a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z"/><path d="M18.5 3a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z"/></svg>
+                </div>
+                <h3 class="mt-6 text-xl font-semibold text-[#0F0F11] transition-colors relative">
+                  AI-Powered Suggestions
+                  <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#0F0F11] transition-all duration-300 group-hover:w-full"></span>
+                </h3>
+                <p class="mt-2 text-sm text-[#0F0F11]/80 max-w-[200px]">Get personalized investment recommendations</p>
+              </div>
+      
+              <!-- Step 3 -->
+              <div class="group relative flex flex-col items-center text-center">
+                <div class="flex h-20 w-20 items-center justify-center rounded-full bg-white text-[#0F0F11] shadow-lg border-4 border-[#0F0F11]/10 
+                          transition-all duration-300 group-hover:scale-110 group-hover:translate-y-[-8px]">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-line-chart transition-transform duration-500 group-hover:rotate-12"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                </div>
+                <h3 class="mt-6 text-xl font-semibold text-[#0F0F11] transition-colors relative">
+                  Invest & Monitor
+                  <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#0F0F11] transition-all duration-300 group-hover:w-full"></span>
+                </h3>
+                <p class="mt-2 text-sm text-[#0F0F11]/80 max-w-[200px]">Track your portfolio growth in real-time</p>
+              </div>
+      
+              <!-- Step 4 -->
+              <div class="group relative flex flex-col items-center text-center">
+                <div class="flex h-20 w-20 items-center justify-center rounded-full bg-white text-[#0F0F11] shadow-lg border-4 border-[#0F0F11]/10 
+                          transition-all duration-300 group-hover:scale-110 group-hover:translate-y-[-8px]">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wallet transition-transform duration-500 group-hover:rotate-12"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+                </div>
+                <h3 class="mt-6 text-xl font-semibold text-[#0F0F11] transition-colors relative">
+                  Manage Portfolio
+                  <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-[#0F0F11] transition-all duration-300 group-hover:w-full"></span>
+                </h3>
+                <p class="mt-2 text-sm text-[#0F0F11]/80 max-w-[200px]">Optimize your assets with smart tools</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-16 flex justify-center">
+            <a href="{% url 'home' %}" class="inline-flex h-12 items-center justify-center rounded-lg bg-[#0F0F11] px-8 py-3 text-base font-bold text-white shadow-lg transition-all hover:shadow-xl hover:translate-y-[-2px]">
+              Start Your Journey
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-right ml-2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </a>
+          </div>
+        </div>
+      </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-12 md:py-24 bg-[#0F0F11]/90">
+      <div class="container mx-auto px-4 sm:px-6">
+        <div class="mx-auto max-w-2xl text-center">
+          <h2 class="text-3xl font-bold tracking-tight text-[#F6F6F5] sm:text-4xl">Trusted by Investors Like You</h2>
+          <p class="mt-4 text-lg text-[#F6F6F5]/80">Hear what our users have to say about their experience with ProfitPulse.</p>
+        </div>
+        <div class="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="rounded-lg border border-[#F6F6F5]/10 bg-[#0F0F11]/50 p-6 shadow-sm backdrop-blur">
+            <div class="flex items-center gap-4">
+              <div class="h-12 w-12 overflow-hidden rounded-full">
+                <img src="/placeholder.svg?height=48&width=48" alt="User Avatar" class="h-full w-full object-cover">
+              </div>
+              <div>
+                <h3 class="text-lg font-medium text-[#F6F6F5]">Sarah Johnson</h3>
+                <p class="text-sm text-[#F6F6F5]/80">Retail Investor</p>
+              </div>
+            </div>
+            <p class="mt-4 text-sm text-[#F6F6F5]/80">"ProfitPulse has transformed how I manage my investments. The AI suggestions have helped me make smarter decisions and grow my portfolio significantly."</p>
+          </div>
+          <div class="rounded-lg border border-[#F6F6F5]/10 bg-[#0F0F11]/50 p-6 shadow-sm backdrop-blur">
+            <div class="flex items-center gap-4">
+              <div class="h-12 w-12 overflow-hidden rounded-full">
+                <img src="/placeholder.svg?height=48&width=48" alt="User Avatar" class="h-full w-full object-cover">
+              </div>
+              <div>
+                <h3 class="text-lg font-medium text-[#F6F6F5]">Michael Chen</h3>
+                <p class="text-sm text-[#F6F6F5]/80">Day Trader</p>
+              </div>
+            </div>
+            <p class="mt-4 text-sm text-[#F6F6F5]/80">"The profit estimation feature is incredibly accurate. I can now plan my trades with confidence and have seen a 30% increase in my returns."</p>
+          </div>
+          <div class="rounded-lg border border-[#F6F6F5]/10 bg-[#0F0F11]/50 p-6 shadow-sm backdrop-blur">
+            <div class="flex items-center gap-4">
+              <div class="h-12 w-12 overflow-hidden rounded-full">
+                <img src="/placeholder.svg?height=48&width=48" alt="User Avatar" class="h-full w-full object-cover">
+              </div>
+              <div>
+                <h3 class="text-lg font-medium text-[#F6F6F5]">Emily Rodriguez</h3>
+                <p class="text-sm text-[#F6F6F5]/80">Long-term Investor</p>
+              </div>
+            </div>
+            <p class="mt-4 text-sm text-[#F6F6F5]/80">"I love how easy it is to buy and sell assets on ProfitPulse. The interface is intuitive, and the security features give me peace of mind."</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="relative overflow-hidden py-12 md:py-24 bg-[#F6F6F5]">
+        <!-- Abstract shape decorations -->
+        <div class="absolute -left-16 -top-16 h-64 w-64 rounded-full bg-gradient-to-br from-[#BFE953]/20 to-[#BFE953]/5 blur-xl"></div>
+        <div class="absolute -right-20 bottom-12 h-80 w-80 rounded-full bg-gradient-to-tl from-[#BFE953]/15 to-[#BFE953]/5 blur-xl"></div>
+        
+        <div class="container relative mx-auto px-4 sm:px-6">
+          <div class="mx-auto max-w-3xl text-center">
+            <div class="inline-flex items-center justify-center rounded-full bg-[#BFE953]/20 px-4 py-1.5 mb-6">
+              <span class="text-sm font-bold text-[#2E7D32]">New! Performance Analytics Released</span>
+            </div>
+            
+            <h2 class="text-3xl font-bold tracking-tight sm:text-5xl bg-gradient-to-br from-[#0F0F11] to-[#333333] bg-clip-text text-transparent">
+              Take Control of Your <span class="relative inline-block">
+                Financial Future
+                <svg class="absolute -bottom-1 left-0 w-full" height="6" viewBox="0 0 200 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M0 3C50 0.5 150 0.5 200 3" stroke="#BFE953" stroke-width="5" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </h2>
+            
+            <p class="mt-6 text-lg font-medium text-[#333333]/80">Join <span class="font-bold text-[#333333]">20,000+</span> investors who are growing their wealth with ProfitPulse's smart investment strategies.</p>
+            
+            <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <a href="{% url 'home' %}" class="inline-flex h-12 items-center justify-center rounded-lg bg-gradient-to-r from-[#96c718] to-[#BFE953] px-8 py-3 text-sm font-bold text-[#0F0F11] shadow-lg shadow-[#BFE953]/30 transition-all hover:shadow-xl hover:shadow-[#BFE953]/40 hover:translate-y-[-2px] ring-2 ring-[#BFE953]/50">
+                <i data-lucide="rocket" class="mr-2 h-5 w-5"></i>
+                Start Investing Now
+              </a>
+              <a href="#" class="inline-flex h-12 items-center justify-center rounded-lg border border-[#0F0F11]/10 bg-white px-8 py-3 text-sm font-bold text-[#333333] shadow-md transition-all hover:bg-white hover:shadow-lg hover:translate-y-[-2px]">
+                <i data-lucide="play-circle" class="mr-2 h-5 w-5 text-[#333333]"></i>
+                See How It Works
+              </a>
+            </div>
+            
+            <div class="mt-12 flex flex-wrap items-center justify-center gap-8">
+              <div class="flex items-center">
+                <div class="flex -space-x-2">
+                  <img class="h-8 w-8 rounded-full border-2 border-white" src="/api/placeholder/32/32" alt="User avatar" />
+                  <img class="h-8 w-8 rounded-full border-2 border-white" src="/api/placeholder/32/32" alt="User avatar" />
+                  <img class="h-8 w-8 rounded-full border-2 border-white" src="/api/placeholder/32/32" alt="User avatar" />
+                </div>
+                <p class="ml-3 text-sm font-medium text-[#333333]">Join thousands of happy investors</p>
+              </div>
+              <div class="flex items-center gap-1">
+                <div class="flex">
+                  <i data-lucide="star" class="h-5 w-5 fill-[#BFE953] text-[#BFE953]"></i>
+                  <i data-lucide="star" class="h-5 w-5 fill-[#BFE953] text-[#BFE953]"></i>
+                  <i data-lucide="star" class="h-5 w-5 fill-[#BFE953] text-[#BFE953]"></i>
+                  <i data-lucide="star" class="h-5 w-5 fill-[#BFE953] text-[#BFE953]"></i>
+                  <i data-lucide="star" class="h-5 w-5 fill-[#BFE953] text-[#BFE953]"></i>
+                </div>
+                <p class="text-sm font-medium text-[#333333]">4.9/5 from over 2,000 reviews</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[#F6F6F5]/10 bg-[#BFE953] py-12">
+    <div class="container mx-auto px-4 sm:px-6">
+      <div class="grid gap-8 md:grid-cols-4">
+        <div class="flex flex-col gap-4">
+          <div class="flex items-center gap-2">
+            <i data-lucide="trending-up" class="h-6 w-6 text-[#0F0F11]"></i>
+            <span class="text-xl font-bold text-[#0F0F11]">ProfitPulse</span>
+          </div>
+          <p class="text-sm text-[#0F0F11]/80">Smart investing, simplified. Manage your investments and grow your wealth with ease.</p>
+        </div>
+        <div>
+          <h3 class="mb-4 text-sm font-medium text-[#0F0F11]">Quick Links</h3>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#" class="text-[#0F0F11]/80 hover:text-[#0F0F11]">Home</a></li>
+            <li><a href="#" class="text-[#0F0F11]/80 hover:text-[#0F0F11]">Features</a></li>
+            <li><a href="#" class="text-[#0F0F11]/80 hover:text-[#0F0F11]">Pricing</a></li>
+            <li><a href="#" class="text-[#0F0F11]/80 hover:text-[#0F0F11]">Blog</a></li>
+            <li><a href="#" class="text-[#0F0F11]/80 hover:text-[#0F0F11]">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="mb-4 text-sm font-medium text-[#0F0F11]">Legal</h3>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#" class="text-[#0F0F11]/80 hover:text-[#0F0F11]">Terms of Service</a></li>
+            <li><a href="#" class="text-[#0F0F11]/80 hover:text-[#0F0F11]">Privacy Policy</a></li>
+            <li><a href="#" class="text-[#0F0F11]/80 hover:text-[#0F0F11]">Cookie Policy</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="mb-4 text-sm font-medium text-[#0F0F11]">Connect With Us</h3>
+          <div class="flex gap-4">
+            <a href="#" class="flex h-8 w-8 items-center justify-center rounded-full bg-[#0F0F11]/10 text-[#0F0F11]/80 hover:bg-[#0F0F11] hover:text-[#BFE953]">
+              <i data-lucide="linkedin" class="h-4 w-4"></i>
+            </a>
+            <a href="#" class="flex h-8 w-8 items-center justify-center rounded-full bg-[#0F0F11]/10 text-[#0F0F11]/80 hover:bg-[#0F0F11] hover:text-[#BFE953]">
+              <i data-lucide="twitter" class="h-4 w-4"></i>
+            </a>
+            <a href="#" class="flex h-8 w-8 items-center justify-center rounded-full bg-[#0F0F11]/10 text-[#0F0F11]/80 hover:bg-[#0F0F11] hover:text-[#BFE953]">
+              <i data-lucide="instagram" class="h-4 w-4"></i>
+            </a>
+          </div>
+          <div class="mt-4">
+            <p class="text-sm text-[#0F0F11]/80">Subscribe to our newsletter</p>
+            <div class="mt-2 flex">
+              <input type="email" placeholder="Enter your email" class="w-full rounded-l-md border border-[#0F0F11]/10 bg-white px-3 py-2 text-sm text-[#0F0F11] placeholder:text-[#0F0F11]/50 focus:outline-none focus:ring-1 focus:ring-[#0F0F11]">
+              <button class="rounded-r-md bg-[#0F0F11] px-3 py-2 text-sm font-medium text-[#BFE953]">
+                <i data-lucide="arrow-right" class="h-4 w-4"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-8 border-t border-[#0F0F11]/10 pt-8 text-center">
+        <p class="text-sm text-[#0F0F11]/80">© 2025 ProfitPulse. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+  </script>
+</body>
+</html>
