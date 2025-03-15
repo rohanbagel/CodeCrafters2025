@@ -152,8 +152,8 @@ def market_stocks(request):
     # Initialize Finnhub client
     finnhub_client = finnhub.Client(api_key='cvam92hr01qsapma5g6gcvam92hr01qsapma5g70')
     
-    # Get stock symbols from US market
-    stock_symbols = finnhub_client.stock_symbols('US')
+    # Get stock symbols from US market - limit to first 100 stocks for better performance
+    stock_symbols = finnhub_client.stock_symbols('US')[:100]  # Limiting initial data load
     
     # Convert to DataFrame for easier filtering
     df = pd.DataFrame(stock_symbols)
@@ -167,6 +167,8 @@ def market_stocks(request):
     if search_query:
         df = df[df['description'].str.contains(search_query, case=False) | 
                 df['symbol'].str.contains(search_query, case=False)]
+        # Limit search results to 50 for better performance
+        df = df.head(50)
     
     if market_cap_filter != 'all':
         # Add market cap filtering logic here if available from API
@@ -175,24 +177,25 @@ def market_stocks(request):
     if sector_filter != 'all':
         # Add sector filtering logic here if available from API
         pass
-    
+
     # Convert filtered DataFrame back to list of dicts
     stocks = df.to_dict('records')
     
     # Add real-time price data for each stock
-    for stock in stocks[:30]:  # Limit to 30 stocks for performance
+    # Limit to 15 stocks per page for better performance
+    for stock in stocks[:15]:
         try:
             quote = finnhub_client.quote(stock['symbol'])
-            stock['current_price'] = quote['c']
-            stock['price_change'] = quote['d']
-            stock['price_change_percent'] = quote['dp']
+            stock['current_price'] = round(quote['c'], 2) if quote['c'] else 'N/A'
+            stock['price_change'] = round(quote['d'], 2) if quote['d'] else 'N/A'
+            stock['price_change_percent'] = round(quote['dp'], 2) if quote['dp'] else 'N/A'
         except:
             stock['current_price'] = 'N/A'
             stock['price_change'] = 'N/A'
             stock['price_change_percent'] = 'N/A'
     
-    # Pagination
-    paginator = Paginator(stocks, 30)  # Show 30 stocks per page
+    # Pagination - reduce page size to 15 for better performance
+    paginator = Paginator(stocks, 15)  # Show 15 stocks per page
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     
