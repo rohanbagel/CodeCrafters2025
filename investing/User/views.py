@@ -343,29 +343,31 @@ def gemini_chat(request):
         logger.info(f"User message: {user_message}")
         
         # Check if Gemini API key is configured
-        if not hasattr(settings, 'GEMINI_API_KEY') or not settings.GEMINI_API_KEY or settings.GEMINI_API_KEY == 'your-gemini-api-key':
+        if not hasattr(settings, 'GEMINI_API_KEY') or not settings.GEMINI_API_KEY:
             logger.error("GEMINI_API_KEY not configured properly in settings")
             return JsonResponse({
                 'success': False,
-                'error': "API key not configured properly",
-                'response': "I'm sorry, the AI service is not properly configured. Please contact the administrator to set up a valid Gemini API key."
+                'error': "API key not configured properly"
             })
             
         try:
             # Configure the Gemini API
             genai.configure(api_key=settings.GEMINI_API_KEY)
-            logger.info("Configured Gemini API with key")
             
-            # Create a Gemini model instance
+            # Create the model
             model = genai.GenerativeModel('gemini-2.0-flash')
-            logger.info("Created Gemini model instance")
             
-            # Add financial context to the prompt
-            prompt = f"""You are a financial assistant with expertise in stock markets, investments, and financial planning.
-            Please provide helpful, accurate information about investments, stocks, market trends, and financial advice.
-            
-            User query: {user_message}
-            """
+            # For portfolio analysis, add specific context
+            if "Analyze this investment portfolio" in user_message:
+                prompt = f"""You are a professional financial analyst. Please analyze the following portfolio data and provide a detailed report.
+                Focus on providing actionable insights and clear recommendations.
+                
+                {user_message}
+                
+                Format the report in a clear, structured way with sections and bullet points where appropriate.
+                Include specific recommendations based on the portfolio's current composition and market conditions."""
+            else:
+                prompt = user_message
             
             # Generate response from Gemini
             logger.info("Sending request to Gemini API")
@@ -377,34 +379,20 @@ def gemini_chat(request):
                 'success': True,
                 'response': response.text
             })
+            
         except Exception as e:
             logger.error(f"Gemini API error: {str(e)}")
-            
-            # Check for specific API key errors
-            error_message = str(e).lower()
-            if 'api key not valid' in error_message or 'api_key_invalid' in error_message:
-                return JsonResponse({
-                    'success': False,
-                    'error': "Invalid API key",
-                    'response': "I'm sorry, the AI service is using an invalid API key. Please contact the administrator to update the Gemini API key."
-                })
-            else:
-                return JsonResponse({
-                    'success': False,
-                    'error': str(e),
-                    'response': "I'm sorry, there was an error connecting to the AI service. Please try again later."
-                })
+            return JsonResponse({
+                'success': False,
+                'error': str(e)
+            })
         
     except Exception as e:
-        # Log the full exception with traceback
         logger.error(f"Error in gemini_chat: {str(e)}")
         logger.error(traceback.format_exc())
-        
         return JsonResponse({
             'success': False,
-            'error': str(e),
-            'traceback': traceback.format_exc(),
-            'response': "I'm sorry, an error occurred while processing your request. Please try again later."
+            'error': str(e)
         })
 
 @login_required
@@ -567,3 +555,116 @@ def portfolio(request):
         'transactions': transactions,
     }
     return render(request, 'User/portfolio.html', context)
+
+@login_required
+def generate_portfolio_report(request):
+    try:
+        # Get user's portfolio data
+        holdings = []
+        total_value = Decimal('0')
+        total_cost = Decimal('0')
+        
+        # Get all stock transactions for the user
+        stock_transactions = StockTransaction.objects.filter(user=request.user)
+        
+        # Calculate holdings and performance metrics
+        holdings_dict = {}
+        for transaction in stock_transactions:
+            symbol = transaction.symbol
+            if symbol not in holdings_dict:
+                holdings_dict[symbol] = {
+                    'symbol': symbol,
+                    'company_name': transaction.company_name,
+                    'quantity': 0,
+                    'total_cost': Decimal('0')
+                }
+            
+            if transaction.transaction_type == 'BUY':
+                holdings_dict[symbol]['quantity'] += transaction.quantity
+                holdings_dict[symbol]['total_cost'] += transaction.total_amount
+            else:
+                holdings_dict[symbol]['quantity'] -= transaction.quantity
+        
+        # Generate analysis report
+        analysis_data = {
+            'totalValue': str(total_value),
+            'totalReturn': calculate_total_return(total_value, total_cost),
+            'performanceMetrics': [
+                {
+                    'name': 'Daily Return',
+                    'value': calculate_daily_return(holdings_dict)
+                },
+                {
+                    'name': 'Monthly Return',
+                    'value': calculate_monthly_return(holdings_dict)
+                }
+            ],
+            'riskAnalysis': generate_risk_analysis(holdings_dict),
+            'riskScore': calculate_risk_score(holdings_dict),
+            'recommendations': generate_recommendations(holdings_dict)
+        }
+        
+        return JsonResponse({
+            'success': True,
+            'report': analysis_data
+        })
+        
+    except Exception as e:
+        logger.error(f"Error generating portfolio report: {str(e)}")
+        return JsonResponse({
+            'success': False,
+            'message': str(e)
+        }, status=500)
+
+def calculate_total_return(total_value, total_cost):
+    try:
+        if total_cost == 0:
+            return 0
+        return round(((total_value - total_cost) / total_cost) * 100, 2)
+    except Exception as e:
+        logger.error(f"Error calculating total return: {str(e)}")
+        return 0
+
+def calculate_daily_return(holdings):
+    try:
+        # Implement daily return calculation logic
+        return 0.0
+    except Exception as e:
+        logger.error(f"Error calculating daily return: {str(e)}")
+        return 0
+
+def calculate_monthly_return(holdings):
+    try:
+        # Implement monthly return calculation logic
+        return 0.0
+    except Exception as e:
+        logger.error(f"Error calculating monthly return: {str(e)}")
+        return 0
+
+def generate_risk_analysis(holdings):
+    try:
+        # Implement risk analysis logic
+        return "Portfolio risk analysis based on current holdings."
+    except Exception as e:
+        logger.error(f"Error generating risk analysis: {str(e)}")
+        return "Unable to generate risk analysis."
+
+def calculate_risk_score(holdings):
+    try:
+        # Implement risk score calculation logic
+        return 50  # Return a value between 0 and 100
+    except Exception as e:
+        logger.error(f"Error calculating risk score: {str(e)}")
+        return 0
+
+def generate_recommendations(holdings):
+    try:
+        # Implement recommendation logic
+        return [
+            "Consider diversifying your portfolio across different sectors.",
+            "Monitor high-volatility stocks closely.",
+            "Review your portfolio allocation periodically."
+        ]
+    except Exception as e:
+        logger.error(f"Error generating recommendations: {str(e)}")
+        return ["Unable to generate recommendations."]

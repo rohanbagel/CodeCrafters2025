@@ -20,6 +20,7 @@ urlpatterns = [
     path('stock/<str:symbol>/buy/', views.buy_stock, name='buy_stock'),
     path('stock/<str:symbol>/sell/', views.sell_stock, name='sell_stock'),
     path('portfolio/', views.portfolio, name='portfolio'),
+    path('generate-portfolio-report/', views.generate_portfolio_report, name='generate_portfolio_report'),
 ]
 
 if settings.DEBUG:

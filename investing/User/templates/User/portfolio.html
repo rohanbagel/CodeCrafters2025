@@ -24,6 +24,71 @@
             </div>
         </div>
 
+        <!-- Report Generation Button -->
+        <div class="flex justify-end mb-6">
+            <button onclick="generateReport()" id="generateReportBtn" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#BFE953] text-[#0F0F11] hover:bg-[#d6ff63] transition-all duration-300">
+                <i data-lucide="file-text" class="w-5 h-5"></i>
+                Generate Analysis Report
+            </button>
+        </div>
+
+        <!-- Report Display Section -->
+        <div id="reportSection" class="hidden bg-white/5 rounded-2xl p-8 backdrop-blur-lg border border-white/10 mb-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-[#F6F6F5]">Portfolio Analysis Report</h2>
+                <button onclick="closeReport()" class="text-[#F6F6F5]/60 hover:text-[#F6F6F5] transition-colors">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Performance Metrics -->
+                <div class="space-y-4">
+                    <div class="bg-white/5 rounded-lg p-4">
+                        <h3 class="text-sm font-medium text-[#F6F6F5]/70 mb-2">Total Value</h3>
+                        <p id="totalValue" class="text-2xl font-bold text-[#BFE953]">$0</p>
+                    </div>
+                    <div class="bg-white/5 rounded-lg p-4">
+                        <h3 class="text-sm font-medium text-[#F6F6F5]/70 mb-2">Total Return</h3>
+                        <p id="totalReturn" class="text-2xl font-bold text-[#BFE953]">0%</p>
+                    </div>
+                </div>
+                
+                <!-- Risk Analysis -->
+                <div class="space-y-4">
+                    <div class="bg-white/5 rounded-lg p-4">
+                        <h3 class="text-sm font-medium text-[#F6F6F5]/70 mb-2">Risk Score</h3>
+                        <div class="flex items-center gap-4">
+                            <div class="flex-1 bg-white/10 rounded-full h-2">
+                                <div id="riskScoreBar" class="bg-[#BFE953] h-full rounded-full"></div>
+                            </div>
+                            <span id="riskScore" class="text-[#F6F6F5]">50%</span>
+                        </div>
+                    </div>
+                    <div class="bg-white/5 rounded-lg p-4">
+                        <h3 class="text-sm font-medium text-[#F6F6F5]/70 mb-2">Risk Analysis</h3>
+                        <p id="riskAnalysis" class="text-[#F6F6F5]/80"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Metrics -->
+            <div class="bg-white/5 rounded-lg p-4 mb-6">
+                <h3 class="text-sm font-medium text-[#F6F6F5]/70 mb-4">Performance Metrics</h3>
+                <div id="performanceMetrics" class="grid grid-cols-2 gap-4">
+                    <!-- Metrics will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="bg-white/5 rounded-lg p-4">
+                <h3 class="text-sm font-medium text-[#F6F6F5]/70 mb-4">Recommendations</h3>
+                <ul id="recommendations" class="space-y-2">
+                    <!-- Recommendations will be inserted here -->
+                </ul>
+            </div>
+        </div>
+
         <!-- Portfolio Summary -->
         <div class="bg-white/5 rounded-2xl p-8 backdrop-blur-lg border border-white/10 mb-8">
             <h2 class="text-2xl font-bold mb-6 text-[#F6F6F5]">Portfolio Holdings</h2>
@@ -129,5 +194,245 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 <script>
     lucide.createIcons();
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const generateReportBtn = document.getElementById('generateReportBtn');
+        const reportSection = document.getElementById('reportSection');
+        const closeReportBtn = document.getElementById('closeReportBtn');
+        const downloadReportBtn = document.getElementById('downloadReportBtn');
+        const reportContent = document.getElementById('reportContent');
+        
+        generateReportBtn.addEventListener('click', async function() {
+            reportSection.classList.remove('hidden');
+            reportContent.innerHTML = '<p class="text-center text-[#F6F6F5]/60">Generating report...</p>';
+            
+            try {
+                const response = await fetch('/api/portfolio-analysis/');
+                const data = await response.json();
+                
+                // Format the report with proper styling
+                let reportHtml = `
+                    <div class="space-y-6">
+                        <!-- Summary Section -->
+                        <div class="p-4 rounded-lg bg-white/5 border border-white/10">
+                            <h3 class="text-lg font-semibold text-[#F6F6F5] mb-3">Portfolio Summary</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-[#F6F6F5]/60 text-sm">Total Value</p>
+                                    <p class="text-xl font-bold text-[#BFE953]">$${data.totalValue}</p>
+                                </div>
+                                <div>
+                                    <p class="text-[#F6F6F5]/60 text-sm">Total Return</p>
+                                    <p class="text-xl font-bold ${data.totalReturn >= 0 ? 'text-[#BFE953]' : 'text-red-500'}">
+                                        ${data.totalReturn >= 0 ? '+' : ''}${data.totalReturn}%
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Performance Analysis -->
+                        <div class="p-4 rounded-lg bg-white/5 border border-white/10">
+                            <h3 class="text-lg font-semibold text-[#F6F6F5] mb-3">Performance Analysis</h3>
+                            <div class="space-y-2">
+                                ${data.performanceMetrics.map(metric => `
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-[#F6F6F5]/80">${metric.name}</span>
+                                        <span class="font-medium ${metric.value >= 0 ? 'text-[#BFE953]' : 'text-red-500'}">
+                                            ${metric.value >= 0 ? '+' : ''}${metric.value}%
+                                        </span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Risk Assessment -->
+                        <div class="p-4 rounded-lg bg-white/5 border border-white/10">
+                            <h3 class="text-lg font-semibold text-[#F6F6F5] mb-3">Risk Assessment</h3>
+                            <p class="text-[#F6F6F5]/80 mb-2">${data.riskAnalysis}</p>
+                            <div class="h-2 bg-white/10 rounded-full overflow-hidden">
+                                <div class="h-full bg-[#BFE953]" style="width: ${data.riskScore}%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Recommendations -->
+                        <div class="p-4 rounded-lg bg-white/5 border border-white/10">
+                            <h3 class="text-lg font-semibold text-[#F6F6F5] mb-3">Recommendations</h3>
+                            <ul class="space-y-2">
+                                ${data.recommendations.map(rec => `
+                                    <li class="flex items-start gap-2">
+                                        <i data-lucide="arrow-right" class="h-5 w-5 text-[#BFE953] shrink-0 mt-0.5"></i>
+                                        <span class="text-[#F6F6F5]/80">${rec}</span>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+                
+                reportContent.innerHTML = reportHtml;
+                lucide.createIcons(); // Refresh icons in the newly added content
+            } catch (error) {
+                reportContent.innerHTML = '<p class="text-center text-red-500">Error generating report. Please try again.</p>';
+            }
+        });
+        
+        closeReportBtn.addEventListener('click', function() {
+            reportSection.classList.add('hidden');
+        });
+        
+        downloadReportBtn.addEventListener('click', function() {
+            const reportText = reportContent.innerText;
+            const blob = new Blob([reportText], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'portfolio_analysis_report.txt';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        });
+    });
+
+    async function generateReport() {
+        const reportSection = document.getElementById('reportSection');
+        const generateReportBtn = document.getElementById('generateReportBtn');
+        
+        try {
+            // Show loading state
+            generateReportBtn.disabled = true;
+            generateReportBtn.innerHTML = '<i data-lucide="loader" class="w-5 h-5 animate-spin"></i> Generating...';
+            
+            const response = await fetch('/generate-portfolio-report/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to generate report');
+            }
+
+            const data = await response.json();
+            
+            if (!data.success) {
+                throw new Error(data.message || 'Error generating report');
+            }
+
+            // Update report content
+            document.getElementById('totalValue').textContent = `$${data.report.totalValue}`;
+            document.getElementById('totalReturn').textContent = `${data.report.totalReturn}%`;
+            document.getElementById('riskScore').textContent = `${data.report.riskScore}%`;
+            document.getElementById('riskScoreBar').style.width = `${data.report.riskScore}%`;
+            document.getElementById('riskAnalysis').textContent = data.report.riskAnalysis;
+
+            // Update performance metrics
+            const metricsHtml = data.report.performanceMetrics.map(metric => `
+                <div class="bg-white/5 rounded-lg p-3">
+                    <h4 class="text-sm text-[#F6F6F5]/70">${metric.name}</h4>
+                    <p class="text-lg font-bold ${metric.value >= 0 ? 'text-[#BFE953]' : 'text-red-500'}">
+                        ${metric.value}%
+                    </p>
+                </div>
+            `).join('');
+            document.getElementById('performanceMetrics').innerHTML = metricsHtml;
+
+            // Update recommendations
+            const recommendationsHtml = data.report.recommendations.map(rec => `
+                <li class="flex items-start gap-2">
+                    <i data-lucide="arrow-right" class="w-5 h-5 text-[#BFE953] shrink-0 mt-0.5"></i>
+                    <span class="text-[#F6F6F5]/80">${rec}</span>
+                </li>
+            `).join('');
+            document.getElementById('recommendations').innerHTML = recommendationsHtml;
+
+            // Show report section
+            reportSection.classList.remove('hidden');
+            
+            // Refresh Lucide icons
+            lucide.createIcons();
+
+        } catch (error) {
+            console.error('Error:', error);
+            showNotification('Error', error.message, 'error');
+        } finally {
+            // Reset button state
+            generateReportBtn.disabled = false;
+            generateReportBtn.innerHTML = '<i data-lucide="file-text" class="w-5 h-5"></i> Generate Analysis Report';
+            lucide.createIcons();
+        }
+    }
+
+    function closeReport() {
+        document.getElementById('reportSection').classList.add('hidden');
+    }
+
+    function showNotification(title, message, type) {
+        const notificationDiv = document.createElement('div');
+        notificationDiv.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg ${
+            type === 'success' ? 'bg-green-500' : 'bg-red-500'
+        } text-white z-50 animate-fade-in-down`;
+        
+        notificationDiv.innerHTML = `
+            <div class="flex items-center gap-2">
+                <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-5 h-5"></i>
+                <div>
+                    <h4 class="font-bold">${title}</h4>
+                    <p class="text-sm">${message}</p>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(notificationDiv);
+        lucide.createIcons();
+        
+        // Remove notification after 5 seconds
+        setTimeout(() => {
+            notificationDiv.classList.add('animate-fade-out');
+            setTimeout(() => notificationDiv.remove(), 300);
+        }, 5000);
+    }
+
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Add fade animations to Tailwind config
+    if (typeof tailwind !== 'undefined') {
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'fade-in-down': 'fadeInDown 0.3s ease-out',
+                        'fade-out': 'fadeOut 0.3s ease-in'
+                    },
+                    keyframes: {
+                        fadeInDown: {
+                            '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        fadeOut: {
+                            '0%': { opacity: '1' },
+                            '100%': { opacity: '0' }
+                        }
+                    }
+                }
+            }
+        }
+    }
 </script>
 {% endblock %} 
