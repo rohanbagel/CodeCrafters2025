@@ -11,6 +11,14 @@ import traceback
 import google.generativeai as genai
 from django.conf import settings
 import logging
+import yfinance as yf
+import plotly.graph_objects as go
+from plotly.offline import plot
+import numpy as np
+from sklearn import preprocessing, model_selection
+from sklearn.linear_model import LinearRegression
+import pandas as pd
+from datetime import datetime, timedelta
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -557,3 +565,137 @@ Keep the response concise and focused on actionable insights."""
             'success': False,
             'error': str(e)
         })
+
+@login_required
+def predict_stock(request, symbol):
+    try:
+        # Define valid tickers for our simulation
+        VALID_TICKERS = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA']
+        
+        if symbol not in VALID_TICKERS:
+            messages.error(request, f'Invalid ticker symbol. Please choose from: {", ".join(VALID_TICKERS)}')
+            return redirect('simulation:available_stocks')
+        
+        # Redirect to the prediction display page
+        return redirect('simulation:show_prediction', symbol=symbol)
+        
+    except Exception as e:
+        messages.error(request, f'Error accessing stock prediction: {str(e)}')
+        return redirect('simulation:available_stocks')
+
+@login_required
+def show_prediction(request, symbol):
+    try:
+        # Define valid tickers for our simulation
+        VALID_TICKERS = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA']
+        
+        if symbol not in VALID_TICKERS:
+            messages.error(request, f'Invalid ticker symbol. Please choose from: {", ".join(VALID_TICKERS)}')
+            return redirect('simulation:available_stocks')
+        
+        stock = get_object_or_404(Stock, symbol=symbol)
+        
+        # Fetch historical data with error handling
+        try:
+            df = yf.download(tickers=symbol, period='3mo', interval='1d')
+            if df.empty:
+                raise ValueError(f"No data available for {symbol}")
+            
+            # Debug log to see available columns
+            logger.info(f"Available columns: {df.columns.tolist()}")
+            
+            # Create candlestick chart
+            fig = go.Figure()
+            fig.add_trace(go.Candlestick(
+                x=df.index,
+                open=df['Open'],
+                high=df['High'],
+                low=df['Low'],
+                close=df['Close'],
+                name='Market Data'
+            ))
+            
+            fig.update_layout(
+                title=f'{symbol} Stock Price Evolution',
+                yaxis_title='Stock Price (USD)',
+                template='plotly_dark',
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='white')
+            )
+            
+            # Use 'Close' instead of 'Adj Close'
+            df_ml = df[['Close']].copy()
+            forecast_out = 7  # Predict next 7 days
+            df_ml['Prediction'] = df_ml[['Close']].shift(-forecast_out)
+            
+            # Prepare features
+            X = np.array(df_ml.drop(columns=['Prediction']))
+            X = preprocessing.scale(X)
+            X_forecast = X[-forecast_out:]
+            X = X[:-forecast_out]
+            y = np.array(df_ml['Prediction'])
+            y = y[:-forecast_out]
+            
+            # Split data
+            X_train, X_test, y_train, y_test = model_selection.train_test_split(X, y, test_size=0.2)
+            
+            # Train model
+            clf = LinearRegression()
+            clf.fit(X_train, y_train)
+            confidence = clf.score(X_test, y_test)
+            
+            # Make predictions
+            forecast_prediction = clf.predict(X_forecast)
+            
+            # Create prediction chart
+            dates = [datetime.now() + timedelta(days=x) for x in range(forecast_out)]
+            pred_fig = go.Figure()
+            pred_fig.add_trace(go.Scatter(
+                x=dates,
+                y=forecast_prediction,
+                mode='lines+markers',
+                name='Predicted Price',
+                line=dict(color='#BFE953')
+            ))
+            
+            pred_fig.update_layout(
+                title=f'{symbol} Price Prediction (Next {forecast_out} Days)',
+                yaxis_title='Predicted Price (USD)',
+                template='plotly_dark',
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='white')
+            )
+            
+            plot_div_pred = plot(pred_fig, output_type='div', include_plotlyjs=False)
+            
+            # Get the last closing price using proper pandas indexing and convert to float
+            last_close = float(df['Close'].iloc[-1])
+            
+            # Convert forecast prediction to list of floats
+            forecast_prediction_list = [float(x) for x in forecast_prediction]
+            
+            context = {
+                'stock': stock,
+                'plot_div': plot(fig, output_type='div', include_plotlyjs=True),
+                'plot_div_pred': plot_div_pred,
+                'confidence': round(confidence * 100, 2),
+                'forecast': forecast_prediction_list,
+                'current_price': last_close,
+                'predicted_price': float(forecast_prediction[-1]),
+                'price_change': round(((float(forecast_prediction[-1]) - last_close) / last_close) * 100, 2)
+            }
+            
+            return render(request, 'simulation/predict_stock.html', context)
+        
+        except Exception as e:
+            logger.error(f"Error in prediction calculation: {str(e)}\n{traceback.format_exc()}")
+            messages.error(request, f'Error calculating stock prediction: {str(e)}')
+            return redirect('simulation:available_stocks')
+        
+    except Exception as e:
+        logger.error(f"Error in prediction: {str(e)}")
+        logger.error(traceback.format_exc())
+        messages.error(request, f'Error accessing stock prediction: {str(e)}')
+        return redirect('simulation:available_stocks')

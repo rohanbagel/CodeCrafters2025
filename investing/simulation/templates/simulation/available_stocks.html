@@ -1,59 +1,40 @@
 {% extends 'simulation/simulation_base.html' %}
+{% load static %}
 
 {% block content %}
-<div class="flex flex-col gap-8">
-    <!-- Stocks List Section -->
-    <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10">
-        <h1 class="text-2xl font-bold text-[#F6F6F5] mb-4">Available Stocks</h1>
-        <p class="text-[#F6F6F5]/80 mb-6">Browse and trade from our selection of virtual stocks.</p>
-        
-        <div class="overflow-x-auto">
-            <table class="w-full">
-                <thead>
-                    <tr class="border-b border-white/10">
-                        <th class="py-3 text-left text-sm font-medium text-[#F6F6F5]/60">Symbol</th>
-                        <th class="py-3 text-left text-sm font-medium text-[#F6F6F5]/60">Company Name</th>
-                        <th class="py-3 text-right text-sm font-medium text-[#F6F6F5]/60">Price</th>
-                        <th class="py-3 text-right text-sm font-medium text-[#F6F6F5]/60">24h Change</th>
-                        <th class="py-3 text-right text-sm font-medium text-[#F6F6F5]/60">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for stock in stocks %}
-                    <tr class="border-b border-white/5 hover:bg-white/5">
-                        <td class="py-4 text-sm font-medium text-[#F6F6F5]">{{ stock.symbol }}</td>
-                        <td class="py-4 text-sm text-[#F6F6F5]/80">{{ stock.name }}</td>
-                        <td class="py-4 text-right text-sm font-medium text-[#F6F6F5]">${{ stock.current_price|floatformat:2 }}</td>
-                        <td class="py-4 text-right text-sm font-medium {% if '-' in stock.price_change %}text-red-500{% else %}text-[#BFE953]{% endif %}">
-                            {{ stock.price_change }}
-                        </td>
-                        <td class="py-4 text-right">
-                            <a href="{% url 'simulation:trade_stock' stock.symbol %}" class="inline-flex items-center gap-2 rounded-lg bg-[#BFE953] px-3 py-1 text-xs font-medium text-[#0F0F11] hover:bg-[#d6ff63] transition-all duration-300">
-                                <i data-lucide="trending-up" class="h-3 w-3"></i>
-                                Trade
-                            </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-white mb-2">Available Stocks</h1>
+        <p class="text-gray-300">Current balance: ${{ wallet.balance|floatformat:2 }}</p>
     </div>
 
-    <!-- Trading Tips -->
-    <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10">
-        <div class="flex items-center gap-3 mb-4">
-            <div class="h-8 w-8 rounded-full bg-[#BFE953]/20 flex items-center justify-center">
-                <i data-lucide="lightbulb" class="h-4 w-4 text-[#BFE953]"></i>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for stock in stocks %}
+        <div class="bg-black/30 backdrop-blur-md rounded-xl p-6 border border-gray-700">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h2 class="text-xl font-bold text-white">{{ stock.symbol }}</h2>
+                    <p class="text-gray-400">{{ stock.name }}</p>
+                </div>
+                <span class="text-2xl font-bold text-[#BFE953]">${{ stock.current_price|floatformat:2 }}</span>
             </div>
-            <h2 class="text-xl font-bold text-[#F6F6F5]">Trading Tips</h2>
+            <div class="flex justify-between items-center mb-6">
+                <span class="{% if stock.price_change|first == '+' %}text-green-500{% else %}text-red-500{% endif %}">
+                    {{ stock.price_change }}
+                </span>
+            </div>
+            <div class="flex space-x-4">
+                <a href="{% url 'simulation:trade_stock' stock.symbol %}"
+                   class="flex-1 px-4 py-2 bg-[#BFE953] text-black rounded-md text-center font-medium hover:bg-[#a8d93a] transition-colors duration-200">
+                    Trade
+                </a>
+                <a href="{% url 'simulation:predict_stock' stock.symbol %}"
+                   class="flex-1 px-4 py-2 border border-[#BFE953] text-[#BFE953] rounded-md text-center font-medium hover:bg-[#BFE953] hover:text-black transition-colors duration-200">
+                    Predict
+                </a>
+            </div>
         </div>
-        <ul class="list-disc list-inside space-y-2 text-[#F6F6F5]/80">
-            <li>Diversify your portfolio to manage risk</li>
-            <li>Research companies before investing</li>
-            <li>Monitor market trends and news</li>
-            <li>Start with small positions while learning</li>
-        </ul>
+        {% endfor %}
     </div>
 </div>
 {% endblock %} 

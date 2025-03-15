@@ -15,4 +15,6 @@ urlpatterns = [
     path('handle-scenario/', views.handle_scenario, name='handle_scenario'),
     path('statistics/', views.statistics, name='statistics'),
     path('get-ai-analysis/', views.get_ai_analysis, name='get_ai_analysis'),
+    path('predict/<str:symbol>/', views.predict_stock, name='predict_stock'),
+    path('prediction/<str:symbol>/', views.show_prediction, name='show_prediction'),
 ] 
