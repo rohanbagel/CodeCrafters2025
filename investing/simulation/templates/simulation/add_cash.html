@@ -1,19 +1,19 @@
 {% extends 'simulation/simulation_base.html' %}
 
 {% block content %}
-<div class="flex flex-col gap-8">
+<div class="flex flex-col gap-4 sm:gap-6 md:gap-8 p-4 sm:p-6 md:p-0">
     <!-- Add Cash Form -->
-    <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10">
-        <div class="flex justify-between items-center mb-4">
+    <div class="rounded-xl bg-white/5 p-4 sm:p-6 backdrop-blur-lg border border-white/10">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
             <div>
-                <h1 class="text-2xl font-bold text-[#F6F6F5]">Add Virtual Cash</h1>
-                <p class="text-[#F6F6F5]/80">Add virtual money to your simulation wallet to practice trading without risk.</p>
+                <h1 class="text-xl sm:text-2xl font-bold text-[#F6F6F5]">Add Virtual Cash</h1>
+                <p class="text-sm text-[#F6F6F5]/80 mt-1">Add virtual money to your simulation wallet to practice trading without risk.</p>
             </div>
             <form action="{% url 'simulation:reset_wallet' %}" method="POST" class="flex-shrink-0">
                 {% csrf_token %}
                 <button type="submit" 
                         onclick="return confirm('Are you sure you want to reset your virtual wallet balance to $0.00? This action cannot be undone.')"
-                        class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-all">
+                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-all">
                     <i data-lucide="refresh-ccw" class="h-4 w-4"></i>
                     Reset Balance
                 </button>
@@ -21,44 +21,44 @@
         </div>
         
         {% if messages %}
-        <div class="mb-6">
+        <div class="mb-4 sm:mb-6">
             {% for message in messages %}
-            <div class="rounded-lg p-4 mb-4 {% if message.tags == 'success' %}bg-[#BFE953]/20 text-[#BFE953]{% elif message.tags == 'info' %}bg-blue-500/20 text-blue-400{% else %}bg-red-500/20 text-red-500{% endif %}">
+            <div class="rounded-lg p-3 sm:p-4 mb-3 {% if message.tags == 'success' %}bg-[#BFE953]/20 text-[#BFE953]{% elif message.tags == 'info' %}bg-blue-500/20 text-blue-400{% else %}bg-red-500/20 text-red-500{% endif %}">
                 {{ message }}
             </div>
             {% endfor %}
         </div>
         {% endif %}
         
-        <form method="POST" class="space-y-6">
+        <form method="POST" class="space-y-5">
             {% csrf_token %}
             <div>
                 <label for="amount" class="block text-sm font-medium text-[#F6F6F5]/80 mb-2">Amount to Add ($)</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-[#F6F6F5]/60">$</span>
                     <input type="number" name="amount" id="amount" step="0.01" min="0" max="1000000"
-                           class="block w-full pl-8 rounded-lg border border-white/10 bg-white/5 py-2 text-[#F6F6F5] placeholder-[#F6F6F5]/40 focus:outline-none focus:ring-2 focus:ring-[#BFE953] focus:border-transparent"
+                           class="block w-full pl-8 rounded-lg border border-white/10 bg-white/5 py-2.5 text-[#F6F6F5] placeholder-[#F6F6F5]/40 focus:outline-none focus:ring-2 focus:ring-[#BFE953] focus:border-transparent"
                            placeholder="Enter amount">
                 </div>
-                <p class="mt-2 text-sm text-[#F6F6F5]/60">Maximum amount: $1,000,000</p>
+                <p class="mt-2 text-xs sm:text-sm text-[#F6F6F5]/60">Maximum amount: $1,000,000</p>
             </div>
             
             <button type="submit" 
-                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-[#0F0F11] bg-[#BFE953] hover:bg-[#d6ff63] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#BFE953] transition-all duration-300">
+                    class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-[#0F0F11] bg-[#BFE953] hover:bg-[#d6ff63] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#BFE953] transition-all">
                 Add to Wallet
             </button>
         </form>
     </div>
 
     <!-- Recent Transactions -->
-    <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10">
-        <h2 class="text-xl font-bold text-[#F6F6F5] mb-4">Recent Transactions</h2>
+    <div class="rounded-xl bg-white/5 p-4 sm:p-6 backdrop-blur-lg border border-white/10">
+        <h2 class="text-lg sm:text-xl font-bold text-[#F6F6F5] mb-3 sm:mb-4">Recent Transactions</h2>
         {% if recent_transactions %}
-        <div class="space-y-4">
+        <div class="space-y-3">
             {% for transaction in recent_transactions %}
-            <div class="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-white/10">
-                <div class="flex items-center gap-4">
-                    <div class="h-8 w-8 rounded-full bg-[#BFE953]/20 flex items-center justify-center">
+            <div class="flex items-center justify-between p-3 sm:p-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+                <div class="flex items-center gap-3">
+                    <div class="h-8 w-8 rounded-full bg-[#BFE953]/20 flex items-center justify-center flex-shrink-0">
                         {% if transaction.transaction_type == 'DEPOSIT' %}
                         <i data-lucide="plus-circle" class="h-4 w-4 text-[#BFE953]"></i>
                         {% elif transaction.transaction_type == 'WITHDRAWAL' %}
@@ -69,8 +69,8 @@
                         <i data-lucide="trending-down" class="h-4 w-4 text-red-500"></i>
                         {% endif %}
                     </div>
-                    <div>
-                        <p class="text-sm font-medium text-[#F6F6F5]">
+                    <div class="min-w-0">
+                        <p class="text-sm font-medium text-[#F6F6F5] truncate">
                             {{ transaction.get_transaction_type_display }}
                         </p>
                         <p class="text-xs text-[#F6F6F5]/60">
@@ -78,7 +78,7 @@
                         </p>
                     </div>
                 </div>
-                <div class="text-right">
+                <div class="text-right flex-shrink-0 ml-2">
                     <p class="text-sm font-medium {% if transaction.transaction_type == 'DEPOSIT' or transaction.transaction_type == 'STOCK_SELL' %}text-[#BFE953]{% else %}text-red-500{% endif %}">
                         {% if transaction.transaction_type == 'DEPOSIT' or transaction.transaction_type == 'STOCK_SELL' %}+{% else %}-{% endif %}${{ transaction.amount|floatformat:2 }}
                     </p>
@@ -90,8 +90,11 @@
             {% endfor %}
         </div>
         {% else %}
-        <p class="text-[#F6F6F5]/60">No recent transactions</p>
+        <div class="py-8 text-center">
+            <i data-lucide="clipboard" class="h-8 w-8 mx-auto text-[#F6F6F5]/20 mb-2"></i>
+            <p class="text-[#F6F6F5]/60">No recent transactions</p>
+        </div>
         {% endif %}
     </div>
 </div>
-{% endblock %} 
+{% endblock %}

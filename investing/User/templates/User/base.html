@@ -562,12 +562,30 @@
                 <span class="text-xl font-black tracking-tight text-white">Profit<span class="bg-gradient-to-r from-[#d6ff63] to-[#BFE953] bg-clip-text text-transparent">Pulse</span></span>
             </div>
             
-            <div class="flex items-center gap-4">
+            <button id="mobile-menu-button" class="lg:hidden rounded-lg bg-white/5 p-2 hover:bg-white/10">
+                <i data-lucide="menu" class="h-6 w-6"></i>
+            </button>
+
+            <div class="hidden lg:flex items-center gap-4">
                 <span class="text-sm text-[#F6F6F5]/60">Welcome, {{ user.username }}</span>
                 <a href="{% url 'logout' %}" class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white transition-all duration-300 hover:bg-white/10">
                     Logout
                     <i data-lucide="log-out" class="h-4 w-4 text-[#BFE953]"></i>
                 </a>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="lg:hidden hidden">
+            <div class="border-t border-white/10 bg-[#0F0F11]/95 backdrop-blur-lg">
+                <div class="container mx-auto px-4 py-3">
+                    <div class="flex flex-col gap-2">
+                        <span class="text-sm text-[#F6F6F5]/60">Welcome, {{ user.username }}</span>
+                        <a href="{% url 'logout' %}" class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white transition-all duration-300 hover:bg-white/10">
+                            Logout
+                            <i data-lucide="log-out" class="h-4 w-4 text-[#BFE953]"></i>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -859,6 +877,33 @@
                     link.parentElement.classList.add('active');
                 }
             });
+        });
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            // Update icon based on menu state
+            const icon = mobileMenuButton.querySelector('[data-lucide]');
+            if (mobileMenu.classList.contains('hidden')) {
+                icon.setAttribute('data-lucide', 'menu');
+            } else {
+                icon.setAttribute('data-lucide', 'x');
+            }
+            // Re-initialize Lucide icons
+            lucide.createIcons();
+        });
+
+        // Close mobile menu on window resize if screen becomes large
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) { // lg breakpoint
+                mobileMenu.classList.add('hidden');
+                const icon = mobileMenuButton.querySelector('[data-lucide]');
+                icon.setAttribute('data-lucide', 'menu');
+                lucide.createIcons();
+            }
         });
     </script>
 </body>

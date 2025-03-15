@@ -343,29 +343,31 @@ def gemini_chat(request):
         logger.info(f"User message: {user_message}")
         
         # Check if Gemini API key is configured
-        if not hasattr(settings, 'GEMINI_API_KEY') or not settings.GEMINI_API_KEY or settings.GEMINI_API_KEY == 'your-gemini-api-key':
+        if not hasattr(settings, 'GEMINI_API_KEY') or not settings.GEMINI_API_KEY:
             logger.error("GEMINI_API_KEY not configured properly in settings")
             return JsonResponse({
                 'success': False,
-                'error': "API key not configured properly",
-                'response': "I'm sorry, the AI service is not properly configured. Please contact the administrator to set up a valid Gemini API key."
+                'error': "API key not configured properly"
             })
             
         try:
             # Configure the Gemini API
             genai.configure(api_key=settings.GEMINI_API_KEY)
-            logger.info("Configured Gemini API with key")
             
-            # Create a Gemini model instance
+            # Create the model
             model = genai.GenerativeModel('gemini-2.0-flash')
-            logger.info("Created Gemini model instance")
             
-            # Add financial context to the prompt
-            prompt = f"""You are a financial assistant with expertise in stock markets, investments, and financial planning.
-            Please provide helpful, accurate information about investments, stocks, market trends, and financial advice.
-            
-            User query: {user_message}
-            """
+            # For portfolio analysis, add specific context
+            if "Analyze this investment portfolio" in user_message:
+                prompt = f"""You are a professional financial analyst. Please analyze the following portfolio data and provide a detailed report.
+                Focus on providing actionable insights and clear recommendations.
+                
+                {user_message}
+                
+                Format the report in a clear, structured way with sections and bullet points where appropriate.
+                Include specific recommendations based on the portfolio's current composition and market conditions."""
+            else:
+                prompt = user_message
             
             # Generate response from Gemini
             logger.info("Sending request to Gemini API")
@@ -377,34 +379,20 @@ def gemini_chat(request):
                 'success': True,
                 'response': response.text
             })
+            
         except Exception as e:
             logger.error(f"Gemini API error: {str(e)}")
-            
-            # Check for specific API key errors
-            error_message = str(e).lower()
-            if 'api key not valid' in error_message or 'api_key_invalid' in error_message:
-                return JsonResponse({
-                    'success': False,
-                    'error': "Invalid API key",
-                    'response': "I'm sorry, the AI service is using an invalid API key. Please contact the administrator to update the Gemini API key."
-                })
-            else:
-                return JsonResponse({
-                    'success': False,
-                    'error': str(e),
-                    'response': "I'm sorry, there was an error connecting to the AI service. Please try again later."
-                })
+            return JsonResponse({
+                'success': False,
+                'error': str(e)
+            })
         
     except Exception as e:
-        # Log the full exception with traceback
         logger.error(f"Error in gemini_chat: {str(e)}")
         logger.error(traceback.format_exc())
-        
         return JsonResponse({
             'success': False,
-            'error': str(e),
-            'traceback': traceback.format_exc(),
-            'response': "I'm sorry, an error occurred while processing your request. Please try again later."
+            'error': str(e)
         })
 
 @login_required
@@ -567,3 +555,147 @@ def portfolio(request):
         'transactions': transactions,
     }
     return render(request, 'User/portfolio.html', context)
+
+@login_required
+def generate_portfolio_report(request):
+    try:
+        # Get user's portfolio data
+        stock_transactions = StockTransaction.objects.filter(user=request.user)
+        
+        # Calculate holdings
+        holdings = {}
+        for transaction in stock_transactions:
+            symbol = transaction.symbol
+            if symbol not in holdings:
+                holdings[symbol] = {
+                    'symbol': symbol,
+                    'company_name': transaction.company_name,
+                    'quantity': 0,
+                    'total_cost': 0,
+                    'transactions': []
+                }
+            
+            if transaction.transaction_type == 'BUY':
+                holdings[symbol]['quantity'] += transaction.quantity
+                holdings[symbol]['total_cost'] += float(transaction.total_amount)
+            else:
+                holdings[symbol]['quantity'] -= transaction.quantity
+            
+            holdings[symbol]['transactions'].append({
+                'type': transaction.transaction_type,
+                'quantity': transaction.quantity,
+                'price': float(transaction.price),
+                'date': transaction.created_at.strftime('%Y-%m-%d')
+            })
+
+        # Prepare portfolio data for Gemini
+        portfolio_data = []
+        total_value = 0
+        
+        for symbol, data in holdings.items():
+            if data['quantity'] > 0:  # Only include active holdings
+                portfolio_data.append({
+                    'symbol': symbol,
+                    'company': data['company_name'],
+                    'shares': data['quantity'],
+                    'cost_basis': data['total_cost'] / data['quantity'],
+                    'transaction_history': data['transactions']
+                })
+                total_value += data['total_cost']
+
+        # Create prompt for Gemini with markdown formatting
+        prompt = f"""As a professional financial analyst, provide a detailed analysis of this investment portfolio. Use markdown formatting with ** for bold text.
+
+**Portfolio Summary:**
+{json.dumps(portfolio_data, indent=2)}
+
+**Total Portfolio Value:** ${total_value:,.2f}
+
+Please include:
+
+**1. Overall Portfolio Performance**
+- Analyze total returns and performance trends
+- Compare with market benchmarks
+- Highlight key performance indicators
+
+**2. Risk Assessment**
+- Portfolio diversification analysis
+- Sector concentration risks
+- Market risk exposure evaluation
+
+**3. Key Portfolio Metrics**
+- Volatility measures
+- Sector distribution
+- Asset allocation breakdown
+
+**4. Strategic Recommendations**
+- Specific portfolio improvement suggestions
+- Rebalancing recommendations
+- Risk management strategies
+
+**5. Market Outlook**
+- Short-term market perspective
+- Long-term growth potential
+- Sector-specific opportunities
+
+Format the analysis in a clear, structured way using bullet points and bold headers."""
+
+        # Use Gemini API to generate analysis
+        model = genai.GenerativeModel('gemini-2.0-flash')
+        response = model.generate_content(prompt)
+        
+        # Process and structure the response
+        analysis_text = response.text
+        sections = analysis_text.split('\n\n')
+        
+        # Structure the response with proper formatting
+        report_data = {
+            'success': True,
+            'report': {
+                'totalValue': f"{total_value:,.2f}",
+                'totalReturn': calculate_total_return(holdings),
+                'riskScore': calculate_risk_score(holdings),
+                'riskAnalysis': next((s for s in sections if 'Risk Assessment' in s), 'Risk analysis not available.'),
+                'performanceMetrics': [
+                    {'name': 'Portfolio Diversity', 'value': len(holdings)},
+                    {'name': 'Total Holdings', 'value': sum(h['quantity'] for h in holdings.values())}
+                ],
+                'recommendations': [
+                    s.replace('*', '').strip() 
+                    for s in sections 
+                    if s.startswith('- ') or s.startswith('* ')
+                ]
+            }
+        }
+
+        return JsonResponse(report_data)
+
+    except Exception as e:
+        logger.error(f"Error generating portfolio report: {str(e)}")
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+def calculate_total_return(holdings):
+    try:
+        total_cost = sum(h['total_cost'] for h in holdings.values())
+        if total_cost == 0:
+            return 0
+        current_value = sum(h['quantity'] * h['total_cost']/h['quantity'] for h in holdings.values() if h['quantity'] > 0)
+        return round(((current_value - total_cost) / total_cost) * 100, 2)
+    except Exception as e:
+        logger.error(f"Error calculating total return: {str(e)}")
+        return 0
+
+def calculate_risk_score(holdings):
+    try:
+        # Simple risk score based on diversification
+        num_holdings = len([h for h in holdings.values() if h['quantity'] > 0])
+        if num_holdings == 0:
+            return 0
+        # More holdings = lower risk score (up to 10 holdings)
+        return max(10, min(90, 100 - (num_holdings * 10)))
+    except Exception as e:
+        logger.error(f"Error calculating risk score: {str(e)}")
+        return 50
