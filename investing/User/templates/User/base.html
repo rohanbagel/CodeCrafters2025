@@ -432,15 +432,11 @@
         
         <div class="nav-category">
             <div class="category-title">Overview</div>
+            <ul class="nav-links">
+                <li><a href="{% url 'home' %}"><i class="fas fa-home"></i>Dashboard</a></li>
+                <li><a href="{% url 'market_analytics' %}"><i class="fas fa-chart-line"></i>Market Analytics</a></li>
+            </ul>
         </div>
-        <ul class="nav-links">
-            <li class="active">
-                <a href="{% url 'home' %}">
-                    <i data-lucide="layout-dashboard"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-        </ul>
         
         <div class="nav-category">
             <div class="category-title">Investments</div>

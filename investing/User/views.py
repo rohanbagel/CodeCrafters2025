@@ -6,6 +6,8 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+import google.generativeai as genai
+import json
 
 def get_started(request):
     return render(request, 'User/get_started.html')
@@ -92,3 +94,48 @@ def profile(request):
         return redirect('profile')
 
     return render(request, 'User/profile.html')
+
+@login_required
+def market_analytics(request):
+    # Static data for all sections
+    context = {
+        'sentiment_data': {
+            'positive': 35,
+            'neutral': 40,
+            'negative': 25
+        },
+        'sector_data': [
+            {'sector': 'Technology', 'change': 2.5},
+            {'sector': 'Healthcare', 'change': -1.2},
+            {'sector': 'Finance', 'change': 1.8},
+            {'sector': 'Energy', 'change': -0.5},
+            {'sector': 'Consumer', 'change': 3.1},
+            {'sector': 'Industrial', 'change': 0.7},
+            {'sector': 'Materials', 'change': -2.1},
+            {'sector': 'Real Estate', 'change': 1.4}
+        ],
+        'indicators_data': {
+            'indicators': [
+                {'name': 'RSI', 'value': 58, 'signal': 'NEUTRAL'},
+                {'name': 'MACD', 'value': 0.5, 'signal': 'BULLISH'},
+                {'name': 'Moving Average', 'value': 1.2, 'signal': 'BULLISH'},
+                {'name': 'Bollinger Bands', 'value': 65, 'signal': 'NEUTRAL'}
+            ]
+        },
+        'trends_data': {
+            'trend_data': [
+                {'date': '2024-03-10', 'value': 45},
+                {'date': '2024-03-11', 'value': 52},
+                {'date': '2024-03-12', 'value': 48},
+                {'date': '2024-03-13', 'value': 55},
+                {'date': '2024-03-14', 'value': 51},
+                {'date': '2024-03-15', 'value': 58},
+                {'date': '2024-03-16', 'value': 62}
+            ]
+        },
+        'volume_data': {
+            'volume_data': [44, 55, 57, 56, 61, 58, 63]
+        }
+    }
+    
+    return render(request, 'User/market_analytics.html', context)
