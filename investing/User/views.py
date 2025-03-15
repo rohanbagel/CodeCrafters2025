@@ -13,6 +13,16 @@ import pandas as pd
 from django.core.paginator import Paginator
 from decimal import Decimal
 from simulation.models import UserWallet, WalletTransaction
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+import logging
+import traceback
+
+# Set up logging
+logger = logging.getLogger(__name__)
+
+# Configure the Gemini API
+genai.configure(api_key=settings.GEMINI_API_KEY)
 
 def get_started(request):
     return render(request, 'User/get_started.html')
@@ -320,3 +330,79 @@ def update_profile_photo(request):
             messages.error(request, f'Error updating profile photo: {str(e)}')
 
     return redirect('profile')
+
+@require_POST
+def gemini_chat(request):
+    try:
+        # Log the start of the request
+        logger.info("Gemini chat request received")
+        
+        # Parse the request body
+        data = json.loads(request.body)
+        user_message = data.get('message', '')
+        logger.info(f"User message: {user_message}")
+        
+        # Check if Gemini API key is configured
+        if not hasattr(settings, 'GEMINI_API_KEY') or not settings.GEMINI_API_KEY or settings.GEMINI_API_KEY == 'your-gemini-api-key':
+            logger.error("GEMINI_API_KEY not configured properly in settings")
+            return JsonResponse({
+                'success': False,
+                'error': "API key not configured properly",
+                'response': "I'm sorry, the AI service is not properly configured. Please contact the administrator to set up a valid Gemini API key."
+            })
+            
+        try:
+            # Configure the Gemini API
+            genai.configure(api_key=settings.GEMINI_API_KEY)
+            logger.info("Configured Gemini API with key")
+            
+            # Create a Gemini model instance
+            model = genai.GenerativeModel('gemini-1.5-flash-latest')
+            logger.info("Created Gemini model instance")
+            
+            # Add financial context to the prompt
+            prompt = f"""You are a financial assistant with expertise in stock markets, investments, and financial planning.
+            Please provide helpful, accurate information about investments, stocks, market trends, and financial advice.
+            
+            User query: {user_message}
+            """
+            
+            # Generate response from Gemini
+            logger.info("Sending request to Gemini API")
+            response = model.generate_content(prompt)
+            logger.info("Received response from Gemini API")
+            
+            # Return the response
+            return JsonResponse({
+                'success': True,
+                'response': response.text
+            })
+        except Exception as e:
+            logger.error(f"Gemini API error: {str(e)}")
+            
+            # Check for specific API key errors
+            error_message = str(e).lower()
+            if 'api key not valid' in error_message or 'api_key_invalid' in error_message:
+                return JsonResponse({
+                    'success': False,
+                    'error': "Invalid API key",
+                    'response': "I'm sorry, the AI service is using an invalid API key. Please contact the administrator to update the Gemini API key."
+                })
+            else:
+                return JsonResponse({
+                    'success': False,
+                    'error': str(e),
+                    'response': "I'm sorry, there was an error connecting to the AI service. Please try again later."
+                })
+        
+    except Exception as e:
+        # Log the full exception with traceback
+        logger.error(f"Error in gemini_chat: {str(e)}")
+        logger.error(traceback.format_exc())
+        
+        return JsonResponse({
+            'success': False,
+            'error': str(e),
+            'traceback': traceback.format_exc(),
+            'response': "I'm sorry, an error occurred while processing your request. Please try again later."
+        })
