@@ -568,6 +568,12 @@
 
             <div class="hidden lg:flex items-center gap-4">
                 <span class="text-sm text-[#F6F6F5]/60">Welcome, {{ user.username }}</span>
+                
+                <a href="{% url 'simulation:home' %}" class="inline-flex items-center gap-2 rounded-full border border-[#BFE953]/20 bg-[#BFE953]/10 px-4 py-2 text-sm font-bold text-[#BFE953] transition-all duration-300 hover:bg-[#BFE953]/20">
+                    <i data-lucide="gamepad-2" class="h-4 w-4"></i>
+                    Enter Simulation
+                </a>
+                
                 <a href="{% url 'logout' %}" class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white transition-all duration-300 hover:bg-white/10">
                     Logout
                     <i data-lucide="log-out" class="h-4 w-4 text-[#BFE953]"></i>
@@ -580,6 +586,12 @@
                 <div class="container mx-auto px-4 py-3">
                     <div class="flex flex-col gap-2">
                         <span class="text-sm text-[#F6F6F5]/60">Welcome, {{ user.username }}</span>
+                        
+                        <a href="{% url 'simulation:home' %}" class="inline-flex items-center gap-2 rounded-full border border-[#BFE953]/20 bg-[#BFE953]/10 px-4 py-2 text-sm font-bold text-[#BFE953] transition-all duration-300 hover:bg-[#BFE953]/20">
+                            <i data-lucide="gamepad-2" class="h-4 w-4"></i>
+                            Enter Simulation
+                        </a>
+                        
                         <a href="{% url 'logout' %}" class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white transition-all duration-300 hover:bg-white/10">
                             Logout
                             <i data-lucide="log-out" class="h-4 w-4 text-[#BFE953]"></i>
