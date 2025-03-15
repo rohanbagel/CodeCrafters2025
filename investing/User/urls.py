@@ -1,6 +1,5 @@
 from django.urls import path
 from . import views
-from django.contrib.auth.views import LogoutView
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -9,7 +8,7 @@ urlpatterns = [
     path('home/', views.home, name='home'),
     path('login/', views.login_view, name='login'),
     path('signup/', views.signup_view, name='signup'),
-    path('logout/', LogoutView.as_view(next_page='get_started'), name='logout'),
+    path('logout/', views.logout_view, name='logout'),
     path('profile/', views.profile, name='profile'),
     path('market-analytics/', views.market_analytics, name='market_analytics'),
 ]
