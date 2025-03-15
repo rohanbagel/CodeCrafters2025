@@ -1,0 +1,106 @@
+{% extends 'User/base.html' %}
+
+{% block content %}
+<div class="p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex items-center gap-4">
+                <a href="{% url 'market_stocks' %}" class="text-[#F6F6F5]/60 hover:text-[#F6F6F5] transition-colors">
+                    <i data-lucide="arrow-left" class="h-6 w-6"></i>
+                </a>
+                <div>
+                    <h1 class="text-3xl font-bold text-[#F6F6F5]">{{ stock.company_name }}</h1>
+                    <p class="text-[#F6F6F5]/60">{{ stock.symbol }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stock Details Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Price Card -->
+            <div class="bg-white/5 rounded-2xl p-6 backdrop-blur-lg border border-white/10">
+                <h3 class="text-lg font-semibold text-[#F6F6F5]/60 mb-2">Current Price</h3>
+                <div class="text-4xl font-bold text-[#F6F6F5]">${{ stock.current_price }}</div>
+                <div class="mt-2 flex items-center gap-2">
+                    <span class="{% if stock.price_change >= 0 %}text-[#BFE953]{% else %}text-[#FF4D4D]{% endif %}">
+                        {{ stock.price_change }}%
+                    </span>
+                    <span class="text-[#F6F6F5]/40">Today</span>
+                </div>
+            </div>
+
+            <!-- Trading Card -->
+            <div class="lg:col-span-2 bg-white/5 rounded-2xl p-6 backdrop-blur-lg border border-white/10">
+                <div class="flex flex-col md:flex-row gap-6">
+                    <!-- Buy Section -->
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold text-[#F6F6F5] mb-4">Buy {{ stock.symbol }}</h3>
+                        <form action="{% url 'buy_stock' symbol=stock.symbol %}" method="POST" class="space-y-4">
+                            {% csrf_token %}
+                            <div>
+                                <label class="block text-sm text-[#F6F6F5]/60 mb-2">Quantity</label>
+                                <input type="number" name="quantity" min="1" step="1" required
+                                    class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-[#F6F6F5] focus:outline-none focus:ring-2 focus:ring-[#BFE953]/50">
+                            </div>
+                            <div class="text-sm text-[#F6F6F5]/60">
+                                Total Cost: $<span id="buyTotal">0.00</span>
+                            </div>
+                            <button type="submit" class="w-full px-4 py-2 bg-[#BFE953] text-[#0F0F11] font-semibold rounded-lg hover:bg-[#BFE953]/90 transition-colors">
+                                Buy
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Sell Section -->
+                    <div class="flex-1">
+                        <h3 class="text-lg font-semibold text-[#F6F6F5] mb-4">Sell {{ stock.symbol }}</h3>
+                        <form action="{% url 'sell_stock' symbol=stock.symbol %}" method="POST" class="space-y-4">
+                            {% csrf_token %}
+                            <div>
+                                <label class="block text-sm text-[#F6F6F5]/60 mb-2">Quantity</label>
+                                <input type="number" name="quantity" min="1" step="1" required
+                                    class="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-[#F6F6F5] focus:outline-none focus:ring-2 focus:ring-[#BFE953]/50">
+                            </div>
+                            <div class="text-sm text-[#F6F6F5]/60">
+                                Total Value: $<span id="sellTotal">0.00</span>
+                            </div>
+                            <button type="submit" class="w-full px-4 py-2 bg-white/10 text-[#F6F6F5] font-semibold rounded-lg hover:bg-white/20 transition-colors">
+                                Sell
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        {% if messages %}
+        <div class="mt-8">
+            {% for message in messages %}
+            <div class="p-4 rounded-lg {% if message.tags == 'success' %}bg-[#BFE953]/10 text-[#BFE953]{% else %}bg-[#FF4D4D]/10 text-[#FF4D4D]{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    // Calculate totals based on quantity input
+    document.querySelectorAll('input[name="quantity"]').forEach(input => {
+        input.addEventListener('input', function() {
+            const quantity = parseFloat(this.value) || 0;
+            const price = {{ stock.current_price }};
+            const total = (quantity * price).toFixed(2);
+            
+            if (this.closest('form').action.includes('buy')) {
+                document.getElementById('buyTotal').textContent = total;
+            } else {
+                document.getElementById('sellTotal').textContent = total;
+            }
+        });
+    });
+</script>
+{% endblock %} 

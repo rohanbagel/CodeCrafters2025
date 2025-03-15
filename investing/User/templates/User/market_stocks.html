@@ -65,7 +65,7 @@
                     </thead>
                     <tbody class="divide-y divide-white/5">
                         {% for stock in stocks %}
-                        <tr class="hover:bg-white/5 transition-colors">
+                        <tr class="hover:bg-white/5 transition-colors cursor-pointer" onclick="window.location.href='{% url 'stock_detail' symbol=stock.symbol %}'">
                             <td class="px-6 py-4 text-sm font-medium text-[#BFE953]">{{ stock.symbol }}</td>
                             <td class="px-6 py-4 text-sm text-[#F6F6F5]">{{ stock.description }}</td>
                             <td class="px-6 py-4 text-right text-sm text-[#F6F6F5]">${{ stock.current_price }}</td>
