@@ -22,6 +22,19 @@ class UserWallet(models.Model):
             return transaction
         return None
 
+    def reset_balance(self):
+        old_balance = self.balance
+        self.balance = Decimal('0')
+        transaction = WalletTransaction.objects.create(
+            wallet=self,
+            transaction_type='WITHDRAWAL',
+            amount=old_balance,
+            balance_after=self.balance,
+            description='Reset wallet balance'
+        )
+        self.save()
+        return transaction
+
     def can_afford(self, amount):
         return self.balance >= amount
 

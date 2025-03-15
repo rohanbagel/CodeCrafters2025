@@ -2,24 +2,24 @@
 {% load static %}
 
 {% block content %}
-<div class="p-8">
+<div class="p-4 sm:p-6 md:p-8">
     <div class="max-w-7xl mx-auto">
         <!-- Portfolio Summary with Links -->
-        <div class="mb-8 flex justify-between items-center">
+        <div class="mb-6 md:mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-                <h1 class="text-3xl font-bold text-[#F6F6F5] mb-2">Your Portfolio</h1>
-                <p class="text-[#F6F6F5]/60">Current Balance: ${{ user.profile.wallet_balance }}</p>
+                <h1 class="text-2xl md:text-3xl font-bold text-[#F6F6F5] mb-1">Your Portfolio</h1>
+                <p class="text-[#F6F6F5]/60 text-sm md:text-base">Current Balance: ${{ user.profile.wallet_balance }}</p>
             </div>
-            <div class="flex gap-4">
+            <div class="flex gap-3 w-full sm:w-auto">
                 <a href="{% url 'market_stocks' %}" 
-                   class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 text-[#F6F6F5] hover:bg-white/10 transition-all">
-                    <i data-lucide="trending-up" class="h-5 w-5"></i>
-                    Trade Stocks
+                   class="flex-1 sm:flex-initial text-center sm:text-left inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-white/5 text-[#F6F6F5] hover:bg-white/10 transition-all">
+                    <i data-lucide="trending-up" class="h-4 w-4"></i>
+                    <span>Trade</span>
                 </a>
                 <a href="{% url 'market_analytics' %}" 
-                   class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#BFE953] text-[#0F0F11] hover:bg-[#d6ff63] transition-all">
-                    <i data-lucide="bar-chart-2" class="h-5 w-5"></i>
-                    View Analytics
+                   class="flex-1 sm:flex-initial text-center sm:text-left inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-[#BFE953] text-[#0F0F11] hover:bg-[#d6ff63] transition-all">
+                    <i data-lucide="bar-chart-2" class="h-4 w-4"></i>
+                    <span>Analytics</span>
                 </a>
             </div>
         </div>
@@ -92,42 +92,48 @@
         <!-- Portfolio Summary -->
         <div class="bg-white/5 rounded-2xl p-8 backdrop-blur-lg border border-white/10 mb-8">
             <h2 class="text-2xl font-bold mb-6 text-[#F6F6F5]">Portfolio Holdings</h2>
+        <!-- Portfolio Holdings -->
+        <div class="bg-white/5 rounded-xl p-4 md:p-6 backdrop-blur-lg border border-white/10 mb-6">
+            <h2 class="text-xl md:text-2xl font-bold mb-4 text-[#F6F6F5]">Portfolio Holdings</h2>
             
             {% if holdings %}
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto -mx-4 md:mx-0">
                 <table class="min-w-full">
                     <thead>
                         <tr class="border-b border-white/10">
-                            <th class="px-6 py-3 text-left text-sm font-medium text-[#F6F6F5]/60">Symbol</th>
-                            <th class="px-6 py-3 text-left text-sm font-medium text-[#F6F6F5]/60">Company</th>
-                            <th class="px-6 py-3 text-right text-sm font-medium text-[#F6F6F5]/60">Quantity</th>
-                            <th class="px-6 py-3 text-right text-sm font-medium text-[#F6F6F5]/60">Avg. Price</th>
-                            <th class="px-6 py-3 text-right text-sm font-medium text-[#F6F6F5]/60">Current Price</th>
-                            <th class="px-6 py-3 text-right text-sm font-medium text-[#F6F6F5]/60">Total Value</th>
-                            <th class="px-6 py-3 text-right text-sm font-medium text-[#F6F6F5]/60">Profit/Loss</th>
-                            <th class="px-6 py-3 text-right text-sm font-medium text-[#F6F6F5]/60">Actions</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-[#F6F6F5]/60">Symbol</th>
+                            <th class="hidden md:table-cell px-4 py-3 text-left text-xs font-medium text-[#F6F6F5]/60">Company</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-[#F6F6F5]/60">Quantity</th>
+                            <th class="hidden sm:table-cell px-4 py-3 text-right text-xs font-medium text-[#F6F6F5]/60">Avg Price</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-[#F6F6F5]/60">Price</th>
+                            <th class="hidden sm:table-cell px-4 py-3 text-right text-xs font-medium text-[#F6F6F5]/60">Value</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-[#F6F6F5]/60">P/L</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-[#F6F6F5]/60">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for holding in holdings %}
-                        <tr class="border-b border-white/10">
-                            <td class="px-6 py-4 text-sm text-[#F6F6F5]">{{ holding.symbol }}</td>
-                            <td class="px-6 py-4 text-sm text-[#F6F6F5]">{{ holding.company_name }}</td>
-                            <td class="px-6 py-4 text-sm text-right text-[#F6F6F5]">{{ holding.quantity }}</td>
-                            <td class="px-6 py-4 text-sm text-right text-[#F6F6F5]">${{ holding.average_price }}</td>
-                            <td class="px-6 py-4 text-sm text-right text-[#F6F6F5]">${{ holding.current_price }}</td>
-                            <td class="px-6 py-4 text-sm text-right text-[#F6F6F5]">${{ holding.total_value }}</td>
-                            <td class="px-6 py-4 text-sm text-right {% if holding.profit_loss >= 0 %}text-[#BFE953]{% else %}text-red-500{% endif %}">
+                        <tr class="border-b border-white/10 hover:bg-white/5 transition-colors">
+                            <td class="px-4 py-3 text-xs text-[#F6F6F5]">
+                                <div class="font-medium">{{ holding.symbol }}</div>
+                                <div class="md:hidden text-xs text-[#F6F6F5]/60 mt-0.5">{{ holding.company_name }}</div>
+                            </td>
+                            <td class="hidden md:table-cell px-4 py-3 text-xs text-[#F6F6F5]">{{ holding.company_name }}</td>
+                            <td class="px-4 py-3 text-xs text-right text-[#F6F6F5]">{{ holding.quantity }}</td>
+                            <td class="hidden sm:table-cell px-4 py-3 text-xs text-right text-[#F6F6F5]">${{ holding.average_price }}</td>
+                            <td class="px-4 py-3 text-xs text-right text-[#F6F6F5]">${{ holding.current_price }}</td>
+                            <td class="hidden sm:table-cell px-4 py-3 text-xs text-right text-[#F6F6F5]">${{ holding.total_value }}</td>
+                            <td class="px-4 py-3 text-xs text-right font-medium {% if holding.profit_loss >= 0 %}text-[#BFE953]{% else %}text-red-500{% endif %}">
                                 ${{ holding.profit_loss }}
                             </td>
-                            <td class="px-6 py-4 text-right">
-                                <form action="{% url 'sell_stock' holding.symbol %}" method="POST" class="inline-flex gap-2">
+                            <td class="px-4 py-3 text-right">
+                                <form action="{% url 'sell_stock' holding.symbol %}" method="POST" class="inline-flex items-center gap-1">
                                     {% csrf_token %}
                                     <input type="number" name="quantity" min="1" max="{{ holding.quantity }}" 
-                                           class="w-20 px-2 py-1 text-sm rounded bg-white/5 border border-white/10 text-[#F6F6F5]"
+                                           class="w-14 sm:w-16 px-2 py-1 text-xs rounded bg-white/5 border border-white/10 text-[#F6F6F5]"
                                            required>
                                     <button type="submit" 
-                                            class="px-3 py-1 text-sm rounded bg-red-500 hover:bg-red-600 text-white transition-colors">
+                                            class="px-2 py-1 text-xs rounded bg-red-500 hover:bg-red-600 text-white transition-colors">
                                         Sell
                                     </button>
                                 </form>
@@ -138,34 +144,38 @@
                 </table>
             </div>
             {% else %}
-            <p class="text-[#F6F6F5]/60 text-center py-8">No stocks in your portfolio yet.</p>
+            <div class="text-center py-6 flex flex-col items-center">
+                <i data-lucide="pie-chart" class="h-12 w-12 text-[#F6F6F5]/20 mb-3"></i>
+                <p class="text-[#F6F6F5]/60">No stocks in your portfolio yet.</p>
+                <a href="{% url 'market_stocks' %}" class="mt-3 text-sm text-[#BFE953] hover:underline">Start trading now</a>
+            </div>
             {% endif %}
         </div>
 
         <!-- Recent Transactions -->
-        <div class="bg-white/5 rounded-2xl p-8 backdrop-blur-lg border border-white/10">
-            <h2 class="text-2xl font-bold mb-6 text-[#F6F6F5]">Recent Transactions</h2>
+        <div class="bg-white/5 rounded-xl p-4 md:p-6 backdrop-blur-lg border border-white/10">
+            <h2 class="text-xl md:text-2xl font-bold mb-4 text-[#F6F6F5]">Recent Transactions</h2>
             
             {% if transactions %}
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto -mx-4 md:mx-0">
                 <table class="min-w-full">
                     <thead>
                         <tr class="border-b border-white/10">
-                            <th class="px-6 py-3 text-left text-sm font-medium text-[#F6F6F5]/60">Date</th>
-                            <th class="px-6 py-3 text-left text-sm font-medium text-[#F6F6F5]/60">Type</th>
-                            <th class="px-6 py-3 text-left text-sm font-medium text-[#F6F6F5]/60">Symbol</th>
-                            <th class="px-6 py-3 text-left text-sm font-medium text-[#F6F6F5]/60">Company</th>
-                            <th class="px-6 py-3 text-right text-sm font-medium text-[#F6F6F5]/60">Quantity</th>
-                            <th class="px-6 py-3 text-right text-sm font-medium text-[#F6F6F5]/60">Price</th>
-                            <th class="px-6 py-3 text-right text-sm font-medium text-[#F6F6F5]/60">Total</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-[#F6F6F5]/60">Date</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-[#F6F6F5]/60">Type</th>
+                            <th class="px-4 py-3 text-left text-xs font-medium text-[#F6F6F5]/60">Symbol</th>
+                            <th class="hidden md:table-cell px-4 py-3 text-left text-xs font-medium text-[#F6F6F5]/60">Company</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-[#F6F6F5]/60">Qty</th>
+                            <th class="hidden sm:table-cell px-4 py-3 text-right text-xs font-medium text-[#F6F6F5]/60">Price</th>
+                            <th class="px-4 py-3 text-right text-xs font-medium text-[#F6F6F5]/60">Total</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for transaction in transactions %}
-                        <tr class="border-b border-white/10">
-                            <td class="px-6 py-4 text-sm text-[#F6F6F5]">{{ transaction.created_at|date:"M d, Y H:i" }}</td>
-                            <td class="px-6 py-4 text-sm">
-                                <span class="px-2 py-1 rounded text-xs font-medium
+                        <tr class="border-b border-white/10 hover:bg-white/5 transition-colors">
+                            <td class="px-4 py-3 text-xs text-[#F6F6F5]">{{ transaction.created_at|date:"M d, Y" }}</td>
+                            <td class="px-4 py-3">
+                                <span class="px-1.5 py-0.5 rounded text-xs font-medium
                                     {% if transaction.transaction_type == 'BUY' %}
                                         bg-[#BFE953]/20 text-[#BFE953]
                                     {% else %}
@@ -174,18 +184,25 @@
                                     {{ transaction.transaction_type }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-sm text-[#F6F6F5]">{{ transaction.symbol }}</td>
-                            <td class="px-6 py-4 text-sm text-[#F6F6F5]">{{ transaction.company_name }}</td>
-                            <td class="px-6 py-4 text-sm text-right text-[#F6F6F5]">{{ transaction.quantity }}</td>
-                            <td class="px-6 py-4 text-sm text-right text-[#F6F6F5]">${{ transaction.price }}</td>
-                            <td class="px-6 py-4 text-sm text-right text-[#F6F6F5]">${{ transaction.total_amount }}</td>
+                            <td class="px-4 py-3 text-xs text-[#F6F6F5]">
+                                {{ transaction.symbol }}
+                                <div class="md:hidden text-xs text-[#F6F6F5]/60 mt-0.5">{{ transaction.company_name }}</div>
+                            </td>
+                            <td class="hidden md:table-cell px-4 py-3 text-xs text-[#F6F6F5]">{{ transaction.company_name }}</td>
+                            <td class="px-4 py-3 text-xs text-right text-[#F6F6F5]">{{ transaction.quantity }}</td>
+                            <td class="hidden sm:table-cell px-4 py-3 text-xs text-right text-[#F6F6F5]">${{ transaction.price }}</td>
+                            <td class="px-4 py-3 text-xs text-right text-[#F6F6F5] font-medium">${{ transaction.total_amount }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
             {% else %}
-            <p class="text-[#F6F6F5]/60 text-center py-8">No transactions yet.</p>
+            <div class="text-center py-6 flex flex-col items-center">
+                <i data-lucide="receipt" class="h-12 w-12 text-[#F6F6F5]/20 mb-3"></i>
+                <p class="text-[#F6F6F5]/60">No transactions yet.</p>
+                <a href="{% url 'market_stocks' %}" class="mt-3 text-sm text-[#BFE953] hover:underline">Start trading now</a>
+            </div>
             {% endif %}
         </div>
     </div>
@@ -435,4 +452,4 @@
         }
     }
 </script>
-{% endblock %} 
+{% endblock %}

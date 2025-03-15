@@ -1,24 +1,24 @@
 {% extends 'simulation/simulation_base.html' %}
 
 {% block content %}
-<div class="flex flex-col gap-8">
+<div class="flex flex-col gap-4 sm:gap-6 md:gap-8 p-4 sm:p-6 md:p-0">
     <!-- Welcome Section -->
-    <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10">
-        <h1 class="text-2xl font-bold text-[#F6F6F5] mb-4">Welcome to ProfitPulse Simulation</h1>
-        <p class="text-[#F6F6F5]/80">Practice trading in a risk-free environment with virtual cash. Learn the markets without risking real money.</p>
+    <div class="rounded-xl bg-white/5 p-4 sm:p-6 backdrop-blur-lg border border-white/10">
+        <h1 class="text-xl sm:text-2xl font-bold text-[#F6F6F5] mb-2 sm:mb-4">Welcome to ProfitPulse Simulation</h1>
+        <p class="text-sm sm:text-base text-[#F6F6F5]/80">Practice trading in a risk-free environment with virtual cash. Learn the markets without risking real money.</p>
         
         <!-- Virtual Balance Display -->
-        <div class="mt-6 flex items-center gap-4">
-            <div class="rounded-lg bg-[#BFE953]/10 p-4">
+        <div class="mt-4 sm:mt-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div class="rounded-lg bg-[#BFE953]/10 p-4 w-full sm:w-auto">
                 <p class="text-sm text-[#BFE953]">Virtual Balance</p>
-                <p class="text-2xl font-bold text-[#BFE953]">${{ wallet.balance|default:"0.00"|floatformat:2 }}</p>
+                <p class="text-xl sm:text-2xl font-bold text-[#BFE953]">${{ wallet.balance|default:"0.00"|floatformat:2 }}</p>
             </div>
-            <div class="flex gap-3">
-                <a href="{% url 'simulation:add_cash' %}" class="inline-flex items-center gap-2 rounded-lg bg-[#BFE953] px-4 py-2 text-sm font-medium text-[#0F0F11] hover:bg-[#d6ff63] transition-all duration-300">
+            <div class="flex gap-3 w-full sm:w-auto">
+                <a href="{% url 'simulation:add_cash' %}" class="flex-1 sm:flex-initial inline-flex items-center justify-center sm:justify-start gap-2 rounded-lg bg-[#BFE953] px-3 sm:px-4 py-2 text-sm font-medium text-[#0F0F11] hover:bg-[#d6ff63] transition-all duration-300">
                     <i data-lucide="plus-circle" class="h-4 w-4"></i>
                     Add Virtual Cash
                 </a>
-                <a href="{% url 'simulation:available_stocks' %}" class="inline-flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 text-sm font-medium text-white hover:bg-white/20 transition-all duration-300">
+                <a href="{% url 'simulation:available_stocks' %}" class="flex-1 sm:flex-initial inline-flex items-center justify-center sm:justify-start gap-2 rounded-lg bg-white/10 px-3 sm:px-4 py-2 text-sm font-medium text-white hover:bg-white/20 transition-all duration-300">
                     <i data-lucide="trending-up" class="h-4 w-4 text-[#BFE953]"></i>
                     Available Stocks
                 </a>
@@ -27,16 +27,16 @@
     </div>
 
     <!-- Coming Soon Banner -->
-    <div class="relative overflow-hidden rounded-xl bg-gradient-to-r from-[#d6ff63]/20 to-[#96c718]/20 p-6 backdrop-blur-lg border border-[#BFE953]/20">
+    <div class="relative overflow-hidden rounded-xl bg-gradient-to-r from-[#d6ff63]/20 to-[#96c718]/20 p-4 sm:p-6 backdrop-blur-lg border border-[#BFE953]/20">
         <div class="relative z-10">
             <div class="flex items-center gap-2 text-[#BFE953]">
-                <i data-lucide="sparkles" class="h-5 w-5"></i>
-                <p class="text-sm font-medium">Coming Soon</p>
+                <i data-lucide="sparkles" class="h-4 w-4 sm:h-5 sm:w-5"></i>
+                <p class="text-xs sm:text-sm font-medium">Coming Soon</p>
             </div>
-            <h2 class="mt-2 text-xl font-bold text-[#F6F6F5]">Advanced Trading Features</h2>
-            <p class="mt-1 text-[#F6F6F5]/80">Real-time market simulation, advanced order types, and portfolio analytics are on the way!</p>
+            <h2 class="mt-1 sm:mt-2 text-lg sm:text-xl font-bold text-[#F6F6F5]">Advanced Trading Features</h2>
+            <p class="mt-1 text-xs sm:text-sm text-[#F6F6F5]/80">Real-time market simulation, advanced order types, and portfolio analytics are on the way!</p>
         </div>
         <div class="absolute right-0 top-0 h-full w-1/2 bg-gradient-to-l from-[#BFE953]/5 to-transparent"></div>
     </div>
 </div>
-{% endblock %} 
+{% endblock %}
