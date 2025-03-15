@@ -1,0 +1,123 @@
+{% extends 'simulation/simulation_base.html' %}
+
+{% block content %}
+<div class="flex flex-col gap-8">
+    <!-- Portfolio Overview -->
+    <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10">
+        <h1 class="text-2xl font-bold text-[#F6F6F5] mb-6">Portfolio Overview</h1>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div class="rounded-lg bg-white/5 p-4">
+                <p class="text-sm text-[#F6F6F5]/60">Current Value</p>
+                <p class="text-xl font-bold text-[#F6F6F5]">${{ total_current_value|floatformat:2 }}</p>
+            </div>
+            <div class="rounded-lg bg-white/5 p-4">
+                <p class="text-sm text-[#F6F6F5]/60">Invested Value</p>
+                <p class="text-xl font-bold text-[#F6F6F5]">${{ total_invested_value|floatformat:2 }}</p>
+            </div>
+            <div class="rounded-lg bg-white/5 p-4">
+                <p class="text-sm text-[#F6F6F5]/60">Total P/L</p>
+                <p class="text-xl font-bold {% if total_profit_loss >= 0 %}text-[#BFE953]{% else %}text-red-500{% endif %}">
+                    ${{ total_profit_loss|floatformat:2 }}
+                </p>
+            </div>
+            <div class="rounded-lg bg-white/5 p-4">
+                <p class="text-sm text-[#F6F6F5]/60">P/L %</p>
+                <p class="text-xl font-bold {% if total_profit_loss_percentage >= 0 %}text-[#BFE953]{% else %}text-red-500{% endif %}">
+                    {{ total_profit_loss_percentage|floatformat:2 }}%
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Current Holdings -->
+    <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10">
+        <h2 class="text-xl font-bold text-[#F6F6F5] mb-4">Current Holdings</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b border-white/10">
+                        <th class="py-3 text-left text-sm font-medium text-[#F6F6F5]/60">Stock</th>
+                        <th class="py-3 text-right text-sm font-medium text-[#F6F6F5]/60">Quantity</th>
+                        <th class="py-3 text-right text-sm font-medium text-[#F6F6F5]/60">Avg. Price</th>
+                        <th class="py-3 text-right text-sm font-medium text-[#F6F6F5]/60">Current Price</th>
+                        <th class="py-3 text-right text-sm font-medium text-[#F6F6F5]/60">Current Value</th>
+                        <th class="py-3 text-right text-sm font-medium text-[#F6F6F5]/60">P/L</th>
+                        <th class="py-3 text-right text-sm font-medium text-[#F6F6F5]/60">P/L %</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for data in holdings_data %}
+                    <tr class="border-b border-white/5 hover:bg-white/5">
+                        <td class="py-4">
+                            <div>
+                                <p class="text-sm font-medium text-[#F6F6F5]">{{ data.holding.stock.symbol }}</p>
+                                <p class="text-xs text-[#F6F6F5]/60">{{ data.holding.stock.name }}</p>
+                            </div>
+                        </td>
+                        <td class="py-4 text-right text-sm text-[#F6F6F5]">{{ data.holding.quantity }}</td>
+                        <td class="py-4 text-right text-sm text-[#F6F6F5]">${{ data.holding.average_price|floatformat:2 }}</td>
+                        <td class="py-4 text-right text-sm text-[#F6F6F5]">${{ data.holding.stock.current_price|floatformat:2 }}</td>
+                        <td class="py-4 text-right text-sm text-[#F6F6F5]">${{ data.current_value|floatformat:2 }}</td>
+                        <td class="py-4 text-right text-sm font-medium {% if data.profit_loss >= 0 %}text-[#BFE953]{% else %}text-red-500{% endif %}">
+                            ${{ data.profit_loss|floatformat:2 }}
+                        </td>
+                        <td class="py-4 text-right text-sm font-medium {% if data.profit_loss_percentage >= 0 %}text-[#BFE953]{% else %}text-red-500{% endif %}">
+                            {{ data.profit_loss_percentage|floatformat:2 }}%
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="py-4 text-center text-[#F6F6F5]/60">No holdings yet</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10">
+        <h2 class="text-xl font-bold text-[#F6F6F5] mb-4">Recent Transactions</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead>
+                    <tr class="border-b border-white/10">
+                        <th class="py-3 text-left text-sm font-medium text-[#F6F6F5]/60">Date</th>
+                        <th class="py-3 text-left text-sm font-medium text-[#F6F6F5]/60">Stock</th>
+                        <th class="py-3 text-center text-sm font-medium text-[#F6F6F5]/60">Type</th>
+                        <th class="py-3 text-right text-sm font-medium text-[#F6F6F5]/60">Quantity</th>
+                        <th class="py-3 text-right text-sm font-medium text-[#F6F6F5]/60">Price</th>
+                        <th class="py-3 text-right text-sm font-medium text-[#F6F6F5]/60">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for transaction in transactions %}
+                    <tr class="border-b border-white/5 hover:bg-white/5">
+                        <td class="py-4 text-sm text-[#F6F6F5]/60">{{ transaction.created_at|date:"M d, Y H:i" }}</td>
+                        <td class="py-4">
+                            <div>
+                                <p class="text-sm font-medium text-[#F6F6F5]">{{ transaction.stock.symbol }}</p>
+                                <p class="text-xs text-[#F6F6F5]/60">{{ transaction.stock.name }}</p>
+                            </div>
+                        </td>
+                        <td class="py-4 text-center">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if transaction.transaction_type == 'BUY' %}bg-[#BFE953]/20 text-[#BFE953]{% else %}bg-red-500/20 text-red-500{% endif %}">
+                                {{ transaction.transaction_type }}
+                            </span>
+                        </td>
+                        <td class="py-4 text-right text-sm text-[#F6F6F5]">{{ transaction.quantity }}</td>
+                        <td class="py-4 text-right text-sm text-[#F6F6F5]">${{ transaction.price_per_share|floatformat:2 }}</td>
+                        <td class="py-4 text-right text-sm font-medium text-[#F6F6F5]">${{ transaction.total_amount|floatformat:2 }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="py-4 text-center text-[#F6F6F5]/60">No transactions yet</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %} 
