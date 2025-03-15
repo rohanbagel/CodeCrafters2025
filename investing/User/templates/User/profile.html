@@ -76,6 +76,29 @@
                 </div>
             </div>
 
+            <!-- Wallet Balance -->
+            <div class="mt-8 p-6 rounded-lg bg-white/5 border border-white/10">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-lg font-semibold text-[#F6F6F5]">Wallet Balance</h3>
+                    <span class="text-2xl font-bold text-[#BFE953]">${{ wallet_balance|floatformat:2 }}</span>
+                </div>
+                <form action="{% url 'update_wallet' %}" method="POST" class="flex gap-4">
+                    {% csrf_token %}
+                    <input type="number" 
+                           name="amount" 
+                           step="0.01" 
+                           min="0" 
+                           placeholder="Enter amount" 
+                           class="flex-1 rounded-md border border-white/10 bg-white/5 px-3 py-2 text-[#F6F6F5] placeholder:text-[#F6F6F5]/40 focus:outline-none focus:ring-1 focus:ring-[#BFE953]"
+                           required>
+                    <button type="submit" 
+                            class="inline-flex items-center gap-2 rounded-md bg-[#BFE953] px-4 py-2 text-sm font-medium text-[#0F0F11] hover:bg-[#d6ff63] transition-all">
+                        <i data-lucide="plus" class="h-4 w-4"></i>
+                        Add Funds
+                    </button>
+                </form>
+            </div>
+
             <!-- Save Button -->
             <div class="mt-8 flex justify-end">
                 <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-[#d6ff63] to-[#96c718] text-[#0F0F11] font-bold shadow-lg shadow-[#BFE953]/30 hover:shadow-xl hover:shadow-[#BFE953]/40 transition-all duration-300">

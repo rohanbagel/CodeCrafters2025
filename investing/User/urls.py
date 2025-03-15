@@ -12,6 +12,7 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('market-analytics/', views.market_analytics, name='market_analytics'),
     path('market-stocks/', views.market_stocks, name='market_stocks'),
+    path('update-wallet/', views.update_wallet, name='update_wallet'),
 ]
 
 if settings.DEBUG:
