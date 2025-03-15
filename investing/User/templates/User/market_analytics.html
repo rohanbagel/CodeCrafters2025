@@ -1,0 +1,271 @@
+{% extends 'User/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Market Overview Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Sentiment Analysis Card -->
+            <div class="bg-white/5 rounded-2xl p-6 backdrop-blur-lg border border-white/10">
+                <h2 class="text-2xl font-bold mb-6 text-[#F6F6F5]">Market Sentiment Analysis</h2>
+                <div id="sentimentChart" class="h-[300px]"></div>
+                <div id="sentimentDetails" class="mt-4 grid grid-cols-3 gap-4">
+                    <!-- Sentiment details will be populated by JS -->
+                </div>
+            </div>
+
+            <!-- Market Heatmap Card -->
+            <div class="bg-white/5 rounded-2xl p-6 backdrop-blur-lg border border-white/10">
+                <h2 class="text-2xl font-bold mb-6 text-[#F6F6F5]">Sector Performance Heatmap</h2>
+                <div id="marketHeatmap" class="h-[300px]"></div>
+            </div>
+        </div>
+
+        <!-- Detailed Analysis Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Technical Indicators -->
+            <div class="bg-white/5 rounded-2xl p-6 backdrop-blur-lg border border-white/10">
+                <h3 class="text-xl font-bold mb-4 text-[#F6F6F5]">Technical Indicators</h3>
+                <div id="technicalIndicators" class="space-y-4">
+                    <!-- Technical indicators will be populated by JS -->
+                </div>
+            </div>
+
+            <!-- Market Trends -->
+            <div class="bg-white/5 rounded-2xl p-6 backdrop-blur-lg border border-white/10">
+                <h3 class="text-xl font-bold mb-4 text-[#F6F6F5]">Market Trends</h3>
+                <div id="trendChart" class="h-[200px]"></div>
+            </div>
+
+            <!-- Volume Analysis -->
+            <div class="bg-white/5 rounded-2xl p-6 backdrop-blur-lg border border-white/10">
+                <h3 class="text-xl font-bold mb-4 text-[#F6F6F5]">Volume Analysis</h3>
+                <div id="volumeChart" class="h-[200px]"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Required Libraries -->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+
+<script>
+// Initialize Gemini API
+const API_KEY = '{{ api_key }}';
+
+// Sentiment Analysis Chart
+function initSentimentChart() {
+    const sentimentData = {{ sentiment_data|safe }};
+    const options = {
+        series: [sentimentData.positive, sentimentData.neutral, sentimentData.negative],
+        chart: {
+            type: 'donut',
+            height: 300,
+            background: 'transparent'
+        },
+        labels: ['Bullish', 'Neutral', 'Bearish'],
+        colors: ['#BFE953', '#FFD700', '#FF4D4D'],
+        plotOptions: {
+            pie: {
+                donut: {
+                    size: '70%'
+                }
+            }
+        },
+        legend: {
+            labels: {
+                colors: '#F6F6F5'
+            }
+        }
+    };
+
+    const chart = new ApexCharts(document.querySelector("#sentimentChart"), options);
+    chart.render();
+
+    // Update sentiment details with real data
+    document.getElementById('sentimentDetails').innerHTML = `
+        <div class="text-center">
+            <div class="text-2xl font-bold text-[#BFE953]">${sentimentData.positive}%</div>
+            <div class="text-sm text-[#F6F6F5]/60">Bullish</div>
+        </div>
+        <div class="text-center">
+            <div class="text-2xl font-bold text-[#FFD700]">${sentimentData.neutral}%</div>
+            <div class="text-sm text-[#F6F6F5]/60">Neutral</div>
+        </div>
+        <div class="text-center">
+            <div class="text-2xl font-bold text-[#FF4D4D]">${sentimentData.negative}%</div>
+            <div class="text-sm text-[#F6F6F5]/60">Bearish</div>
+        </div>
+    `;
+}
+
+// Market Heatmap
+function initMarketHeatmap() {
+    const sectorData = {{ sector_data|safe }};
+    const data = [{
+        type: 'treemap',
+        labels: sectorData.map(d => d.sector),
+        parents: Array(sectorData.length).fill(''),
+        values: sectorData.map(d => Math.abs(d.change)),
+        textinfo: 'label+value',
+        marker: {
+            colors: sectorData.map(d => d.change > 0 ? '#BFE953' : '#FF4D4D'),
+            opacity: 0.8
+        }
+    }];
+
+    const layout = {
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        margin: {t: 0, l: 0, r: 0, b: 0},
+        font: {
+            color: '#F6F6F5'
+        }
+    };
+
+    Plotly.newPlot('marketHeatmap', data, layout, {displayModeBar: false});
+}
+
+// Technical Indicators Chart
+function initTechnicalIndicators() {
+    const indicators = {{ indicators_data.indicators|safe }};
+    const indicatorsHtml = indicators.map(indicator => `
+        <div class="flex justify-between items-center p-4 bg-white/5 rounded-lg">
+            <div>
+                <h4 class="text-lg font-semibold text-[#F6F6F5]">${indicator.name}</h4>
+                <span class="text-sm text-[#F6F6F5]/60">${indicator.value.toFixed(2)}</span>
+            </div>
+            <span class="px-3 py-1 rounded-full text-sm font-medium ${
+                indicator.signal === 'BULLISH' ? 'bg-[#BFE953]/20 text-[#BFE953]' :
+                indicator.signal === 'BEARISH' ? 'bg-red-500/20 text-red-500' :
+                'bg-yellow-500/20 text-yellow-500'
+            }">${indicator.signal}</span>
+        </div>
+    `).join('');
+    
+    document.getElementById('technicalIndicators').innerHTML = indicatorsHtml;
+}
+
+// Market Trends Chart
+function initTrendChart() {
+    const trendData = {{ trends_data.trend_data|safe }};
+    const options = {
+        series: [{
+            name: 'Market Trend',
+            data: trendData.map(d => d.value)
+        }],
+        chart: {
+            type: 'line',
+            height: 300,
+            background: 'transparent',
+            toolbar: {
+                show: false
+            }
+        },
+        stroke: {
+            curve: 'smooth',
+            width: 3
+        },
+        colors: ['#BFE953'],
+        xaxis: {
+            categories: trendData.map(d => d.date),
+            labels: {
+                style: {
+                    colors: '#F6F6F5'
+                }
+            }
+        },
+        yaxis: {
+            labels: {
+                style: {
+                    colors: '#F6F6F5'
+                }
+            }
+        },
+        grid: {
+            borderColor: '#F6F6F5/10'
+        },
+        tooltip: {
+            theme: 'dark'
+        }
+    };
+
+    const chart = new ApexCharts(document.querySelector("#trendChart"), options);
+    chart.render();
+}
+
+// Volume Analysis Chart
+function initVolumeChart() {
+    const volumeData = {{ volume_data.volume_data|safe }};
+    const options = {
+        series: [{
+            name: 'Volume',
+            data: volumeData
+        }],
+        chart: {
+            type: 'bar',
+            height: 300,
+            background: 'transparent',
+            toolbar: {
+                show: false
+            }
+        },
+        plotOptions: {
+            bar: {
+                borderRadius: 4
+            }
+        },
+        colors: ['#BFE953'],
+        xaxis: {
+            categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            labels: {
+                style: {
+                    colors: '#F6F6F5'
+                }
+            }
+        },
+        yaxis: {
+            labels: {
+                style: {
+                    colors: '#F6F6F5'
+                }
+            }
+        },
+        grid: {
+            borderColor: '#F6F6F5/10'
+        },
+        tooltip: {
+            theme: 'dark'
+        }
+    };
+
+    const chart = new ApexCharts(document.querySelector("#volumeChart"), options);
+    chart.render();
+}
+
+// Initialize all charts
+document.addEventListener('DOMContentLoaded', function() {
+    initSentimentChart();
+    initMarketHeatmap();
+    initTechnicalIndicators();
+    initTrendChart();
+    initVolumeChart();
+
+    // Refresh data every 5 minutes
+    setInterval(async () => {
+        try {
+            const response = await fetch('/api/market-data/');
+            const data = await response.json();
+            
+            // Update all charts with new data
+            updateCharts(data);
+        } catch (error) {
+            console.error('Error fetching market data:', error);
+        }
+    }, 300000);
+});
+</script>
+{% endblock %} 
