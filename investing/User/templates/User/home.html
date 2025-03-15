@@ -46,6 +46,131 @@
             height: 300px;
             margin-top: 20px;
         }
+
+        /* Stock Market Section Styles */
+        .stock-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .stock-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stock-card {
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .stock-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .stock-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .stock-symbol {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .stock-price {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .stock-change {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .positive {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .negative {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .news-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .news-grid {
+            display: grid;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .news-card {
+            display: flex;
+            gap: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+
+        .news-image {
+            width: 120px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .news-content h3 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+        }
+
+        .news-content p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .refresh-button {
+            padding: 8px 16px;
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .refresh-button:hover {
+            background: #333;
+        }
     </style>
 
     <h1>Investment Dashboard</h1>
@@ -83,6 +208,34 @@
         <canvas id="portfolioChart"></canvas>
     </div>
 
+    <!-- Stock Market Section -->
+    <div class="stock-section">
+        <div class="section-header">
+            <h2>Live Market Data</h2>
+            <button class="refresh-button" onclick="refreshStockData()">
+                <i class="fas fa-sync-alt"></i>
+                Refresh
+            </button>
+        </div>
+        <div class="stock-grid" id="stockGrid">
+            <!-- Stock cards will be populated here -->
+        </div>
+    </div>
+
+    <!-- Financial News Section -->
+    <div class="news-section">
+        <div class="section-header">
+            <h2>Financial News</h2>
+            <button class="refresh-button" onclick="refreshNews()">
+                <i class="fas fa-sync-alt"></i>
+                Refresh
+            </button>
+        </div>
+        <div class="news-grid" id="newsGrid">
+            <!-- News cards will be populated here -->
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         // Sample chart
@@ -108,5 +261,77 @@
                 }
             }
         });
+
+        const FINNHUB_API_KEY = '{{ api_key }}';
+        const STOCKS = {{ stocks|safe }};
+
+        // Function to format numbers with commas
+        function formatNumber(num) {
+            return new Intl.NumberFormat('en-US').format(num);
+        }
+
+        // Function to update stock data
+        async function refreshStockData() {
+            const stockGrid = document.getElementById('stockGrid');
+            stockGrid.innerHTML = ''; // Clear existing content
+
+            for (const stock of STOCKS) {
+                try {
+                    const response = await fetch(`https://finnhub.io/api/v1/quote?symbol=${stock.symbol}&token=${FINNHUB_API_KEY}`);
+                    const data = await response.json();
+
+                    const changeClass = data.d >= 0 ? 'positive' : 'negative';
+                    const changeSign = data.d >= 0 ? '+' : '';
+
+                    const stockCard = `
+                        <div class="stock-card">
+                            <div class="stock-header">
+                                <span class="stock-symbol">${stock.symbol}</span>
+                                <span>${stock.name}</span>
+                            </div>
+                            <div class="stock-price">$${formatNumber(data.c)}</div>
+                            <div class="stock-change ${changeClass}">
+                                ${changeSign}${data.d.toFixed(2)} (${changeSign}${data.dp.toFixed(2)}%)
+                            </div>
+                        </div>
+                    `;
+                    stockGrid.innerHTML += stockCard;
+                } catch (error) {
+                    console.error(`Error fetching data for ${stock.symbol}:`, error);
+                }
+            }
+        }
+
+        // Function to refresh news
+        async function refreshNews() {
+            try {
+                const response = await fetch(`https://finnhub.io/api/v1/news?category=general&token=${FINNHUB_API_KEY}`);
+                const news = await response.json();
+                
+                const newsGrid = document.getElementById('newsGrid');
+                newsGrid.innerHTML = news.slice(0, 5).map(item => `
+                    <div class="news-card">
+                        <img src="${item.image}" alt="News Image" class="news-image" 
+                             onerror="this.src='https://via.placeholder.com/120x80'">
+                        <div class="news-content">
+                            <h3><a href="${item.url}" target="_blank">${item.headline}</a></h3>
+                            <p>${item.summary.slice(0, 150)}...</p>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error fetching news:', error);
+            }
+        }
+
+        // Initial load
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshStockData();
+            refreshNews();
+        });
+
+        // Auto-refresh every 10 seconds for stocks and 5 minutes for news
+        setInterval(refreshStockData, 10000);
+        setInterval(refreshNews, 300000);
     </script>
 {% endblock %}
