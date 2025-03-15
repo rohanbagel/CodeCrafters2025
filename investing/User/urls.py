@@ -14,6 +14,8 @@ urlpatterns = [
     path('market-stocks/', views.market_stocks, name='market_stocks'),
     path('gemini-chat/', views.gemini_chat, name='gemini_chat'),
     path('update-wallet/', views.update_wallet, name='update_wallet'),
+    path('update-profile/', views.update_profile, name='update_profile'),
+    path('update-profile-photo/', views.update_profile_photo, name='update_profile_photo'),
 ]
 
 if settings.DEBUG:

@@ -12,6 +12,7 @@ import finnhub
 import pandas as pd
 from django.core.paginator import Paginator
 from decimal import Decimal
+from simulation.models import UserWallet, WalletTransaction
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 import logging
@@ -228,23 +229,106 @@ def market_stocks(request):
 def update_wallet(request):
     if request.method == 'POST':
         try:
-            amount = Decimal(request.POST.get('amount', '0'))
-            if amount <= 0:
-                messages.error(request, 'Amount must be greater than 0')
-                return redirect('profile')
-                
-            profile = request.user.profile  # Use the related_name to get profile directly
-            profile.wallet_balance += amount
-            profile.save()
+            # Debug print to check if we're hitting this view
+            print("DEBUG: update_wallet view called")
             
-            messages.success(request, f'Successfully added ${amount:,.2f} to your wallet')
-        except (ValueError, TypeError):
-            messages.error(request, 'Invalid amount')
-        except UserProfile.DoesNotExist:
-            messages.error(request, 'User profile not found')
+            # Debug print to see what's in the POST data
+            print("DEBUG: POST data:", request.POST)
+            
+            amount = Decimal(request.POST.get('amount', '0'))
+            print(f"DEBUG: Amount parsed: {amount}")
+            
+            if amount <= 0:
+                print("DEBUG: Amount is <= 0")
+                messages.error(request, 'Please enter a positive amount.')
+            elif amount > 1000000:
+                print("DEBUG: Amount exceeds limit")
+                messages.error(request, 'Maximum deposit limit is $1,000,000.')
+            else:
+                # Get user profile
+                try:
+                    profile = request.user.profile
+                    print(f"DEBUG: Current wallet balance: {profile.wallet_balance}")
+                    
+                    # Update UserProfile wallet balance
+                    old_balance = profile.wallet_balance
+                    profile.wallet_balance += amount
+                    profile.save()
+                    print(f"DEBUG: New wallet balance: {profile.wallet_balance}")
+                    print(f"DEBUG: Balance change: {profile.wallet_balance - old_balance}")
+
+                    # Update or create simulation wallet
+                    simulation_wallet, created = UserWallet.objects.get_or_create(user=request.user)
+                    print(f"DEBUG: Simulation wallet {'created' if created else 'retrieved'}")
+                    print(f"DEBUG: Current simulation wallet balance: {simulation_wallet.balance}")
+                    
+                    simulation_wallet.balance += amount
+                    simulation_wallet.save()
+                    print(f"DEBUG: New simulation wallet balance: {simulation_wallet.balance}")
+
+                    # Create transaction record
+                    transaction = WalletTransaction.objects.create(
+                        wallet=simulation_wallet,
+                        transaction_type='DEPOSIT',
+                        amount=amount,
+                        balance_after=simulation_wallet.balance,
+                        description=f'Deposit from main wallet'
+                    )
+                    print(f"DEBUG: Transaction created: {transaction.id}")
+
+                    messages.success(request, f'Successfully added ${amount:,.2f} to your wallet.')
+                    
+                except UserProfile.DoesNotExist:
+                    print("DEBUG: UserProfile does not exist")
+                    messages.error(request, 'User profile not found. Please contact support.')
+                except Exception as e:
+                    print(f"DEBUG: Error updating profile: {str(e)}")
+                    messages.error(request, f'Error updating profile: {str(e)}')
+                
+        except (ValueError, TypeError) as e:
+            print(f"DEBUG: Value/Type error: {str(e)}")
+            messages.error(request, 'Please enter a valid amount.')
         except Exception as e:
-            messages.error(request, f'Error updating wallet: {str(e)}')
+            print(f"DEBUG: Unexpected error: {str(e)}")
+            messages.error(request, f'An unexpected error occurred: {str(e)}')
+    else:
+        print("DEBUG: Non-POST request to update_wallet")
     
+    return redirect('profile')
+
+@login_required
+def update_profile(request):
+    if request.method == 'POST':
+        # Update user information
+        user = request.user
+        user.username = request.POST.get('username')
+        user.email = request.POST.get('email')
+        
+        # Update profile information
+        profile = user.profile
+        profile.phone_number = request.POST.get('phone_number')
+        profile.address = request.POST.get('address')
+
+        try:
+            user.save()
+            profile.save()
+            messages.success(request, 'Profile updated successfully!')
+        except Exception as e:
+            messages.error(request, f'Error updating profile: {str(e)}')
+
+    return redirect('profile')
+
+@login_required
+def update_profile_photo(request):
+    if request.method == 'POST' and request.FILES.get('profile_photo'):
+        profile = request.user.profile
+        profile.profile_photo = request.FILES['profile_photo']
+        try:
+            profile.save()
+            messages.success(request, 'Profile photo updated successfully!')
+        except Exception as e:
+            messages.error(request, f'Error updating profile photo: {str(e)}')
+
     return redirect('profile')
 
 @require_POST
