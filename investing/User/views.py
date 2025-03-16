@@ -699,3 +699,52 @@ def calculate_risk_score(holdings):
     except Exception as e:
         logger.error(f"Error calculating risk score: {str(e)}")
         return 50
+
+@login_required
+def suggestions(request):
+    # Get user's portfolio data
+    user_transactions = StockTransaction.objects.filter(user=request.user)
+    user_stocks = set(transaction.symbol for transaction in user_transactions)
+    
+    # Initialize Finnhub client
+    finnhub_client = finnhub.Client(api_key='cvam92hr01qsapma5g6gcvam92hr01qsapma5g70')
+    
+    # Get market data and generate suggestions
+    suggestions = []
+    try:
+        # Example: Get similar stocks based on sector/industry
+        for symbol in user_stocks:
+            company_profile = finnhub_client.company_profile2(symbol=symbol)
+            if company_profile:
+                similar_companies = finnhub_client.company_peers(symbol)
+                if similar_companies:
+                    suggestions.extend(similar_companies[:2])  # Add top 2 similar companies
+        
+        # Remove duplicates and user's existing stocks
+        suggestions = list(set(suggestions) - user_stocks)[:5]  # Show top 5 unique suggestions
+        
+        # Get company details for suggestions
+        suggestion_details = []
+        for symbol in suggestions:
+            try:
+                company_data = finnhub_client.company_profile2(symbol=symbol)
+                if company_data:
+                    suggestion_details.append({
+                        'symbol': symbol,
+                        'name': company_data.get('name', ''),
+                        'industry': company_data.get('finnhubIndustry', ''),
+                        'logo': company_data.get('logo', ''),
+                        'weburl': company_data.get('weburl', '')
+                    })
+            except Exception as e:
+                logger.error(f"Error fetching data for {symbol}: {str(e)}")
+                continue
+                
+    except Exception as e:
+        logger.error(f"Error generating suggestions: {str(e)}")
+        suggestion_details = []
+    
+    context = {
+        'suggestions': suggestion_details
+    }
+    return render(request, 'User/suggestions.html', context)

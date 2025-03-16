@@ -1,0 +1,74 @@
+{% extends 'User/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="p-4 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-[#F6F6F5] mb-2">AI-Powered Stock Suggestions</h1>
+            <p class="text-[#F6F6F5]/60">Personalized stock recommendations based on your portfolio and market analysis.</p>
+        </div>
+
+        {% if suggestions %}
+        <!-- Suggestions Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for stock in suggestions %}
+            <div class="bg-white/5 rounded-2xl p-6 backdrop-blur-lg border border-white/10 transition-all hover:bg-white/10">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center gap-4">
+                        {% if stock.logo %}
+                        <img src="{{ stock.logo }}" alt="{{ stock.name }} logo" class="w-12 h-12 rounded-xl">
+                        {% else %}
+                        <div class="w-12 h-12 rounded-xl bg-[#BFE953]/20 flex items-center justify-center">
+                            <i data-lucide="trending-up" class="w-6 h-6 text-[#BFE953]"></i>
+                        </div>
+                        {% endif %}
+                        <div>
+                            <h3 class="text-lg font-semibold text-[#F6F6F5]">{{ stock.symbol }}</h3>
+                            <p class="text-sm text-[#F6F6F5]/60">{{ stock.name }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="flex items-center gap-2 text-sm text-[#F6F6F5]/60">
+                        <i data-lucide="briefcase" class="w-4 h-4"></i>
+                        <span>{{ stock.industry }}</span>
+                    </div>
+                    {% if stock.weburl %}
+                    <div class="flex items-center gap-2 text-sm">
+                        <i data-lucide="globe" class="w-4 h-4 text-[#F6F6F5]/60"></i>
+                        <a href="{{ stock.weburl }}" target="_blank" class="text-[#BFE953] hover:text-[#d6ff63]">Company Website</a>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="mt-6">
+                    <a href="{% url 'stock_detail' stock.symbol %}" class="inline-flex items-center gap-2 w-full justify-center rounded-xl bg-[#BFE953]/10 px-4 py-2.5 text-sm font-semibold text-[#BFE953] hover:bg-[#BFE953]/20 transition-all">
+                        View Details
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- No Suggestions State -->
+        <div class="bg-white/5 rounded-2xl p-8 backdrop-blur-lg border border-white/10 text-center">
+            <div class="flex justify-center mb-4">
+                <div class="w-16 h-16 rounded-xl bg-[#BFE953]/20 flex items-center justify-center">
+                    <i data-lucide="lightbulb" class="w-8 h-8 text-[#BFE953]"></i>
+                </div>
+            </div>
+            <h2 class="text-xl font-semibold text-[#F6F6F5] mb-2">No Suggestions Available</h2>
+            <p class="text-[#F6F6F5]/60 mb-6">Start building your portfolio to receive personalized stock suggestions.</p>
+            <a href="{% url 'market_stocks' %}" class="inline-flex items-center gap-2 rounded-xl bg-[#BFE953]/10 px-6 py-3 text-sm font-semibold text-[#BFE953] hover:bg-[#BFE953]/20 transition-all">
+                Explore Market Stocks
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

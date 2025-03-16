@@ -21,6 +21,7 @@ urlpatterns = [
     path('stock/<str:symbol>/sell/', views.sell_stock, name='sell_stock'),
     path('portfolio/', views.portfolio, name='portfolio'),
     path('generate-portfolio-report/', views.generate_portfolio_report, name='generate_portfolio_report'),
+    path('suggestions/', views.suggestions, name='suggestions'),
 ]
 
 if settings.DEBUG:
