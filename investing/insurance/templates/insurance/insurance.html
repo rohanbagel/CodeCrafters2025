@@ -1,0 +1,354 @@
+{% extends 'User/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="p-4 sm:p-6 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-2xl md:text-3xl font-bold text-[#F6F6F5] mb-2">Insurance Plans</h1>
+            <p class="text-[#F6F6F5]/60">Compare insurance plans from top providers</p>
+        </div>
+
+        <!-- Insurance Type Tabs -->
+        <div class="mb-8">
+            <div class="flex gap-4 border-b border-white/10">
+                <button onclick="showInsuranceType('life')" 
+                        class="px-4 py-2 text-[#F6F6F5] hover:text-[#BFE953] border-b-2 border-transparent insurance-tab active"
+                        data-type="life">
+                    Life Insurance
+                </button>
+                <button onclick="showInsuranceType('health')" 
+                        class="px-4 py-2 text-[#F6F6F5] hover:text-[#BFE953] border-b-2 border-transparent insurance-tab"
+                        data-type="health">
+                    Health Insurance
+                </button>
+                <button onclick="showInsuranceType('asset')" 
+                        class="px-4 py-2 text-[#F6F6F5] hover:text-[#BFE953] border-b-2 border-transparent insurance-tab"
+                        data-type="asset">
+                    Asset Insurance
+                </button>
+            </div>
+        </div>
+
+        <!-- Insurance Plans Grid -->
+        {% if companies %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for company in companies %}
+            <!-- Life Insurance Plans -->
+            <div class="insurance-plan life-plan">
+                <div class="bg-white/5 rounded-xl p-6 backdrop-blur-lg border border-white/10">
+                    <div class="flex items-center gap-4 mb-4">
+                        {% if company.logo %}
+                        <img src="{{ company.logo }}" alt="{{ company.name }}" class="w-12 h-12 rounded-lg">
+                        {% endif %}
+                        <div>
+                            <h3 class="text-lg font-semibold text-[#F6F6F5]">{{ company.plans.life.name }}</h3>
+                            <p class="text-sm text-[#F6F6F5]/60">{{ company.name }}</p>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-[#F6F6F5]/60">Coverage</span>
+                            <span class="text-[#F6F6F5]">${{ company.plans.life.coverage|floatformat:2 }}M</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-[#F6F6F5]/60">Monthly Premium</span>
+                            <span class="text-[#F6F6F5]">${{ company.plans.life.premium|floatformat:2 }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-[#F6F6F5]/60">Term</span>
+                            <span class="text-[#F6F6F5]">{{ company.plans.life.term }} years</span>
+                        </div>
+                    </div>
+                    <button onclick="applyForInsurance(this)" class="w-full mt-6 px-4 py-2 bg-[#BFE953] text-[#0F0F11] rounded-lg hover:bg-[#d6ff63] transition-all">
+                        Compare & Apply
+                    </button>
+                </div>
+            </div>
+
+            <!-- Health Insurance Plans -->
+            <div class="insurance-plan health-plan hidden">
+                <div class="bg-white/5 rounded-xl p-6 backdrop-blur-lg border border-white/10">
+                    <div class="flex items-center gap-4 mb-4">
+                        {% if company.logo %}
+                        <img src="{{ company.logo }}" alt="{{ company.name }}" class="w-12 h-12 rounded-lg">
+                        {% endif %}
+                        <div>
+                            <h3 class="text-lg font-semibold text-[#F6F6F5]">{{ company.plans.health.name }}</h3>
+                            <p class="text-sm text-[#F6F6F5]/60">{{ company.name }}</p>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-[#F6F6F5]/60">Coverage</span>
+                            <span class="text-[#F6F6F5]">${{ company.plans.health.coverage|floatformat:2 }}M</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-[#F6F6F5]/60">Monthly Premium</span>
+                            <span class="text-[#F6F6F5]">${{ company.plans.health.premium|floatformat:2 }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-[#F6F6F5]/60">Term</span>
+                            <span class="text-[#F6F6F5]">{{ company.plans.health.term }} years</span>
+                        </div>
+                    </div>
+                    <button onclick="applyForInsurance(this)" class="w-full mt-6 px-4 py-2 bg-[#BFE953] text-[#0F0F11] rounded-lg hover:bg-[#d6ff63] transition-all">
+                        Compare & Apply
+                    </button>
+                </div>
+            </div>
+
+            <!-- Asset Insurance Plans -->
+            <div class="insurance-plan asset-plan hidden">
+                <div class="bg-white/5 rounded-xl p-6 backdrop-blur-lg border border-white/10">
+                    <div class="flex items-center gap-4 mb-4">
+                        {% if company.logo %}
+                        <img src="{{ company.logo }}" alt="{{ company.name }}" class="w-12 h-12 rounded-lg">
+                        {% endif %}
+                        <div>
+                            <h3 class="text-lg font-semibold text-[#F6F6F5]">{{ company.plans.asset.name }}</h3>
+                            <p class="text-sm text-[#F6F6F5]/60">{{ company.name }}</p>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-[#F6F6F5]/60">Coverage</span>
+                            <span class="text-[#F6F6F5]">${{ company.plans.asset.coverage|floatformat:2 }}M</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-[#F6F6F5]/60">Monthly Premium</span>
+                            <span class="text-[#F6F6F5]">${{ company.plans.asset.premium|floatformat:2 }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-[#F6F6F5]/60">Term</span>
+                            <span class="text-[#F6F6F5]">{{ company.plans.asset.term }} years</span>
+                        </div>
+                    </div>
+                    <button onclick="applyForInsurance(this)" class="w-full mt-6 px-4 py-2 bg-[#BFE953] text-[#0F0F11] rounded-lg hover:bg-[#d6ff63] transition-all">
+                        Compare & Apply
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-12">
+            <p class="text-[#F6F6F5]/60">{{ error|default:"No insurance plans available at the moment." }}</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Add this modal HTML at the bottom of the template, before the scripts -->
+<div id="compareModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50">
+    <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl">
+        <div class="bg-[#1C1C1E] rounded-2xl p-6 shadow-xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-[#F6F6F5]">Compare & Apply Insurance</h3>
+                <button onclick="closeCompareModal()" class="text-[#F6F6F5]/60 hover:text-[#F6F6F5]">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div id="planDetails" class="mb-6">
+                <!-- Plan details will be inserted here -->
+            </div>
+            <div class="flex justify-end gap-4">
+                <button onclick="closeCompareModal()" class="px-4 py-2 text-[#F6F6F5] bg-white/10 rounded-lg hover:bg-white/20">
+                    Cancel
+                </button>
+                <button onclick="submitApplication()" id="submitBtn" class="px-4 py-2 bg-[#BFE953] text-[#0F0F11] rounded-lg hover:bg-[#d6ff63]">
+                    Confirm & Apply
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showInsuranceType(type) {
+    // Hide all plans
+    document.querySelectorAll('.insurance-plan').forEach(plan => {
+        plan.classList.add('hidden');
+    });
+    
+    // Show selected type plans
+    document.querySelectorAll(`.${type}-plan`).forEach(plan => {
+        plan.classList.remove('hidden');
+    });
+    
+    // Update tab styling
+    document.querySelectorAll('.insurance-tab').forEach(tab => {
+        tab.classList.remove('border-[#BFE953]', 'text-[#BFE953]');
+        if (tab.dataset.type === type) {
+            tab.classList.add('border-[#BFE953]', 'text-[#BFE953]');
+        }
+    });
+}
+
+// Show life insurance plans by default
+document.addEventListener('DOMContentLoaded', () => {
+    showInsuranceType('life');
+});
+
+let selectedPlan = null;
+
+function applyForInsurance(button) {
+    const planCard = button.closest('.insurance-plan');
+    const planType = planCard.classList.contains('life-plan') ? 'LIFE' :
+                    planCard.classList.contains('health-plan') ? 'HEALTH' : 'ASSET';
+    
+    selectedPlan = {
+        company: planCard.querySelector('p.text-sm').textContent.trim(),
+        planName: planCard.querySelector('h3').textContent.trim(),
+        coverage: planCard.querySelector('div:contains("Coverage") span:last-child').textContent.trim().replace('$', '').replace('M', ''),
+        premium: planCard.querySelector('div:contains("Premium") span:last-child').textContent.trim().replace('$', ''),
+        term: planCard.querySelector('div:contains("Term") span:last-child').textContent.trim().replace(' years', ''),
+        planType: planType
+    };
+
+    // Show plan details in modal
+    const planDetails = document.getElementById('planDetails');
+    planDetails.innerHTML = `
+        <div class="bg-white/5 rounded-lg p-4 space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <p class="text-[#F6F6F5]/60 text-sm">Insurance Provider</p>
+                    <p class="text-[#F6F6F5] font-medium">${selectedPlan.company}</p>
+                </div>
+                <div>
+                    <p class="text-[#F6F6F5]/60 text-sm">Plan Name</p>
+                    <p class="text-[#F6F6F5] font-medium">${selectedPlan.planName}</p>
+                </div>
+                <div>
+                    <p class="text-[#F6F6F5]/60 text-sm">Coverage Amount</p>
+                    <p class="text-[#F6F6F5] font-medium">$${selectedPlan.coverage}M</p>
+                </div>
+                <div>
+                    <p class="text-[#F6F6F5]/60 text-sm">Monthly Premium</p>
+                    <p class="text-[#F6F6F5] font-medium">$${selectedPlan.premium}</p>
+                </div>
+                <div>
+                    <p class="text-[#F6F6F5]/60 text-sm">Term</p>
+                    <p class="text-[#F6F6F5] font-medium">${selectedPlan.term} years</p>
+                </div>
+                <div>
+                    <p class="text-[#F6F6F5]/60 text-sm">Insurance Type</p>
+                    <p class="text-[#F6F6F5] font-medium">${selectedPlan.planType}</p>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Show modal
+    document.getElementById('compareModal').classList.remove('hidden');
+}
+
+function closeCompareModal() {
+    document.getElementById('compareModal').classList.add('hidden');
+    selectedPlan = null;
+}
+
+async function submitApplication() {
+    if (!selectedPlan) return;
+
+    const submitBtn = document.getElementById('submitBtn');
+    const originalText = submitBtn.innerHTML;
+    
+    try {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="inline-flex items-center"><i data-lucide="loader" class="animate-spin mr-2 h-4 w-4"></i>Applying...</span>';
+        lucide.createIcons();
+
+        const response = await fetch('{% url "insurance:apply_insurance" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: new URLSearchParams({
+                'company': selectedPlan.company,
+                'plan_type': selectedPlan.planType,
+                'plan_name': selectedPlan.planName,
+                'coverage': selectedPlan.coverage,
+                'premium': selectedPlan.premium,
+                'term': selectedPlan.term
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            showNotification('success', data.message);
+            closeCompareModal();
+            
+            // Update original button
+            const planCards = document.querySelectorAll('.insurance-plan');
+            planCards.forEach(card => {
+                if (card.querySelector('h3').textContent.trim() === selectedPlan.planName) {
+                    const btn = card.querySelector('button');
+                    btn.innerHTML = '<i data-lucide="check" class="w-5 h-5 mr-2"></i>Applied';
+                    btn.classList.add('bg-green-500', 'hover:bg-green-600');
+                    btn.disabled = true;
+                }
+            });
+        } else {
+            throw new Error(data.message);
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+        showNotification('error', error.message || 'Failed to apply for insurance.');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+        lucide.createIcons();
+    }
+}
+
+function showNotification(type, message) {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg ${
+        type === 'success' ? 'bg-green-500' : 'bg-red-500'
+    } text-white z-50 animate-fade-in-down`;
+    
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" 
+               class="w-5 h-5 mr-3"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    lucide.createIcons();
+    
+    setTimeout(() => {
+        notification.classList.add('animate-fade-out');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// Helper function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    showInsuranceType('life');
+    lucide.createIcons();
+});
+</script>
+{% endblock %} 
