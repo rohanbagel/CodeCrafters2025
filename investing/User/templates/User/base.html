@@ -598,102 +598,6 @@
                 transform: translateY(100%);
             }
         }
-
-        /* Navbar translator styles */
-        .translator-container-navbar {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        
-        .translator-button-navbar {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            padding: 8px 12px;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-        
-        .translator-button-navbar:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-        
-        .translator-panel {
-            position: absolute;
-            bottom: 100%;
-            left: 0;
-            width: 220px;
-            background-color: #161616;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(10px);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-        
-        .translator-panel.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        
-        /* Update other translator styles as needed */
-        .translator-label {
-            font-size: 14px;
-            font-weight: 600;
-            color: #F6F6F5;
-            margin-bottom: 10px;
-        }
-        
-        .language-list {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-        }
-        
-        .language-option {
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s;
-            background-color: #1E1E1E;
-            color: #F6F6F5;
-        }
-        
-        .language-option:hover {
-            background-color: #2A2A2A;
-        }
-        
-        .language-option.active {
-            background-color: #BFE953;
-            color: #0F0F11;
-        }
-
-        /* Hide Google elements */
-        .goog-te-banner-frame,
-        .skiptranslate,
-        iframe.skiptranslate {
-            display: none !important;
-            visibility: hidden !important;
-        }
-        
-        body {
-            top: 0 !important;
-            position: static !important;
-        }
-        
-        /* GTranslate custom styles */
-        .gt_float_switcher {
-            display: none !important;
-        }
     </style>
 </head>
 <body class="flex min-h-screen flex-col bg-[#0F0F11] text-[#F6F6F5]">
@@ -895,19 +799,6 @@
             </ul>
         </div>
         
-        <!-- Insurance section -->
-        <div class="nav-category">
-            <div class="category-title">Insurance</div>
-            <ul class="nav-links">
-                <li>
-                    <a href="{% url 'insurance:insurance' %}" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/5 transition-all {% if request.resolver_match.url_name == 'insurance' %}bg-white/5 text-[#BFE953]{% endif %}">
-                        <i data-lucide="shield" class="h-5 w-5"></i>
-                        <span>Insurance Plans</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-        
         <!-- Add Risk Analysis button -->
         <div class="nav-category">
             <div class="category-title">Risk Analysis</div>
@@ -922,18 +813,6 @@
         </div>
         
         <div class="sidebar-footer">
-            <div class="translator-container-navbar">
-                <div id="translatorButton" class="translator-button-navbar">
-                    <i data-lucide="globe" class="h-5 w-5"></i>
-                    <span>Language</span>
-                </div>
-                <div id="translatorPanel" class="translator-panel">
-                    <div class="translator-label">Select Language</div>
-                    <div class="language-list" id="languageList">
-                        <!-- Languages will be populated by JavaScript -->
-                    </div>
-                </div>
-            </div>
             <a href="#"><i class="fas fa-question-circle"></i> Help</a>
             <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
@@ -979,27 +858,6 @@
                     <i data-lucide="send" class="h-5 w-5"></i>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- GTranslate: A more reliable solution -->
-    <div id="gt-custom-selector" style="display:none;">
-        <div id="google_translate_element"></div>
-        <div class="gt_custom_links">
-            <a href="#" onclick="doGTranslate('en|en');return false;" title="English">English</a>
-            <a href="#" onclick="doGTranslate('en|hi');return false;" title="Hindi">हिन्दी</a>
-            <a href="#" onclick="doGTranslate('en|bn');return false;" title="Bengali">বাংলা</a>
-            <a href="#" onclick="doGTranslate('en|ta');return false;" title="Tamil">தமிழ்</a>
-            <a href="#" onclick="doGTranslate('en|te');return false;" title="Telugu">తెలుగు</a>
-            <a href="#" onclick="doGTranslate('en|ml');return false;" title="Malayalam">മലയാളം</a>
-            <a href="#" onclick="doGTranslate('en|gu');return false;" title="Gujarati">ગુજરાતી</a>
-            <a href="#" onclick="doGTranslate('en|mr');return false;" title="Marathi">मराठी</a>
-            <a href="#" onclick="doGTranslate('en|pa');return false;" title="Punjabi">ਪੰਜਾਬੀ</a>
-            <a href="#" onclick="doGTranslate('en|kn');return false;" title="Kannada">ಕನ್ನಡ</a>
-            <a href="#" onclick="doGTranslate('en|ur');return false;" title="Urdu">اردو</a>
-            <a href="#" onclick="doGTranslate('en|es');return false;" title="Spanish">Español</a>
-            <a href="#" onclick="doGTranslate('en|fr');return false;" title="French">Français</a>
-            <a href="#" onclick="doGTranslate('en|zh-CN');return false;" title="Chinese">中文</a>
         </div>
     </div>
 
@@ -1202,145 +1060,6 @@
                 }
             });
         });
-
-        // Custom language selector implementation
-        document.addEventListener('DOMContentLoaded', function() {
-            const translatorButton = document.getElementById('translatorButton');
-            const translatorPanel = document.getElementById('translatorPanel');
-            const languageList = document.getElementById('languageList');
-            
-            // Define languages
-            const languages = [
-                { code: 'en', name: 'English' },
-                { code: 'hi', name: 'हिन्दी' },
-                { code: 'bn', name: 'বাংলা' },
-                { code: 'ta', name: 'தமிழ்' },
-                { code: 'te', name: 'తెలుగు' },
-                { code: 'ml', name: 'മലയാളം' },
-                { code: 'gu', name: 'ગુજરાતી' },
-                { code: 'mr', name: 'मराठी' },
-                { code: 'pa', name: 'ਪੰਜਾਬੀ' },
-                { code: 'kn', name: 'ಕನ್ನಡ' },
-                { code: 'ur', name: 'اردو' },
-                { code: 'es', name: 'Español' },
-                { code: 'fr', name: 'Français' },
-                { code: 'zh-CN', name: '中文' }
-            ];
-            
-            // Populate language list
-            languages.forEach(lang => {
-                const langElement = document.createElement('div');
-                langElement.className = 'language-option';
-                langElement.textContent = lang.name;
-                langElement.dataset.langCode = lang.code;
-                
-                // Add click event
-                langElement.addEventListener('click', function() {
-                    // Use GTranslate function
-                    doGTranslate('en|' + lang.code);
-                    
-                    // Update active state
-                    document.querySelectorAll('.language-option').forEach(el => {
-                        el.classList.remove('active');
-                    });
-                    langElement.classList.add('active');
-                    
-                    // Close panel
-                    setTimeout(() => {
-                        translatorPanel.classList.remove('active');
-                    }, 300);
-                });
-                
-                languageList.appendChild(langElement);
-            });
-            
-            // Toggle translator panel
-            translatorButton.addEventListener('click', function(e) {
-                e.stopPropagation();
-                translatorPanel.classList.toggle('active');
-            });
-            
-            // Close translator panel when clicking outside
-            document.addEventListener('click', function(event) {
-                if (!event.target.closest('.translator-container-navbar') && translatorPanel.classList.contains('active')) {
-                    translatorPanel.classList.remove('active');
-                }
-            });
-        });
-        
-        // Function to change Google Translate language
-        function changeGoogleTranslateLanguage(langCode) {
-            if (langCode === 'en') {
-                // If English, reset to original
-                const iframe = document.querySelector('.goog-te-menu-frame');
-                if (iframe) {
-                    const innerDoc = iframe.contentDocument || iframe.contentWindow.document;
-                    const resetLink = innerDoc.querySelector('a.goog-te-menu2-item[data-value=""]');
-                    if (resetLink) {
-                        resetLink.click();
-                    }
-                }
-                return;
-            }
-            
-            // Set cookies for Google Translate
-            document.cookie = `googtrans=/auto/${langCode}; path=/; domain=${location.hostname}`;
-            document.cookie = `googtrans=/auto/${langCode}; path=/;`;
-            
-            // Force reload to apply translation
-            location.reload();
-        }
-    </script>
-    
-    <!-- GTranslate Script -->
-    <script type="text/javascript">
-    /* <![CDATA[ */
-    function doGTranslate(lang_pair) {
-        if(lang_pair.value) lang_pair = lang_pair.value;
-        if(lang_pair == '') return;
-        var lang = lang_pair.split('|')[1];
-        
-        // Create the cookie
-        var now = new Date();
-        var expiry = new Date(now.getTime() + 999*24*60*60*1000);
-        document.cookie = 'googtrans=/en/' + lang + ';expires=' + expiry.toGMTString() + ';path=/;domain=.' + location.hostname;
-        document.cookie = 'googtrans=/en/' + lang + ';expires=' + expiry.toGMTString() + ';path=/;domain=' + location.hostname;
-        document.cookie = 'googtrans=/en/' + lang + ';expires=' + expiry.toGMTString() + ';path=/;';
-        
-        // Reload the page to apply translation
-        window.location.reload();
-    }
-
-    // Initialize Google Translate
-    function googleTranslateElementInit2() {
-        new google.translate.TranslateElement({
-            pageLanguage: 'en',
-            autoDisplay: false
-        }, 'google_translate_element');
-    }
-    /* ]]> */
-    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit2"></script>
-
-    <!-- Add this script to the head section -->
-    <script>
-        // Inject CSS early to prevent Google Translate bar from showing
-        (function() {
-            const style = document.createElement('style');
-            style.textContent = `
-                .goog-te-banner-frame, 
-                .skiptranslate,
-                iframe.skiptranslate {
-                    display: none !important;
-                    visibility: hidden !important;
-                }
-                body {
-                    top: 0 !important;
-                    position: static !important;
-                }
-            `;
-            document.head.appendChild(style);
-        })();
     </script>
 </body>
 </html>

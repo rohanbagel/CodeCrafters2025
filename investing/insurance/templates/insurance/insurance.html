@@ -6,45 +6,45 @@
     <div class="max-w-7xl mx-auto">
         <!-- Header -->
         <div class="mb-8">
-            <div class="flex justify-between items-center">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center">
                 <div>
-                    <h1 class="text-2xl md:text-3xl font-bold text-[#F6F6F5] mb-2">Insurance Plans</h1>
-                    <p class="text-[#F6F6F5]/60">Compare insurance plans from top providers</p>
+                    <h1 class="text-3xl md:text-4xl font-bold text-[#F6F6F5] mb-2">Insurance Plans</h1>
+                    <p class="text-[#F6F6F5]/60 text-lg">Compare insurance plans from top providers</p>
                 </div>
                 <a href="{% url 'insurance:my_policies' %}" 
-                   class="flex items-center space-x-2 px-4 py-2 bg-white/10 text-[#F6F6F5] rounded-lg hover:bg-white/20 transition-all">
-                    <i data-lucide="shield" class="w-4 h-4"></i>
-                    <span>My Applied Policies</span>
+                   class="flex items-center space-x-2 px-6 py-3 bg-[#BFE953] text-[#0F0F11] rounded-lg hover:bg-[#d6ff63] transition-all mt-4 sm:mt-0">
+                    <i data-lucide="shield" class="w-5 h-5"></i>
+                    <span class="font-medium">My Applied Policies</span>
                 </a>
             </div>
         </div>
 
         <!-- Insurance Type Tabs -->
         <div class="mb-8">
-            <div class="flex gap-4 border-b border-white/10">
+            <div class="flex gap-4 border-b border-white/10 overflow-x-auto">
                 <button onclick="showInsuranceType('life')" 
-                        class="px-4 py-2 text-[#F6F6F5] hover:text-[#BFE953] border-b-2 border-transparent insurance-tab active"
+                        class="px-6 py-3 text-[#F6F6F5] hover:text-[#BFE953] border-b-2 border-transparent insurance-tab active transition-all whitespace-nowrap"
                         data-type="life">
                     Life Insurance
                 </button>
                 <button onclick="showInsuranceType('health')" 
-                        class="px-4 py-2 text-[#F6F6F5] hover:text-[#BFE953] border-b-2 border-transparent insurance-tab"
+                        class="px-6 py-3 text-[#F6F6F5] hover:text-[#BFE953] border-b-2 border-transparent insurance-tab transition-all whitespace-nowrap"
                         data-type="health">
                     Health Insurance
                 </button>
                 <button onclick="showInsuranceType('asset')" 
-                        class="px-4 py-2 text-[#F6F6F5] hover:text-[#BFE953] border-b-2 border-transparent insurance-tab"
+                        class="px-6 py-3 text-[#F6F6F5] hover:text-[#BFE953] border-b-2 border-transparent insurance-tab transition-all whitespace-nowrap"
                         data-type="asset">
                     Asset Insurance
                 </button>
             </div>
         </div>
 
-        <!-- Add this button at the top of the plans section -->
-        <div class="flex justify-end mb-4">
+        <!-- Compare Button -->
+        <div class="flex justify-end mb-6">
             <button id="compareButton" 
                     onclick="compareSelectedPlans()" 
-                    class="px-4 py-2 bg-[#BFE953] text-[#0F0F11] rounded-lg hover:bg-[#d6ff63] hidden">
+                    class="px-6 py-3 bg-[#BFE953] text-[#0F0F11] rounded-lg hover:bg-[#d6ff63] transition-all hidden">
                 Compare Selected Plans
             </button>
         </div>
@@ -55,14 +55,14 @@
             {% for company in companies %}
             <!-- Life Insurance Plans -->
             <div class="insurance-plan life-plan">
-                <div class="bg-white/5 rounded-xl p-6 backdrop-blur-lg border border-white/10 relative">
+                <div class="bg-white/5 rounded-xl p-6 backdrop-blur-lg border border-white/10 hover:border-[#BFE953] transition-all relative">
                     <div class="absolute top-4 right-4">
                         <input type="checkbox" 
                                onchange="handlePlanSelection(this)" 
-                               class="w-5 h-5 rounded border-white/10 bg-white/5 text-[#BFE953]">
+                               class="w-5 h-5 rounded border-white/10 bg-white/5 text-[#BFE953] focus:ring-[#BFE953]">
                     </div>
                     <p class="text-sm text-[#F6F6F5]/60">{{ company.name }}</p>
-                    <h3 class="text-lg font-semibold text-[#F6F6F5] mt-2">{{ company.plans.life.name }}</h3>
+                    <h3 class="text-xl font-semibold text-[#F6F6F5] mt-2">{{ company.plans.life.name }}</h3>
                     <div class="mt-4 space-y-2">
                         <div class="flex justify-between">
                             <span class="text-[#F6F6F5]/60">Coverage</span>
@@ -78,7 +78,7 @@
                         </div>
                     </div>
                     <button onclick="handlePlanAction(this)" 
-                            class="w-full mt-6 px-4 py-2 bg-[#BFE953] text-[#0F0F11] rounded-lg hover:bg-[#d6ff63]">
+                            class="w-full mt-6 px-4 py-2 bg-[#BFE953] text-[#0F0F11] rounded-lg hover:bg-[#d6ff63] transition-all">
                         Compare & Apply
                     </button>
                 </div>
@@ -86,13 +86,13 @@
 
             <!-- Health Insurance Plans -->
             <div class="insurance-plan health-plan hidden">
-                <div class="bg-white/5 rounded-xl p-6 backdrop-blur-lg border border-white/10">
+                <div class="bg-white/5 rounded-xl p-6 backdrop-blur-lg border border-white/10 hover:border-[#BFE953] transition-all">
                     <div class="flex items-center gap-4 mb-4">
                         {% if company.logo %}
                         <img src="{{ company.logo }}" alt="{{ company.name }}" class="w-12 h-12 rounded-lg">
                         {% endif %}
                         <div>
-                            <h3 class="text-lg font-semibold text-[#F6F6F5]">{{ company.plans.health.name }}</h3>
+                            <h3 class="text-xl font-semibold text-[#F6F6F5]">{{ company.plans.health.name }}</h3>
                             <p class="text-sm text-[#F6F6F5]/60">{{ company.name }}</p>
                         </div>
                     </div>
@@ -119,13 +119,13 @@
 
             <!-- Asset Insurance Plans -->
             <div class="insurance-plan asset-plan hidden">
-                <div class="bg-white/5 rounded-xl p-6 backdrop-blur-lg border border-white/10">
+                <div class="bg-white/5 rounded-xl p-6 backdrop-blur-lg border border-white/10 hover:border-[#BFE953] transition-all">
                     <div class="flex items-center gap-4 mb-4">
                         {% if company.logo %}
                         <img src="{{ company.logo }}" alt="{{ company.name }}" class="w-12 h-12 rounded-lg">
                         {% endif %}
                         <div>
-                            <h3 class="text-lg font-semibold text-[#F6F6F5]">{{ company.plans.asset.name }}</h3>
+                            <h3 class="text-xl font-semibold text-[#F6F6F5]">{{ company.plans.asset.name }}</h3>
                             <p class="text-sm text-[#F6F6F5]/60">{{ company.name }}</p>
                         </div>
                     </div>

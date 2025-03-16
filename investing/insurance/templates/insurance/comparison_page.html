@@ -3,17 +3,23 @@
 
 {% block content %}
 <div class="p-4 sm:p-6 md:p-8">
-    <div class="max-w-7xl mx-auto">
+    <div class="max-w-7xl mx-auto space-y-8">
         <!-- Header -->
-        <div class="mb-8">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h1 class="text-2xl md:text-3xl font-bold text-[#F6F6F5] mb-2">Insurance Plan Comparison</h1>
-                    <p class="text-[#F6F6F5]/60">Compare and apply for insurance plans</p>
+        <div class="bg-white/5 rounded-2xl p-6 backdrop-blur-lg border border-white/10">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+                <div class="flex items-start gap-4">
+                    <div class="h-12 w-12 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                        <i data-lucide="clipboard-list" class="h-6 w-6 text-[#BFE953]"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl md:text-4xl font-bold text-[#F6F6F5] mb-2">Insurance Plan Comparison</h1>
+                        <p class="text-[#F6F6F5]/60 text-lg">Compare and apply for insurance plans</p>
+                    </div>
                 </div>
                 <a href="{% url 'insurance:insurance' %}" 
-                   class="px-4 py-2 text-[#F6F6F5] bg-white/10 rounded-lg hover:bg-white/20">
-                    Back to Plans
+                   class="group flex items-center gap-2 px-6 py-3 bg-[#BFE953] text-[#0F0F11] rounded-lg hover:bg-[#d6ff63] transition-all">
+                    <i data-lucide="arrow-left" class="h-5 w-5 transition-transform group-hover:-translate-x-1"></i>
+                    <span class="font-medium">Back to Plans</span>
                 </a>
             </div>
         </div>
@@ -33,7 +39,13 @@
         </script>
 
         <!-- Comparison Table -->
-        <div class="bg-white/5 rounded-xl p-6 backdrop-blur-lg border border-white/10 mb-8">
+        <div class="bg-white/5 rounded-2xl p-6 backdrop-blur-lg border border-white/10">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                    <i data-lucide="git-compare" class="h-5 w-5 text-[#BFE953]"></i>
+                </div>
+                <h2 class="text-xl font-bold text-[#F6F6F5]">Plan Comparison</h2>
+            </div>
             <div class="overflow-x-auto">
                 <table class="w-full" id="comparisonTable">
                     <!-- Table content will be populated by JavaScript -->
@@ -42,8 +54,16 @@
         </div>
 
         <!-- Application Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="applicationCards">
-            <!-- Cards will be populated by JavaScript -->
+        <div>
+            <div class="flex items-center gap-3 mb-6">
+                <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                    <i data-lucide="file-check" class="h-5 w-5 text-[#BFE953]"></i>
+                </div>
+                <h2 class="text-xl font-bold text-[#F6F6F5]">Apply for Insurance</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="applicationCards">
+                <!-- Cards will be populated by JavaScript -->
+            </div>
         </div>
     </div>
 </div>
@@ -53,7 +73,13 @@
 function populateComparisonTable() {
     const table = document.getElementById('comparisonTable');
     if (!selectedPlans || selectedPlans.length === 0) {
-        table.innerHTML = '<p class="text-center text-[#F6F6F5]/60 py-4">No plans selected for comparison.</p>';
+        table.innerHTML = `
+            <div class="flex flex-col items-center justify-center py-8 gap-4">
+                <div class="h-16 w-16 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                    <i data-lucide="file-question" class="h-8 w-8 text-[#BFE953]"></i>
+                </div>
+                <p class="text-center text-[#F6F6F5]/60">No plans selected for comparison.</p>
+            </div>`;
         return;
     }
 
@@ -67,34 +93,38 @@ function populateComparisonTable() {
             </tr>
         </thead>
         <tbody class="divide-y divide-white/10">
-            <tr>
+            <tr class="hover:bg-white/5 transition-all">
                 <td class="py-4 px-4 text-[#F6F6F5]/60">Plan Name</td>
                 ${selectedPlans.map(plan => `
-                    <td class="py-4 px-4 text-[#F6F6F5]">${plan.planName}</td>
+                    <td class="py-4 px-4 text-[#F6F6F5] font-medium">${plan.planName}</td>
                 `).join('')}
             </tr>
-            <tr>
+            <tr class="hover:bg-white/5 transition-all">
                 <td class="py-4 px-4 text-[#F6F6F5]/60">Insurance Type</td>
                 ${selectedPlans.map(plan => `
-                    <td class="py-4 px-4 text-[#F6F6F5]">${plan.type}</td>
+                    <td class="py-4 px-4">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium bg-[#BFE953]/10 text-[#BFE953]">
+                            ${plan.type}
+                        </span>
+                    </td>
                 `).join('')}
             </tr>
-            <tr>
+            <tr class="hover:bg-white/5 transition-all">
                 <td class="py-4 px-4 text-[#F6F6F5]/60">Coverage Amount</td>
                 ${selectedPlans.map(plan => `
-                    <td class="py-4 px-4 text-[#F6F6F5]">${plan.coverage}</td>
+                    <td class="py-4 px-4 text-[#F6F6F5] font-medium">${plan.coverage}</td>
                 `).join('')}
             </tr>
-            <tr>
+            <tr class="hover:bg-white/5 transition-all">
                 <td class="py-4 px-4 text-[#F6F6F5]/60">Monthly Premium</td>
                 ${selectedPlans.map(plan => `
-                    <td class="py-4 px-4 text-[#F6F6F5]">${plan.premium}</td>
+                    <td class="py-4 px-4 text-[#F6F6F5] font-medium">${plan.premium}</td>
                 `).join('')}
             </tr>
-            <tr>
+            <tr class="hover:bg-white/5 transition-all">
                 <td class="py-4 px-4 text-[#F6F6F5]/60">Term</td>
                 ${selectedPlans.map(plan => `
-                    <td class="py-4 px-4 text-[#F6F6F5]">${plan.term}</td>
+                    <td class="py-4 px-4 text-[#F6F6F5] font-medium">${plan.term}</td>
                 `).join('')}
             </tr>
         </tbody>
@@ -106,21 +136,47 @@ function populateComparisonTable() {
 function populateApplicationCards() {
     const cardsContainer = document.getElementById('applicationCards');
     if (!selectedPlans || selectedPlans.length === 0) {
-        cardsContainer.innerHTML = '<p class="text-center text-[#F6F6F5]/60 col-span-full">No plans selected for comparison.</p>';
+        cardsContainer.innerHTML = `
+            <div class="col-span-full flex flex-col items-center justify-center py-8 gap-4">
+                <div class="h-16 w-16 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                    <i data-lucide="file-question" class="h-8 w-8 text-[#BFE953]"></i>
+                </div>
+                <p class="text-center text-[#F6F6F5]/60">No plans selected for comparison.</p>
+            </div>`;
         return;
     }
 
     cardsContainer.innerHTML = selectedPlans.map(plan => `
-        <div class="bg-white/5 rounded-xl p-6 backdrop-blur-lg border border-white/10">
-            <h3 class="text-lg font-semibold text-[#F6F6F5] mb-4">${plan.planName}</h3>
-            <div class="space-y-2 mb-6">
-                <p class="text-[#F6F6F5]/60">Provider: <span class="text-[#F6F6F5]">${plan.company}</span></p>
-                <p class="text-[#F6F6F5]/60">Type: <span class="text-[#F6F6F5]">${plan.type}</span></p>
-                <p class="text-[#F6F6F5]/60">Coverage: <span class="text-[#F6F6F5]">${plan.coverage}</span></p>
+        <div class="bg-white/5 rounded-xl p-6 backdrop-blur-lg border border-white/10 hover:border-[#BFE953] transition-all group">
+            <div class="flex items-start justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                        <i data-lucide="shield" class="h-5 w-5 text-[#BFE953]"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-[#F6F6F5]">${plan.planName}</h3>
+                        <p class="text-[#F6F6F5]/60">${plan.company}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="space-y-3 mb-6">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="check-circle" class="h-5 w-5 text-[#BFE953]"></i>
+                    <p class="text-[#F6F6F5]/60">Type: <span class="text-[#F6F6F5]">${plan.type}</span></p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <i data-lucide="check-circle" class="h-5 w-5 text-[#BFE953]"></i>
+                    <p class="text-[#F6F6F5]/60">Coverage: <span class="text-[#F6F6F5]">${plan.coverage}</span></p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <i data-lucide="check-circle" class="h-5 w-5 text-[#BFE953]"></i>
+                    <p class="text-[#F6F6F5]/60">Premium: <span class="text-[#F6F6F5]">${plan.premium}</span></p>
+                </div>
             </div>
             <button onclick="applyForInsurance(this)" 
                     data-plan='${JSON.stringify(plan)}'
-                    class="w-full px-4 py-2 bg-[#BFE953] text-[#0F0F11] rounded-lg hover:bg-[#d6ff63] transition-all">
+                    class="w-full px-4 py-3 bg-[#BFE953] text-[#0F0F11] rounded-lg hover:bg-[#d6ff63] transition-all flex items-center justify-center gap-2 font-medium">
+                <i data-lucide="check" class="h-5 w-5"></i>
                 Apply Now
             </button>
         </div>

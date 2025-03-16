@@ -2,200 +2,256 @@
 {% load static %}
 
 {% block content %}
-<div class="content-wrapper">
-    <div class="content-header">
-        <h1 class="text-2xl font-bold text-[#BFE953] mb-4">Risk Profile Settings</h1>
-        <p class="text-[#F6F6F5]/70 mb-6">Customize your risk parameters and notification preferences</p>
-    </div>
-    
-    <div class="bg-[#1A1A1A] rounded-xl p-6 shadow-lg border border-[#333] mb-8">
-        <form method="post" class="space-y-6">
-            {% csrf_token %}
-            
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="p-4 mb-4 rounded-lg {% if message.tags == 'success' %}bg-green-900/30 text-green-400 border border-green-800{% else %}bg-red-900/30 text-red-400 border border-red-800{% endif %}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-            
-            <div>
-                <h2 class="text-xl font-semibold text-[#F6F6F5] mb-4">Risk Tolerance</h2>
-                <div class="mb-4">
-                    <label for="{{ form.risk_tolerance.id_for_label }}" class="block text-[#F6F6F5]/70 mb-2">
-                        Risk Tolerance Level (1-10)
-                    </label>
-                    <div class="flex items-center space-x-4">
-                        <span class="text-sm text-[#F6F6F5]/50">Conservative</span>
-                        <input type="range" min="1" max="10" 
-                               name="{{ form.risk_tolerance.html_name }}" 
-                               id="{{ form.risk_tolerance.id_for_label }}" 
-                               value="{{ form.risk_tolerance.value }}"
-                               class="w-full h-2 bg-[#333] rounded-lg appearance-none cursor-pointer">
-                        <span class="text-sm text-[#F6F6F5]/50">Aggressive</span>
-                    </div>
-                    <div class="text-center mt-2">
-                        <span id="riskToleranceValue" class="text-lg font-medium text-[#BFE953]">{{ form.risk_tolerance.value }}</span>
-                    </div>
-                    {% if form.risk_tolerance.errors %}
-                        <p class="text-red-500 text-sm mt-1">{{ form.risk_tolerance.errors.0 }}</p>
-                    {% endif %}
+<div class="p-4 sm:p-6 md:p-8">
+    <div class="max-w-7xl mx-auto space-y-8">
+        <!-- Header -->
+        <div class="bg-white/5 rounded-2xl p-6 backdrop-blur-lg border border-white/10">
+            <div class="flex items-start gap-4">
+                <div class="h-12 w-12 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                    <i data-lucide="settings" class="h-6 w-6 text-[#BFE953]"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-bold text-[#F6F6F5] mb-2">Risk Profile Settings</h1>
+                    <p class="text-[#F6F6F5]/60 text-lg">Customize your risk parameters and notification preferences</p>
                 </div>
             </div>
-            
-            <div class="border-t border-[#333] pt-6">
-                <h2 class="text-xl font-semibold text-[#F6F6F5] mb-4">Alert Thresholds</h2>
+        </div>
+
+        <!-- Settings Form -->
+        <div class="bg-white/5 rounded-2xl backdrop-blur-lg border border-white/10">
+            <form method="post" class="divide-y divide-white/10">
+                {% csrf_token %}
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="{{ form.volatility_threshold.id_for_label }}" class="block text-[#F6F6F5]/70 mb-2">
-                            Volatility Threshold (%)
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="p-6 {% if message.tags == 'success' %}bg-green-500/10 border-green-500/20 text-green-400{% else %}bg-red-500/10 border-red-500/20 text-red-400{% endif %} border rounded-xl mb-6 flex items-center gap-3">
+                            <i data-lucide="{% if message.tags == 'success' %}check-circle{% else %}alert-circle{% endif %}" class="h-5 w-5"></i>
+                            <p class="text-sm font-medium">{{ message }}</p>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <!-- Risk Tolerance Section -->
+                <div class="p-6">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                            <i data-lucide="gauge" class="h-5 w-5 text-[#BFE953]"></i>
+                        </div>
+                        <h2 class="text-xl font-semibold text-[#F6F6F5]">Risk Tolerance</h2>
+                    </div>
+
+                    <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                        <label for="{{ form.risk_tolerance.id_for_label }}" class="block text-[#F6F6F5] mb-4 font-medium">
+                            Risk Tolerance Level (1-10)
                         </label>
-                        <div class="relative">
-                            <input type="number" step="0.1" min="0.1" 
-                                   name="{{ form.volatility_threshold.html_name }}" 
-                                   id="{{ form.volatility_threshold.id_for_label }}" 
-                                   value="{{ form.volatility_threshold.value }}"
-                                   class="w-full bg-[#222] border border-[#333] rounded-lg py-3 px-4 text-[#F6F6F5] focus:outline-none focus:border-[#BFE953]">
-                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                <span class="text-[#F6F6F5]/50">%</span>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-4">
+                                <span class="text-sm text-[#F6F6F5]/60">Conservative</span>
+                                <div class="flex-grow">
+                                    <input type="range" min="1" max="10" 
+                                           name="{{ form.risk_tolerance.html_name }}" 
+                                           id="{{ form.risk_tolerance.id_for_label }}" 
+                                           value="{{ form.risk_tolerance.value }}"
+                                           class="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-[#BFE953]">
+                                </div>
+                                <span class="text-sm text-[#F6F6F5]/60">Aggressive</span>
+                            </div>
+                            <div class="flex justify-center">
+                                <span id="riskToleranceValue" class="text-2xl font-semibold text-[#BFE953]">{{ form.risk_tolerance.value }}</span>
                             </div>
                         </div>
-                        <p class="text-[#F6F6F5]/50 text-sm mt-1">Alert when stock volatility exceeds this percentage</p>
-                        {% if form.volatility_threshold.errors %}
-                            <p class="text-red-500 text-sm mt-1">{{ form.volatility_threshold.errors.0 }}</p>
+                        {% if form.risk_tolerance.errors %}
+                            <p class="mt-2 text-sm text-red-400">{{ form.risk_tolerance.errors.0 }}</p>
                         {% endif %}
                     </div>
-                    
-                    <div>
-                        <label for="{{ form.price_drop_threshold.id_for_label }}" class="block text-[#F6F6F5]/70 mb-2">
-                            Price Drop Threshold (%)
-                        </label>
-                        <div class="relative">
-                            <input type="number" step="0.1" min="0.1" 
-                                   name="{{ form.price_drop_threshold.html_name }}" 
-                                   id="{{ form.price_drop_threshold.id_for_label }}" 
-                                   value="{{ form.price_drop_threshold.value }}"
-                                   class="w-full bg-[#222] border border-[#333] rounded-lg py-3 px-4 text-[#F6F6F5] focus:outline-none focus:border-[#BFE953]">
-                            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                                <span class="text-[#F6F6F5]/50">%</span>
+                </div>
+
+                <!-- Alert Thresholds Section -->
+                <div class="p-6">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                            <i data-lucide="bell" class="h-5 w-5 text-[#BFE953]"></i>
+                        </div>
+                        <h2 class="text-xl font-semibold text-[#F6F6F5]">Alert Thresholds</h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                            <label for="{{ form.volatility_threshold.id_for_label }}" class="block text-[#F6F6F5] mb-2 font-medium">
+                                Volatility Threshold
+                            </label>
+                            <div class="relative">
+                                <input type="number" step="0.1" min="0.1" 
+                                       name="{{ form.volatility_threshold.html_name }}" 
+                                       id="{{ form.volatility_threshold.id_for_label }}" 
+                                       value="{{ form.volatility_threshold.value }}"
+                                       class="w-full bg-white/5 border border-white/10 rounded-lg py-3 px-4 text-[#F6F6F5] focus:outline-none focus:border-[#BFE953] focus:ring-1 focus:ring-[#BFE953] pr-12">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-4">
+                                    <span class="text-[#F6F6F5]/60">%</span>
+                                </div>
+                            </div>
+                            <p class="mt-2 text-sm text-[#F6F6F5]/60">Alert when stock volatility exceeds this percentage</p>
+                            {% if form.volatility_threshold.errors %}
+                                <p class="mt-2 text-sm text-red-400">{{ form.volatility_threshold.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                            <label for="{{ form.price_drop_threshold.id_for_label }}" class="block text-[#F6F6F5] mb-2 font-medium">
+                                Price Drop Threshold
+                            </label>
+                            <div class="relative">
+                                <input type="number" step="0.1" min="0.1" 
+                                       name="{{ form.price_drop_threshold.html_name }}" 
+                                       id="{{ form.price_drop_threshold.id_for_label }}" 
+                                       value="{{ form.price_drop_threshold.value }}"
+                                       class="w-full bg-white/5 border border-white/10 rounded-lg py-3 px-4 text-[#F6F6F5] focus:outline-none focus:border-[#BFE953] focus:ring-1 focus:ring-[#BFE953] pr-12">
+                                <div class="absolute inset-y-0 right-0 flex items-center pr-4">
+                                    <span class="text-[#F6F6F5]/60">%</span>
+                                </div>
+                            </div>
+                            <p class="mt-2 text-sm text-[#F6F6F5]/60">Alert when stock price drops by this percentage</p>
+                            {% if form.price_drop_threshold.errors %}
+                                <p class="mt-2 text-sm text-red-400">{{ form.price_drop_threshold.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Technical Indicators Section -->
+                <div class="p-6">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                            <i data-lucide="activity" class="h-5 w-5 text-[#BFE953]"></i>
+                        </div>
+                        <h2 class="text-xl font-semibold text-[#F6F6F5]">Technical Indicators</h2>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                            <label for="{{ form.rsi_lower_threshold.id_for_label }}" class="block text-[#F6F6F5] mb-2 font-medium">
+                                RSI Lower Threshold
+                            </label>
+                            <input type="number" min="0" max="100" 
+                                   name="{{ form.rsi_lower_threshold.html_name }}" 
+                                   id="{{ form.rsi_lower_threshold.id_for_label }}" 
+                                   value="{{ form.rsi_lower_threshold.value }}"
+                                   class="w-full bg-white/5 border border-white/10 rounded-lg py-3 px-4 text-[#F6F6F5] focus:outline-none focus:border-[#BFE953] focus:ring-1 focus:ring-[#BFE953]">
+                            <p class="mt-2 text-sm text-[#F6F6F5]/60">Alert when RSI falls below this value (oversold)</p>
+                            {% if form.rsi_lower_threshold.errors %}
+                                <p class="mt-2 text-sm text-red-400">{{ form.rsi_lower_threshold.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+
+                        <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                            <label for="{{ form.rsi_upper_threshold.id_for_label }}" class="block text-[#F6F6F5] mb-2 font-medium">
+                                RSI Upper Threshold
+                            </label>
+                            <input type="number" min="0" max="100" 
+                                   name="{{ form.rsi_upper_threshold.html_name }}" 
+                                   id="{{ form.rsi_upper_threshold.id_for_label }}" 
+                                   value="{{ form.rsi_upper_threshold.value }}"
+                                   class="w-full bg-white/5 border border-white/10 rounded-lg py-3 px-4 text-[#F6F6F5] focus:outline-none focus:border-[#BFE953] focus:ring-1 focus:ring-[#BFE953]">
+                            <p class="mt-2 text-sm text-[#F6F6F5]/60">Alert when RSI rises above this value (overbought)</p>
+                            {% if form.rsi_upper_threshold.errors %}
+                                <p class="mt-2 text-sm text-red-400">{{ form.rsi_upper_threshold.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Exit Strategy Section -->
+                <div class="p-6">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                            <i data-lucide="brain" class="h-5 w-5 text-[#BFE953]"></i>
+                        </div>
+                        <h2 class="text-xl font-semibold text-[#F6F6F5]">AI Exit Strategy</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                            <div class="flex items-center gap-3">
+                                <input type="checkbox" 
+                                       name="{{ form.use_ai_exit_strategy.html_name }}" 
+                                       id="{{ form.use_ai_exit_strategy.id_for_label }}" 
+                                       {% if form.use_ai_exit_strategy.value %}checked{% endif %}
+                                       class="w-5 h-5 rounded border-white/10 bg-white/5 text-[#BFE953] focus:ring-[#BFE953] focus:ring-offset-0">
+                                <label for="{{ form.use_ai_exit_strategy.id_for_label }}" class="text-[#F6F6F5] font-medium">
+                                    Enable AI-powered exit strategies
+                                </label>
+                            </div>
+                            <p class="mt-2 text-sm text-[#F6F6F5]/60 ml-8">Use Gemini AI to analyze your stocks and suggest optimal exit points</p>
+                        </div>
+
+                        <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                            <label for="{{ form.ai_confidence_threshold.id_for_label }}" class="block text-[#F6F6F5] mb-2 font-medium">
+                                AI Confidence Threshold
+                            </label>
+                            <input type="number" step="0.01" min="0.1" max="1.0" 
+                                   name="{{ form.ai_confidence_threshold.html_name }}" 
+                                   id="{{ form.ai_confidence_threshold.id_for_label }}" 
+                                   value="{{ form.ai_confidence_threshold.value }}"
+                                   class="w-full bg-white/5 border border-white/10 rounded-lg py-3 px-4 text-[#F6F6F5] focus:outline-none focus:border-[#BFE953] focus:ring-1 focus:ring-[#BFE953]">
+                            <p class="mt-2 text-sm text-[#F6F6F5]/60">Only show AI recommendations with confidence above this threshold (0.1-1.0)</p>
+                            {% if form.ai_confidence_threshold.errors %}
+                                <p class="mt-2 text-sm text-red-400">{{ form.ai_confidence_threshold.errors.0 }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notification Preferences Section -->
+                <div class="p-6">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                            <i data-lucide="bell-ring" class="h-5 w-5 text-[#BFE953]"></i>
+                        </div>
+                        <h2 class="text-xl font-semibold text-[#F6F6F5]">Notification Preferences</h2>
+                    </div>
+
+                    <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-3">
+                                <input type="checkbox" 
+                                       name="{{ form.email_alerts.html_name }}" 
+                                       id="{{ form.email_alerts.id_for_label }}" 
+                                       {% if form.email_alerts.value %}checked{% endif %}
+                                       class="w-5 h-5 rounded border-white/10 bg-white/5 text-[#BFE953] focus:ring-[#BFE953] focus:ring-offset-0">
+                                <label for="{{ form.email_alerts.id_for_label }}" class="text-[#F6F6F5] font-medium">
+                                    Receive email alerts
+                                </label>
+                            </div>
+
+                            <div class="flex items-center gap-3">
+                                <input type="checkbox" 
+                                       name="{{ form.in_app_alerts.html_name }}" 
+                                       id="{{ form.in_app_alerts.id_for_label }}" 
+                                       {% if form.in_app_alerts.value %}checked{% endif %}
+                                       class="w-5 h-5 rounded border-white/10 bg-white/5 text-[#BFE953] focus:ring-[#BFE953] focus:ring-offset-0">
+                                <label for="{{ form.in_app_alerts.id_for_label }}" class="text-[#F6F6F5] font-medium">
+                                    Receive in-app notifications
+                                </label>
                             </div>
                         </div>
-                        <p class="text-[#F6F6F5]/50 text-sm mt-1">Alert when stock price drops by this percentage</p>
-                        {% if form.price_drop_threshold.errors %}
-                            <p class="text-red-500 text-sm mt-1">{{ form.price_drop_threshold.errors.0 }}</p>
-                        {% endif %}
                     </div>
                 </div>
-            </div>
-            
-            <div class="border-t border-[#333] pt-6">
-                <h2 class="text-xl font-semibold text-[#F6F6F5] mb-4">Technical Indicators</h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="{{ form.rsi_lower_threshold.id_for_label }}" class="block text-[#F6F6F5]/70 mb-2">
-                            RSI Lower Threshold
-                        </label>
-                        <input type="number" min="0" max="100" 
-                               name="{{ form.rsi_lower_threshold.html_name }}" 
-                               id="{{ form.rsi_lower_threshold.id_for_label }}" 
-                               value="{{ form.rsi_lower_threshold.value }}"
-                               class="w-full bg-[#222] border border-[#333] rounded-lg py-3 px-4 text-[#F6F6F5] focus:outline-none focus:border-[#BFE953]">
-                        <p class="text-[#F6F6F5]/50 text-sm mt-1">Alert when RSI falls below this value (oversold)</p>
-                        {% if form.rsi_lower_threshold.errors %}
-                            <p class="text-red-500 text-sm mt-1">{{ form.rsi_lower_threshold.errors.0 }}</p>
-                        {% endif %}
-                    </div>
-                    
-                    <div>
-                        <label for="{{ form.rsi_upper_threshold.id_for_label }}" class="block text-[#F6F6F5]/70 mb-2">
-                            RSI Upper Threshold
-                        </label>
-                        <input type="number" min="0" max="100" 
-                               name="{{ form.rsi_upper_threshold.html_name }}" 
-                               id="{{ form.rsi_upper_threshold.id_for_label }}" 
-                               value="{{ form.rsi_upper_threshold.value }}"
-                               class="w-full bg-[#222] border border-[#333] rounded-lg py-3 px-4 text-[#F6F6F5] focus:outline-none focus:border-[#BFE953]">
-                        <p class="text-[#F6F6F5]/50 text-sm mt-1">Alert when RSI rises above this value (overbought)</p>
-                        {% if form.rsi_upper_threshold.errors %}
-                            <p class="text-red-500 text-sm mt-1">{{ form.rsi_upper_threshold.errors.0 }}</p>
-                        {% endif %}
-                    </div>
+
+                <!-- Action Buttons -->
+                <div class="p-6 flex flex-col sm:flex-row justify-end gap-4">
+                    <a href="{% url 'risk_dashboard' %}" 
+                       class="flex items-center justify-center gap-2 px-6 py-3 bg-white/5 text-[#F6F6F5] rounded-xl hover:bg-white/10 transition-all font-medium">
+                        <i data-lucide="x" class="h-5 w-5"></i>
+                        Cancel
+                    </a>
+                    <button type="submit" 
+                            class="flex items-center justify-center gap-2 px-6 py-3 bg-[#BFE953] text-[#0F0F11] rounded-xl hover:bg-[#d6ff63] transition-all font-medium">
+                        <i data-lucide="save" class="h-5 w-5"></i>
+                        Save Settings
+                    </button>
                 </div>
-            </div>
-            
-            <div class="border-t border-[#333] pt-6">
-                <h2 class="text-xl font-semibold text-[#F6F6F5] mb-4">AI Exit Strategy</h2>
-                
-                <div class="mb-4">
-                    <div class="flex items-center">
-                        <input type="checkbox" 
-                               name="{{ form.use_ai_exit_strategy.html_name }}" 
-                               id="{{ form.use_ai_exit_strategy.id_for_label }}" 
-                               {% if form.use_ai_exit_strategy.value %}checked{% endif %}
-                               class="w-5 h-5 rounded border-[#333] bg-[#222] text-[#BFE953] focus:ring-[#BFE953] focus:ring-opacity-25">
-                        <label for="{{ form.use_ai_exit_strategy.id_for_label }}" class="ml-2 block text-[#F6F6F5]/70">
-                            Enable AI-powered exit strategies
-                        </label>
-                    </div>
-                    <p class="text-[#F6F6F5]/50 text-sm mt-1 ml-7">Use Gemini AI to analyze your stocks and suggest optimal exit points</p>
-                </div>
-                
-                <div class="mb-4">
-                    <label for="{{ form.ai_confidence_threshold.id_for_label }}" class="block text-[#F6F6F5]/70 mb-2">
-                        AI Confidence Threshold
-                    </label>
-                    <input type="number" step="0.01" min="0.1" max="1.0" 
-                           name="{{ form.ai_confidence_threshold.html_name }}" 
-                           id="{{ form.ai_confidence_threshold.id_for_label }}" 
-                           value="{{ form.ai_confidence_threshold.value }}"
-                           class="w-full bg-[#222] border border-[#333] rounded-lg py-3 px-4 text-[#F6F6F5] focus:outline-none focus:border-[#BFE953]">
-                    <p class="text-[#F6F6F5]/50 text-sm mt-1">Only show AI recommendations with confidence above this threshold (0.1-1.0)</p>
-                    {% if form.ai_confidence_threshold.errors %}
-                        <p class="text-red-500 text-sm mt-1">{{ form.ai_confidence_threshold.errors.0 }}</p>
-                    {% endif %}
-                </div>
-            </div>
-            
-            <div class="border-t border-[#333] pt-6">
-                <h2 class="text-xl font-semibold text-[#F6F6F5] mb-4">Notification Preferences</h2>
-                
-                <div class="space-y-4">
-                    <div class="flex items-center">
-                        <input type="checkbox" 
-                               name="{{ form.email_alerts.html_name }}" 
-                               id="{{ form.email_alerts.id_for_label }}" 
-                               {% if form.email_alerts.value %}checked{% endif %}
-                               class="w-5 h-5 rounded border-[#333] bg-[#222] text-[#BFE953] focus:ring-[#BFE953] focus:ring-opacity-25">
-                        <label for="{{ form.email_alerts.id_for_label }}" class="ml-2 block text-[#F6F6F5]/70">
-                            Receive email alerts
-                        </label>
-                    </div>
-                    
-                    <div class="flex items-center">
-                        <input type="checkbox" 
-                               name="{{ form.in_app_alerts.html_name }}" 
-                               id="{{ form.in_app_alerts.id_for_label }}" 
-                               {% if form.in_app_alerts.value %}checked{% endif %}
-                               class="w-5 h-5 rounded border-[#333] bg-[#222] text-[#BFE953] focus:ring-[#BFE953] focus:ring-opacity-25">
-                        <label for="{{ form.in_app_alerts.id_for_label }}" class="ml-2 block text-[#F6F6F5]/70">
-                            Receive in-app notifications
-                        </label>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="border-t border-[#333] pt-6 flex justify-end">
-                <a href="{% url 'risk_dashboard' %}" class="bg-[#333] text-[#F6F6F5] font-medium py-3 px-6 rounded-lg hover:bg-[#444] transition duration-300 mr-4">
-                    Cancel
-                </a>
-                <button type="submit" class="bg-[#BFE953] text-[#0F0F11] font-medium py-3 px-6 rounded-lg hover:bg-[#a8d93a] transition duration-300">
-                    Save Settings
-                </button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 
@@ -204,10 +260,19 @@
         const riskToleranceInput = document.getElementById('{{ form.risk_tolerance.id_for_label }}');
         const riskToleranceValue = document.getElementById('riskToleranceValue');
         
-        // Update the displayed value when the slider changes
-        riskToleranceInput.addEventListener('input', function() {
-            riskToleranceValue.textContent = this.value;
-        });
+        function updateRiskToleranceValue() {
+            riskToleranceValue.textContent = riskToleranceInput.value;
+            // Add animation class
+            riskToleranceValue.classList.add('scale-110');
+            setTimeout(() => {
+                riskToleranceValue.classList.remove('scale-110');
+            }, 200);
+        }
+        
+        riskToleranceInput.addEventListener('input', updateRiskToleranceValue);
+        
+        // Initialize Lucide icons
+        lucide.createIcons();
     });
 </script>
 {% endblock %} 

@@ -3,327 +3,349 @@
 {% load risksystem_tags %}
 
 {% block content %}
-<div class="content-wrapper">
-    <div class="content-header">
-        <div class="flex flex-wrap items-center justify-between mb-6">
-            <div>
-                <h1 class="text-2xl font-bold text-[#BFE953] mb-2">{{ symbol }} Risk Analysis</h1>
-                <p class="text-[#F6F6F5]/70">{{ stock_data.name }}</p>
-            </div>
-            
-            <div class="flex items-center space-x-4">
-                <div class="text-right">
-                    <p class="text-2xl font-bold text-[#F6F6F5]">${{ stock_data.current_price }}</p>
-                    <p class="text-sm {% if stock_data.percent_change >= 0 %}text-green-500{% else %}text-red-500{% endif %}">
-                        {% if stock_data.percent_change >= 0 %}+{% endif %}{{ stock_data.percent_change }}% today
-                    </p>
-                </div>
-                <a href="{% url 'risk_dashboard' %}" class="bg-[#333] text-[#F6F6F5] font-medium py-2 px-4 rounded-lg hover:bg-[#444] transition duration-300 flex items-center">
-                    <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i> Back
-                </a>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Technical Indicators -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <!-- RSI Indicator -->
-        <div class="bg-[#1A1A1A] rounded-xl p-5 shadow-lg border border-[#333]">
-            <div class="flex items-center justify-between mb-3">
-                <h2 class="text-lg font-semibold text-[#F6F6F5]">RSI</h2>
-                <i data-lucide="bar-chart" class="w-5 h-5 text-blue-500"></i>
-            </div>
-            
-            <div class="mb-3">
-                <div class="flex justify-between items-center mb-1">
-                    <p class="text-sm text-[#F6F6F5]/70">Current Value</p>
-                    <p class="text-lg font-medium 
-                        {% if indicators.rsi.value <= 30 %}text-red-500
-                        {% elif indicators.rsi.value >= 70 %}text-green-500
-                        {% else %}text-[#F6F6F5]{% endif %}">
-                        {{ indicators.rsi.value|floatformat:2 }}
-                    </p>
-                </div>
-                
-                <div class="w-full bg-[#333] rounded-full h-2.5 mb-1">
-                    <div class="h-2.5 rounded-full 
-                        {% if indicators.rsi.value <= 30 %}bg-red-500
-                        {% elif indicators.rsi.value >= 70 %}bg-green-500
-                        {% else %}bg-blue-500{% endif %}" 
-                        style="width: {{ indicators.rsi.value }}%"></div>
-                </div>
-                
-                <div class="flex justify-between text-xs text-[#F6F6F5]/50">
-                    <span>Oversold</span>
-                    <span>Neutral</span>
-                    <span>Overbought</span>
-                </div>
-            </div>
-            
-            <div class="text-sm text-[#F6F6F5]/70">
-                {% if indicators.rsi.value <= 30 %}
-                    <p class="text-red-500">Oversold condition detected. The stock may be undervalued.</p>
-                {% elif indicators.rsi.value >= 70 %}
-                    <p class="text-green-500">Overbought condition detected. The stock may be overvalued.</p>
-                {% else %}
-                    <p>RSI is in the neutral zone, indicating balanced buying and selling pressure.</p>
-                {% endif %}
-            </div>
-        </div>
-        
-        <!-- MACD Indicator -->
-        <div class="bg-[#1A1A1A] rounded-xl p-5 shadow-lg border border-[#333]">
-            <div class="flex items-center justify-between mb-3">
-                <h2 class="text-lg font-semibold text-[#F6F6F5]">MACD</h2>
-                <i data-lucide="line-chart" class="w-5 h-5 text-purple-500"></i>
-            </div>
-            
-            <div class="grid grid-cols-2 gap-4 mb-3">
-                <div>
-                    <p class="text-sm text-[#F6F6F5]/70">MACD Line</p>
-                    <p class="text-lg font-medium text-[#F6F6F5]">{{ indicators.macd.macd|floatformat:4 }}</p>
-                </div>
-                <div>
-                    <p class="text-sm text-[#F6F6F5]/70">Signal Line</p>
-                    <p class="text-lg font-medium text-[#F6F6F5]">{{ indicators.macd.signal|floatformat:4 }}</p>
-                </div>
-            </div>
-            
-            <div class="text-sm text-[#F6F6F5]/70">
-                {% if indicators.macd.macd > indicators.macd.signal %}
-                    <p class="text-green-500">Bullish signal: MACD line is above the signal line, indicating upward momentum.</p>
-                {% elif indicators.macd.macd < indicators.macd.signal %}
-                    <p class="text-red-500">Bearish signal: MACD line is below the signal line, indicating downward momentum.</p>
-                {% else %}
-                    <p>MACD and signal lines are converging, suggesting a potential trend change.</p>
-                {% endif %}
-            </div>
-        </div>
-        
-        <!-- Bollinger Bands -->
-        <div class="bg-[#1A1A1A] rounded-xl p-5 shadow-lg border border-[#333]">
-            <div class="flex items-center justify-between mb-3">
-                <h2 class="text-lg font-semibold text-[#F6F6F5]">Bollinger Bands</h2>
-                <i data-lucide="trending-up" class="w-5 h-5 text-green-500"></i>
-            </div>
-            
-            <div class="grid grid-cols-2 gap-4 mb-3">
-                <div>
-                    <p class="text-sm text-[#F6F6F5]/70">Upper Band</p>
-                    <p class="text-lg font-medium text-[#F6F6F5]">${{ indicators.bollinger.upper|floatformat:2 }}</p>
-                </div>
-                <div>
-                    <p class="text-sm text-[#F6F6F5]/70">Lower Band</p>
-                    <p class="text-lg font-medium text-[#F6F6F5]">${{ indicators.bollinger.lower|floatformat:2 }}</p>
-                </div>
-            </div>
-            
-            <div class="text-sm text-[#F6F6F5]/70">
-                {% if stock_data.current_price > indicators.bollinger.upper %}
-                    <p class="text-red-500">Price is above the upper band, suggesting the stock may be overbought.</p>
-                {% elif stock_data.current_price < indicators.bollinger.lower %}
-                    <p class="text-green-500">Price is below the lower band, suggesting the stock may be oversold.</p>
-                {% else %}
-                    <p>Price is within the Bollinger Bands, indicating normal volatility.</p>
-                {% endif %}
-            </div>
-        </div>
-        
-        <!-- Volatility -->
-        <div class="bg-[#1A1A1A] rounded-xl p-5 shadow-lg border border-[#333]">
-            <div class="flex items-center justify-between mb-3">
-                <h2 class="text-lg font-semibold text-[#F6F6F5]">Volatility</h2>
-                <i data-lucide="activity" class="w-5 h-5 text-yellow-500"></i>
-            </div>
-            
-            <div class="mb-3">
-                <div class="flex justify-between items-center mb-1">
-                    <p class="text-sm text-[#F6F6F5]/70">Current Value</p>
-                    <p class="text-lg font-medium 
-                        {% if indicators.volatility.value > risk_profile.volatility_threshold %}text-red-500
-                        {% else %}text-[#F6F6F5]{% endif %}">
-                        {{ indicators.volatility.value|floatformat:2 }}%
-                    </p>
-                </div>
-                
-                <div class="w-full bg-[#333] rounded-full h-2.5 mb-1">
-                    <div class="bg-gradient-to-r from-green-500 to-red-500 h-2.5 rounded-full" 
-                         style="width: {{ indicators.volatility.value|multiply:5 }}%"></div>
-                </div>
-                
-                <div class="flex justify-between text-xs text-[#F6F6F5]/50">
-                    <span>Low</span>
-                    <span>Medium</span>
-                    <span>High</span>
-                </div>
-            </div>
-            
-            <div class="text-sm text-[#F6F6F5]/70">
-                {% if indicators.volatility.value > risk_profile.volatility_threshold %}
-                    <p class="text-red-500">High volatility detected. Consider reducing position size or setting tighter stop losses.</p>
-                {% else %}
-                    <p>Volatility is within acceptable range based on your risk profile.</p>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-    
-    <!-- AI Exit Strategy -->
-    <div class="bg-[#1A1A1A] rounded-xl p-6 shadow-lg border border-[#333] mb-8">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-semibold text-[#F6F6F5]">AI Exit Strategy</h2>
-            <div class="flex items-center">
-                <i data-lucide="brain-circuit" class="w-5 h-5 text-[#BFE953] mr-2"></i>
-                <span class="text-sm text-[#F6F6F5]/70">Powered by Gemini AI</span>
-            </div>
-        </div>
-        
-        {% if exit_strategy %}
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                <div class="bg-[#222] rounded-lg p-4 border border-[#333]">
-                    <p class="text-sm text-[#F6F6F5]/70 mb-1">Current Price</p>
-                    <p class="text-2xl font-bold text-[#F6F6F5]">${{ exit_strategy.current_price }}</p>
-                    <p class="text-xs {% if exit_strategy.current_price > exit_strategy.entry_price %}text-green-500{% else %}text-red-500{% endif %} mt-1">
-                        {% if exit_strategy.current_price > exit_strategy.entry_price %}
-                            +${{ exit_strategy.current_price|subtract:exit_strategy.entry_price|floatformat:2 }} ({{ exit_strategy.current_price|subtract:exit_strategy.entry_price|divide:exit_strategy.entry_price|multiply:100|floatformat:1 }}%)
-                        {% else %}
-                            -${{ exit_strategy.entry_price|subtract:exit_strategy.current_price|floatformat:2 }} ({{ exit_strategy.entry_price|subtract:exit_strategy.current_price|divide:exit_strategy.entry_price|multiply:100|floatformat:1 }}%)
-                        {% endif %}
-                        from entry
-                    </p>
-                </div>
-                
-                <div class="bg-[#222] rounded-lg p-4 border border-[#333]">
-                    <p class="text-sm text-[#F6F6F5]/70 mb-1">Target Exit Price</p>
-                    <p class="text-2xl font-bold text-green-500">${{ exit_strategy.target_exit_price }}</p>
-                    <p class="text-xs text-green-500 mt-1">
-                        +${{ exit_strategy.target_exit_price|subtract:exit_strategy.current_price|floatformat:2 }} ({{ exit_strategy.target_exit_price|subtract:exit_strategy.current_price|divide:exit_strategy.current_price|multiply:100|floatformat:1 }}%)
-                        potential gain
-                    </p>
-                </div>
-                
-                <div class="bg-[#222] rounded-lg p-4 border border-[#333]">
-                    <p class="text-sm text-[#F6F6F5]/70 mb-1">Stop Loss</p>
-                    <p class="text-2xl font-bold text-red-500">${{ exit_strategy.stop_loss_price }}</p>
-                    <p class="text-xs text-red-500 mt-1">
-                        -${{ exit_strategy.current_price|subtract:exit_strategy.stop_loss_price|floatformat:2 }} ({{ exit_strategy.current_price|subtract:exit_strategy.stop_loss_price|divide:exit_strategy.current_price|multiply:100|floatformat:1 }}%)
-                        potential loss
-                    </p>
-                </div>
-            </div>
-            
-            <div class="bg-[#222] rounded-lg p-5 border border-[#333] mb-4">
-                <div class="flex items-center justify-between mb-3">
-                    <h3 class="font-medium text-[#F6F6F5]">AI Reasoning</h3>
-                    <div class="flex items-center">
-                        <span class="text-xs px-2 py-1 rounded-full bg-[#333] text-[#F6F6F5]/70 mr-2">
-                            Confidence: {{ exit_strategy.confidence_score|floatformat:2 }}
-                        </span>
-                        <span class="text-xs text-[#F6F6F5]/50">
-                            Updated {{ exit_strategy.updated_at|timesince }} ago
-                        </span>
+<div class="p-4 sm:p-6 md:p-8">
+    <div class="max-w-7xl mx-auto space-y-8">
+        <!-- Header -->
+        <div class="bg-white/5 rounded-2xl p-6 backdrop-blur-lg border border-white/10">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+                <div class="flex items-start gap-4">
+                    <div class="h-12 w-12 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                        <i data-lucide="bar-chart-2" class="h-6 w-6 text-[#BFE953]"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl md:text-4xl font-bold text-[#F6F6F5] mb-2">{{ symbol }} Risk Analysis</h1>
+                        <p class="text-[#F6F6F5]/60 text-lg">{{ stock_data.name }}</p>
                     </div>
                 </div>
-                <p class="text-[#F6F6F5]/70">{{ exit_strategy.reasoning }}</p>
-            </div>
-            
-            <div class="flex justify-end">
-                <button id="refreshStrategy" class="bg-[#333] text-[#F6F6F5] font-medium py-2 px-4 rounded-lg hover:bg-[#444] transition duration-300 flex items-center mr-3">
-                    <i data-lucide="refresh-cw" class="w-4 h-4 mr-2"></i> Refresh Analysis
-                </button>
-                <a href="#" class="bg-[#BFE953] text-[#0F0F11] font-medium py-2 px-4 rounded-lg hover:bg-[#a8d93a] transition duration-300 flex items-center">
-                    <i data-lucide="external-link" class="w-4 h-4 mr-2"></i> Trade Now
-                </a>
-            </div>
-        {% else %}
-            <div class="text-center py-8 text-[#F6F6F5]/50">
-                <i data-lucide="brain-off" class="w-12 h-12 mx-auto mb-4 opacity-50"></i>
-                <p class="text-lg">No exit strategy available</p>
-                <p class="text-sm mt-2">Click the button below to generate an AI-powered exit strategy</p>
-                <button id="generateStrategy" class="mt-6 bg-[#BFE953] text-[#0F0F11] font-medium py-3 px-6 rounded-lg hover:bg-[#a8d93a] transition duration-300 flex items-center mx-auto">
-                    <i data-lucide="brain-circuit" class="w-5 h-5 mr-2"></i> Generate Exit Strategy
-                </button>
-            </div>
-        {% endif %}
-    </div>
-    
-    <!-- Risk Assessment -->
-    <div class="bg-[#1A1A1A] rounded-xl p-6 shadow-lg border border-[#333] mb-8">
-        <h2 class="text-xl font-semibold text-[#F6F6F5] mb-4">Overall Risk Assessment</h2>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-                <div class="mb-4">
-                    <div class="flex justify-between items-center mb-1">
-                        <p class="text-[#F6F6F5]/70">Risk Level</p>
-                        <p class="text-lg font-medium 
-                            {% if risk_score < 30 %}text-green-500
-                            {% elif risk_score < 70 %}text-yellow-500
-                            {% else %}text-red-500{% endif %}">
-                            {% if risk_score < 30 %}Low
-                            {% elif risk_score < 70 %}Medium
-                            {% else %}High{% endif %}
+                
+                <div class="flex items-center gap-6">
+                    <div class="text-right">
+                        <p class="text-3xl font-bold text-[#F6F6F5]">${{ stock_data.current_price }}</p>
+                        <p class="text-sm font-medium {% if stock_data.percent_change >= 0 %}text-[#BFE953]{% else %}text-red-500{% endif %}">
+                            {% if stock_data.percent_change >= 0 %}+{% endif %}{{ stock_data.percent_change }}% today
                         </p>
                     </div>
-                    <div class="w-full bg-[#333] rounded-full h-2.5 mb-1">
-                        <div class="bg-gradient-to-r from-green-500 via-yellow-500 to-red-500 h-2.5 rounded-full" 
-                             style="width: {{ risk_score }}%"></div>
+                    <a href="{% url 'risk_dashboard' %}" 
+                       class="flex items-center gap-2 px-4 py-2 bg-white/5 text-[#F6F6F5] rounded-xl hover:bg-white/10 transition-all">
+                        <i data-lucide="arrow-left" class="h-5 w-5"></i>
+                        <span class="font-medium">Back</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Indicators Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- RSI Card -->
+            <div class="bg-white/5 rounded-2xl p-6 backdrop-blur-lg border border-white/10">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-[#F6F6F5]">RSI</h2>
+                    <div class="h-8 w-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                        <i data-lucide="bar-chart" class="h-4 w-4 text-blue-500"></i>
                     </div>
                 </div>
                 
-                <div class="space-y-3">
+                <div class="space-y-4">
                     <div class="flex justify-between items-center">
-                        <p class="text-sm text-[#F6F6F5]/70">Volatility Risk</p>
-                        <div class="flex">
-                            {% for i in "12345" %}
-                                <div class="w-4 h-4 rounded-full ml-1 
-                                    {% if forloop.counter <= risk_factors.volatility %}bg-red-500
-                                    {% else %}bg-[#333]{% endif %}"></div>
-                            {% endfor %}
+                        <p class="text-sm text-[#F6F6F5]/60">Current Value</p>
+                        <p class="text-xl font-semibold {% if indicators.rsi.value <= 30 %}text-red-500{% elif indicators.rsi.value >= 70 %}text-[#BFE953]{% else %}text-[#F6F6F5]{% endif %}">
+                            {{ indicators.rsi.value|floatformat:2 }}
+                        </p>
+                    </div>
+                    
+                    <div class="relative h-2 bg-white/10 rounded-full overflow-hidden">
+                        <div class="absolute inset-y-0 left-0 {% if indicators.rsi.value <= 30 %}bg-red-500{% elif indicators.rsi.value >= 70 %}bg-[#BFE953]{% else %}bg-blue-500{% endif %} transition-all duration-500"
+                             style="width: {{ indicators.rsi.value }}%"></div>
+                    </div>
+                    
+                    <div class="flex justify-between text-xs text-[#F6F6F5]/60">
+                        <span>Oversold</span>
+                        <span>Neutral</span>
+                        <span>Overbought</span>
+                    </div>
+                    
+                    <div class="text-sm text-[#F6F6F5]/60 mt-2">
+                        {% if indicators.rsi.value <= 30 %}
+                            <p class="text-red-500">Oversold condition detected. The stock may be undervalued.</p>
+                        {% elif indicators.rsi.value >= 70 %}
+                            <p class="text-[#BFE953]">Overbought condition detected. The stock may be overvalued.</p>
+                        {% else %}
+                            <p>RSI is in the neutral zone, indicating balanced buying and selling pressure.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- MACD Card -->
+            <div class="bg-white/5 rounded-2xl p-6 backdrop-blur-lg border border-white/10">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-[#F6F6F5]">MACD</h2>
+                    <div class="h-8 w-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                        <i data-lucide="line-chart" class="h-4 w-4 text-purple-500"></i>
+                    </div>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white/5 rounded-lg p-3">
+                            <p class="text-sm text-[#F6F6F5]/60 mb-1">MACD Line</p>
+                            <p class="text-xl font-semibold text-[#F6F6F5]">{{ indicators.macd.macd|floatformat:4 }}</p>
+                        </div>
+                        <div class="bg-white/5 rounded-lg p-3">
+                            <p class="text-sm text-[#F6F6F5]/60 mb-1">Signal Line</p>
+                            <p class="text-xl font-semibold text-[#F6F6F5]">{{ indicators.macd.signal|floatformat:4 }}</p>
                         </div>
                     </div>
                     
-                    <div class="flex justify-between items-center">
-                        <p class="text-sm text-[#F6F6F5]/70">Trend Risk</p>
-                        <div class="flex">
-                            {% for i in "12345" %}
-                                <div class="w-4 h-4 rounded-full ml-1 
-                                    {% if forloop.counter <= risk_factors.trend %}bg-red-500
-                                    {% else %}bg-[#333]{% endif %}"></div>
-                            {% endfor %}
+                    <div class="text-sm text-[#F6F6F5]/60">
+                        {% if indicators.macd.macd > indicators.macd.signal %}
+                            <p class="text-[#BFE953]">Bullish signal: MACD line is above the signal line, indicating upward momentum.</p>
+                        {% elif indicators.macd.macd < indicators.macd.signal %}
+                            <p class="text-red-500">Bearish signal: MACD line is below the signal line, indicating downward momentum.</p>
+                        {% else %}
+                            <p>MACD and signal lines are converging, suggesting a potential trend change.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bollinger Bands Card -->
+            <div class="bg-white/5 rounded-2xl p-6 backdrop-blur-lg border border-white/10">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-[#F6F6F5]">Bollinger Bands</h2>
+                    <div class="h-8 w-8 rounded-lg bg-[#BFE953]/10 flex items-center justify-center">
+                        <i data-lucide="trending-up" class="h-4 w-4 text-[#BFE953]"></i>
+                    </div>
+                </div>
+                
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white/5 rounded-lg p-3">
+                            <p class="text-sm text-[#F6F6F5]/60 mb-1">Upper Band</p>
+                            <p class="text-xl font-semibold text-[#F6F6F5]">${{ indicators.bollinger.upper|floatformat:2 }}</p>
+                        </div>
+                        <div class="bg-white/5 rounded-lg p-3">
+                            <p class="text-sm text-[#F6F6F5]/60 mb-1">Lower Band</p>
+                            <p class="text-xl font-semibold text-[#F6F6F5]">${{ indicators.bollinger.lower|floatformat:2 }}</p>
                         </div>
                     </div>
                     
+                    <div class="text-sm text-[#F6F6F5]/60">
+                        {% if stock_data.current_price > indicators.bollinger.upper %}
+                            <p class="text-red-500">Price is above the upper band, suggesting the stock may be overbought.</p>
+                        {% elif stock_data.current_price < indicators.bollinger.lower %}
+                            <p class="text-[#BFE953]">Price is below the lower band, suggesting the stock may be oversold.</p>
+                        {% else %}
+                            <p>Price is within the Bollinger Bands, indicating normal volatility.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Volatility Card -->
+            <div class="bg-white/5 rounded-2xl p-6 backdrop-blur-lg border border-white/10">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-semibold text-[#F6F6F5]">Volatility</h2>
+                    <div class="h-8 w-8 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+                        <i data-lucide="activity" class="h-4 w-4 text-yellow-500"></i>
+                    </div>
+                </div>
+                
+                <div class="space-y-4">
                     <div class="flex justify-between items-center">
-                        <p class="text-sm text-[#F6F6F5]/70">Momentum Risk</p>
-                        <div class="flex">
-                            {% for i in "12345" %}
-                                <div class="w-4 h-4 rounded-full ml-1 
-                                    {% if forloop.counter <= risk_factors.momentum %}bg-red-500
-                                    {% else %}bg-[#333]{% endif %}"></div>
-                            {% endfor %}
-                        </div>
+                        <p class="text-sm text-[#F6F6F5]/60">Current Value</p>
+                        <p class="text-xl font-semibold {% if indicators.volatility.value > risk_profile.volatility_threshold %}text-red-500{% else %}text-[#F6F6F5]{% endif %}">
+                            {{ indicators.volatility.value|floatformat:2 }}%
+                        </p>
                     </div>
                     
-                    <div class="flex justify-between items-center">
-                        <p class="text-sm text-[#F6F6F5]/70">Valuation Risk</p>
-                        <div class="flex">
-                            {% for i in "12345" %}
-                                <div class="w-4 h-4 rounded-full ml-1 
-                                    {% if forloop.counter <= risk_factors.valuation %}bg-red-500
-                                    {% else %}bg-[#333]{% endif %}"></div>
-                            {% endfor %}
-                        </div>
+                    <div class="relative h-2 bg-white/10 rounded-full overflow-hidden">
+                        <div class="absolute inset-y-0 left-0 bg-gradient-to-r from-[#BFE953] to-red-500 transition-all duration-500"
+                             style="width: {{ indicators.volatility.value|multiply:5 }}%"></div>
+                    </div>
+                    
+                    <div class="flex justify-between text-xs text-[#F6F6F5]/60">
+                        <span>Low</span>
+                        <span>Medium</span>
+                        <span>High</span>
+                    </div>
+                    
+                    <div class="text-sm text-[#F6F6F5]/60">
+                        {% if indicators.volatility.value > risk_profile.volatility_threshold %}
+                            <p class="text-red-500">High volatility detected. Consider reducing position size or setting tighter stop losses.</p>
+                        {% else %}
+                            <p>Volatility is within acceptable range based on your risk profile.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Exit Strategy Section -->
+        <div class="bg-white/5 rounded-2xl p-6 backdrop-blur-lg border border-white/10">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-4">
+                    <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                        <i data-lucide="brain-circuit" class="h-5 w-5 text-[#BFE953]"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-semibold text-[#F6F6F5]">AI Exit Strategy</h2>
+                        <p class="text-sm text-[#F6F6F5]/60">Powered by Gemini AI</p>
                     </div>
                 </div>
             </div>
             
-            <div class="bg-[#222] rounded-lg p-4 border border-[#333]">
-                <h3 class="font-medium text-[#F6F6F5] mb-3">Risk Summary</h3>
-                <div class="text-sm text-[#F6F6F5]/70 space-y-2">
-                    {% for item in risk_summary %}
-                        <p>• {{ item }}</p>
-                    {% endfor %}
+            {% if exit_strategy %}
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                        <p class="text-sm text-[#F6F6F5]/60 mb-2">Current Price</p>
+                        <p class="text-2xl font-bold text-[#F6F6F5] mb-1">${{ exit_strategy.current_price }}</p>
+                        <p class="text-sm {% if exit_strategy.current_price > exit_strategy.entry_price %}text-[#BFE953]{% else %}text-red-500{% endif %}">
+                            {% if exit_strategy.current_price > exit_strategy.entry_price %}
+                                +${{ exit_strategy.current_price|subtract:exit_strategy.entry_price|floatformat:2 }} ({{ exit_strategy.current_price|subtract:exit_strategy.entry_price|divide:exit_strategy.entry_price|multiply:100|floatformat:1 }}%)
+                            {% else %}
+                                -${{ exit_strategy.entry_price|subtract:exit_strategy.current_price|floatformat:2 }} ({{ exit_strategy.entry_price|subtract:exit_strategy.current_price|divide:exit_strategy.entry_price|multiply:100|floatformat:1 }}%)
+                            {% endif %}
+                            from entry
+                        </p>
+                    </div>
+                    
+                    <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                        <p class="text-sm text-[#F6F6F5]/60 mb-2">Target Exit Price</p>
+                        <p class="text-2xl font-bold text-[#BFE953] mb-1">${{ exit_strategy.target_exit_price }}</p>
+                        <p class="text-sm text-[#BFE953]">
+                            +${{ exit_strategy.target_exit_price|subtract:exit_strategy.current_price|floatformat:2 }} ({{ exit_strategy.target_exit_price|subtract:exit_strategy.current_price|divide:exit_strategy.current_price|multiply:100|floatformat:1 }}%)
+                            potential gain
+                        </p>
+                    </div>
+                    
+                    <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                        <p class="text-sm text-[#F6F6F5]/60 mb-2">Stop Loss</p>
+                        <p class="text-2xl font-bold text-red-500 mb-1">${{ exit_strategy.stop_loss_price }}</p>
+                        <p class="text-sm text-red-500">
+                            -${{ exit_strategy.current_price|subtract:exit_strategy.stop_loss_price|floatformat:2 }} ({{ exit_strategy.current_price|subtract:exit_strategy.stop_loss_price|divide:exit_strategy.current_price|multiply:100|floatformat:1 }}%)
+                            potential loss
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="bg-white/5 rounded-xl p-6 border border-white/10 mb-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+                        <h3 class="text-lg font-semibold text-[#F6F6F5]">AI Reasoning</h3>
+                        <div class="flex items-center gap-3">
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-[#BFE953]/10 text-[#BFE953] border border-[#BFE953]/20">
+                                <i data-lucide="brain" class="h-4 w-4"></i>
+                                Confidence: {{ exit_strategy.confidence_score|floatformat:2 }}
+                            </span>
+                            <span class="text-sm text-[#F6F6F5]/60">
+                                Updated {{ exit_strategy.updated_at|timesince }} ago
+                            </span>
+                        </div>
+                    </div>
+                    <p class="text-[#F6F6F5]/80">{{ exit_strategy.reasoning }}</p>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row justify-end gap-4">
+                    <button id="refreshStrategy" 
+                            class="flex items-center justify-center gap-2 px-6 py-3 bg-white/5 text-[#F6F6F5] rounded-xl hover:bg-white/10 transition-all font-medium">
+                        <i data-lucide="refresh-cw" class="h-5 w-5"></i>
+                        Refresh Analysis
+                    </button>
+                    <a href="#" 
+                       class="flex items-center justify-center gap-2 px-6 py-3 bg-[#BFE953] text-[#0F0F11] rounded-xl hover:bg-[#d6ff63] transition-all font-medium">
+                        <i data-lucide="external-link" class="h-5 w-5"></i>
+                        Trade Now
+                    </a>
+                </div>
+            {% else %}
+                <div class="text-center py-12">
+                    <div class="h-16 w-16 rounded-xl bg-[#BFE953]/10 flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="brain-off" class="h-8 w-8 text-[#BFE953]"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-[#F6F6F5] mb-2">No Exit Strategy Available</h3>
+                    <p class="text-[#F6F6F5]/60 mb-8">Click the button below to generate an AI-powered exit strategy</p>
+                    <button id="generateStrategy" 
+                            class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#BFE953] text-[#0F0F11] rounded-xl hover:bg-[#d6ff63] transition-all font-medium">
+                        <i data-lucide="brain-circuit" class="h-5 w-5"></i>
+                        Generate Exit Strategy
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Risk Assessment Section -->
+        <div class="bg-white/5 rounded-2xl p-6 backdrop-blur-lg border border-white/10">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                    <i data-lucide="shield" class="h-5 w-5 text-[#BFE953]"></i>
+                </div>
+                <h2 class="text-xl font-semibold text-[#F6F6F5]">Overall Risk Assessment</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="space-y-6">
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <p class="text-[#F6F6F5]/60">Risk Level</p>
+                            <p class="text-lg font-semibold {% if risk_score < 30 %}text-[#BFE953]{% elif risk_score < 70 %}text-yellow-500{% else %}text-red-500{% endif %}">
+                                {% if risk_score < 30 %}Low{% elif risk_score < 70 %}Medium{% else %}High{% endif %}
+                            </p>
+                        </div>
+                        <div class="relative h-2 bg-white/10 rounded-full overflow-hidden">
+                            <div class="absolute inset-y-0 left-0 bg-gradient-to-r from-[#BFE953] via-yellow-500 to-red-500 transition-all duration-500"
+                                 style="width: {{ risk_score }}%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <p class="text-sm text-[#F6F6F5]/60">Volatility Risk</p>
+                            <div class="flex gap-1">
+                                {% for i in "12345" %}
+                                    <div class="w-4 h-4 rounded-full {% if forloop.counter <= risk_factors.volatility %}bg-red-500{% else %}bg-white/10{% endif %}"></div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <p class="text-sm text-[#F6F6F5]/60">Trend Risk</p>
+                            <div class="flex gap-1">
+                                {% for i in "12345" %}
+                                    <div class="w-4 h-4 rounded-full {% if forloop.counter <= risk_factors.trend %}bg-red-500{% else %}bg-white/10{% endif %}"></div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <p class="text-sm text-[#F6F6F5]/60">Momentum Risk</p>
+                            <div class="flex gap-1">
+                                {% for i in "12345" %}
+                                    <div class="w-4 h-4 rounded-full {% if forloop.counter <= risk_factors.momentum %}bg-red-500{% else %}bg-white/10{% endif %}"></div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <p class="text-sm text-[#F6F6F5]/60">Valuation Risk</p>
+                            <div class="flex gap-1">
+                                {% for i in "12345" %}
+                                    <div class="w-4 h-4 rounded-full {% if forloop.counter <= risk_factors.valuation %}bg-red-500{% else %}bg-white/10{% endif %}"></div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white/5 rounded-xl p-6 border border-white/10">
+                    <h3 class="text-lg font-semibold text-[#F6F6F5] mb-4">Risk Summary</h3>
+                    <div class="space-y-3 text-sm text-[#F6F6F5]/80">
+                        {% for item in risk_summary %}
+                            <div class="flex items-start gap-2">
+                                <i data-lucide="alert-circle" class="h-4 w-4 mt-0.5 text-[#BFE953]"></i>
+                                <p>{{ item }}</p>
+                            </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -345,12 +367,15 @@
         if (generateBtn) {
             generateBtn.addEventListener('click', function() {
                 generateBtn.disabled = true;
-                generateBtn.innerHTML = '<i data-lucide="loader" class="w-5 h-5 mr-2 animate-spin"></i> Generating...';
+                generateBtn.innerHTML = '<i data-lucide="loader" class="h-5 w-5 mr-2 animate-spin"></i> Generating...';
                 lucide.createIcons();
                 
                 window.location.href = "{% url 'analyze_stock_risk' symbol %}?generate=true";
             });
         }
+        
+        // Initialize Lucide icons
+        lucide.createIcons();
     });
 </script>
 {% endblock %} 
