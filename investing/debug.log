@@ -464,3 +464,29 @@ INFO 2025-03-16 04:29:02,782 basehttp "GET /simulation/trade/GOOGL/ HTTP/1.1" 20
 INFO 2025-03-16 04:29:04,841 basehttp "POST /simulation/sell-stock/GOOGL/ HTTP/1.1" 302 0
 INFO 2025-03-16 04:29:04,983 basehttp "GET /simulation/available-stocks/ HTTP/1.1" 200 21065
 INFO 2025-03-16 04:29:07,262 basehttp "GET /simulation/trade/AMZN/ HTTP/1.1" 200 7820
+INFO 2025-03-16 06:16:59,082 autoreload Watching for file changes with StatReloader
+INFO 2025-03-16 06:17:15,060 autoreload C:\Users\Shailesh Dalvi\projects\CodeCrafters2025\investing\User\migrations\0008_merge_20250316_0117.py changed, reloading.
+INFO 2025-03-16 06:17:17,206 autoreload Watching for file changes with StatReloader
+INFO 2025-03-16 06:23:37,085 autoreload Watching for file changes with StatReloader
+INFO 2025-03-16 06:23:44,518 basehttp "GET / HTTP/1.1" 200 25422
+INFO 2025-03-16 06:23:48,474 basehttp "GET /signup/ HTTP/1.1" 200 34422
+INFO 2025-03-16 06:23:50,989 basehttp "GET /accounts/google/login/ HTTP/1.1" 200 1416
+INFO 2025-03-16 06:23:52,824 basehttp "POST /accounts/google/login/ HTTP/1.1" 302 0
+INFO 2025-03-16 06:23:57,970 basehttp "GET /accounts/google/login/callback/?state=dxrPBvjrhunH5asy&code=4%2F0AQSTgQHKDezsfQPLxTinBj_LhamWmZK15_a6rcCuqL8X4L7e6u-xJJaEw2l0rHTMX8-rxA&scope=email+profile+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&authuser=0&prompt=none HTTP/1.1" 302 0
+INFO 2025-03-16 06:23:58,025 basehttp "GET /home/ HTTP/1.1" 200 49283
+INFO 2025-03-16 06:24:02,359 basehttp "GET /profile/ HTTP/1.1" 200 59239
+INFO 2025-03-16 06:24:09,232 basehttp "GET /portfolio/ HTTP/1.1" 200 57851
+INFO 2025-03-16 06:24:15,416 basehttp "GET /home/ HTTP/1.1" 200 49283
+INFO 2025-03-16 06:24:16,844 basehttp "GET /market-analytics/ HTTP/1.1" 200 46117
+INFO 2025-03-16 06:24:21,254 basehttp "GET /portfolio/ HTTP/1.1" 200 57851
+INFO 2025-03-16 06:24:42,956 basehttp "GET /market-stocks/ HTTP/1.1" 200 53181
+INFO 2025-03-16 06:24:46,065 basehttp "GET /profile/ HTTP/1.1" 200 58860
+ERROR 2025-03-16 06:24:49,268 views Error fetching data for 603605.SS: FinnhubAPIException(status_code: 403): You don't have access to this resource.
+ERROR 2025-03-16 06:24:49,646 views Error fetching data for 2367.HK: FinnhubAPIException(status_code: 403): You don't have access to this resource.
+INFO 2025-03-16 06:24:49,660 basehttp "GET /suggestions/ HTTP/1.1" 200 38239
+INFO 2025-03-16 06:25:36,459 basehttp "GET /market-stocks/ HTTP/1.1" 200 53194
+INFO 2025-03-16 06:25:43,125 basehttp "GET /portfolio/ HTTP/1.1" 200 57851
+INFO 2025-03-16 06:25:45,241 basehttp "GET /simulation/ HTTP/1.1" 200 12720
+INFO 2025-03-16 06:26:00,340 basehttp "GET /simulation/ HTTP/1.1" 200 12720
+INFO 2025-03-16 06:26:01,817 basehttp "GET /simulation/ HTTP/1.1" 200 12720
+INFO 2025-03-16 06:26:06,671 basehttp "GET /home/ HTTP/1.1" 200 49283
