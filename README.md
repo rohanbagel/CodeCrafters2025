@@ -4,13 +4,13 @@
 The **AI-Powered Investment Platform** is a web-based application that enables users to manage their investments, including stocks, bonds, and insurance. It provides AI-driven insights, real-time analytics, automated risk management, and secure transactions. Users can securely log in, complete KYC verification, and track their portfolio through an intuitive dashboard. The platform also includes a built-in wallet for seamless transactions.
 
 ## Features
+✅ **ML Stock Price Predictor** – Predicts the price of a stock for the next 7 days using Scikit-learn.
 ✅ **User & Admin Dashboard** – Track investments, view analytics, and manage transactions.  
 ✅ **Market Insights** – Real-time stock updates, AI-based investment suggestions.  
 ✅ **Risk Management** – AI-powered alerts, exit strategies, and volatility detection.  
 ✅ **Secure Wallet & Payments** – In-platform wallet with Stripe/Razorpay integration.(Future purposes)  
 ✅ **Social & Community Features** – Copy trading, discussion forums, and leaderboards.  
 ✅ **Paper Trading Mode** – Simulated investing environment with virtual money.
-✅ **ML Stock Price Predictor** – Predicts the price of a stock for the next 7 days using Scikit-learn.
 
 ## Tech Stack
 - **Backend:** Django (Python)
