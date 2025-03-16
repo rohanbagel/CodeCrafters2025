@@ -15,7 +15,7 @@ The **AI-Powered Investment Platform** is a web-based application that enables u
 ## Tech Stack
 - **Backend:** Django (Python)
 - **Frontend:** HTML, CSS, JavaScript
-- **Machine Learning:** Scikit-learn, NumPy, Pandas, Plotly
+- **Machine Learning:** Scikit-learn, NumPy, Pandas, Plotly, Yahoo Finance
 - **Authentication:** Google OAuth, KYC Verification by video call
 - **Payments:** Secure Wallet, Stripe/Razorpay Integration(In the near future) 
 - **Database:** PostgreSQL/MySQL/SQLite
