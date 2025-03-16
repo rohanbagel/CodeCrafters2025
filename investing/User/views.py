@@ -17,12 +17,24 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 import logging
 import traceback
+import random
+from datetime import datetime
+from twilio.rest import Client
+from django.views.decorators.csrf import csrf_exempt
 
 # Set up logging
 logger = logging.getLogger(__name__)
 
 # Configure the Gemini API
 genai.configure(api_key=settings.GEMINI_API_KEY)
+
+# Add these settings to your settings.py
+# TWILIO_ACCOUNT_SID = 'your_account_sid'
+# TWILIO_AUTH_TOKEN = 'your_auth_token'
+# TWILIO_PHONE_NUMBER = 'your_twilio_phone_number'
+
+# Store OTPs temporarily (in a real app, use Redis or another cache)
+OTP_STORE = {}
 
 def get_started(request):
     return render(request, 'User/get_started.html')
@@ -299,23 +311,35 @@ def update_wallet(request):
 @login_required
 def update_profile(request):
     if request.method == 'POST':
-        # Update user information
-        user = request.user
-        user.username = request.POST.get('username')
-        user.email = request.POST.get('email')
-        
-        # Update profile information
-        profile = user.profile
-        profile.phone_number = request.POST.get('phone_number')
-        profile.address = request.POST.get('address')
-
         try:
+            user = request.user
+            profile = user.profile
+            
+            # Update User model fields
+            # The error is happening because we're not preserving the username
+            user.username = user.username  # Keep the existing username
+            user.email = request.POST.get('email')
             user.save()
+            
+            # Update UserProfile model fields
+            profile.full_name = request.POST.get('full_name')
+            profile.phone_number = request.POST.get('phone_number')
+            profile.address = request.POST.get('address')
+            profile.age = request.POST.get('age')
+            
+            # Handle government ID upload
+            if 'government_id' in request.FILES:
+                profile.government_id = request.FILES['government_id']
+            
             profile.save()
+            
             messages.success(request, 'Profile updated successfully!')
+            return redirect('profile')
+            
         except Exception as e:
             messages.error(request, f'Error updating profile: {str(e)}')
-
+            return redirect('profile')
+    
     return redirect('profile')
 
 @login_required
@@ -567,3 +591,75 @@ def portfolio(request):
         'transactions': transactions,
     }
     return render(request, 'User/portfolio.html', context)
+
+@login_required
+@require_POST
+def send_phone_verification(request):
+    data = json.loads(request.body)
+    phone_number = data.get('phone_number')
+    
+    if not phone_number:
+        return JsonResponse({'success': False, 'error': 'Phone number is required'})
+    
+    # Generate a 6-digit OTP
+    otp = ''.join([str(random.randint(0, 9)) for _ in range(6)])
+    
+    # Store OTP with user ID
+    OTP_STORE[request.user.id] = {
+        'phone_number': phone_number,
+        'otp': otp,
+        'timestamp': datetime.now()
+    }
+    
+    try:
+        # Initialize Twilio client
+        client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+        
+        # For trial accounts, we'll simulate sending the OTP instead of actually sending it
+        # This avoids the "unverified number" error
+        if settings.TWILIO_TRIAL_MODE:
+            # Just log the OTP instead of sending it
+            print(f"SIMULATED SMS to {phone_number}: Your ProfitPulse verification code is: {otp}")
+            return JsonResponse({'success': True, 'message': 'OTP sent successfully (SIMULATED)'})
+        else:
+            # Send SMS with OTP for non-trial accounts
+            message = client.messages.create(
+                body=f"Your ProfitPulse verification code is: {otp}",
+                from_=settings.TWILIO_PHONE_NUMBER,
+                to=phone_number
+            )
+            return JsonResponse({'success': True, 'message': 'OTP sent successfully'})
+    
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+
+@login_required
+@require_POST
+def verify_phone_otp(request):
+    data = json.loads(request.body)
+    phone_number = data.get('phone_number')
+    otp = data.get('otp')
+    
+    if not phone_number or not otp:
+        return JsonResponse({'success': False, 'error': 'Phone number and OTP are required'})
+    
+    # Get stored OTP data
+    stored_data = OTP_STORE.get(request.user.id)
+    
+    if not stored_data:
+        return JsonResponse({'success': False, 'error': 'No verification code was sent'})
+    
+    # Check if OTP matches and phone number matches
+    if stored_data['otp'] == otp and stored_data['phone_number'] == phone_number:
+        # OTP is valid, update user profile
+        profile = request.user.profile
+        profile.phone_number = phone_number
+        profile.is_phone_verified = True
+        profile.save()
+        
+        # Remove OTP from store
+        del OTP_STORE[request.user.id]
+        
+        return JsonResponse({'success': True, 'message': 'Phone verified successfully'})
+    else:
+        return JsonResponse({'success': False, 'error': 'Invalid verification code'})

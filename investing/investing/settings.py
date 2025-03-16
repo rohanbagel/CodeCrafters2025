@@ -208,3 +208,13 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'hxrsh1764@gmail.com'  # Replace with your email
 EMAIL_HOST_PASSWORD = 'oqfm hrdf mwdw mcta'  # Replace with your app password
 DEFAULT_FROM_EMAIL = 'ProfitPulse <hxrsh1764@gmail.com>'
+
+# Twilio Configuration
+TWILIO_ACCOUNT_SID = 'ACb604cdff6ba558c3c2b0c563a69a9a02'  # Replace with your actual Twilio Account SID
+TWILIO_AUTH_TOKEN = 'e9646954742fe0a8aa3362b6772e8f12'    # Replace with your actual Twilio Auth Token
+TWILIO_PHONE_NUMBER = '+15417128857' 
+TWILIO_TRIAL_MODE = True # Replace with your actual Twilio phone number
+
+
+
+

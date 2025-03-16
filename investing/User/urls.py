@@ -20,6 +20,8 @@ urlpatterns = [
     path('stock/<str:symbol>/buy/', views.buy_stock, name='buy_stock'),
     path('stock/<str:symbol>/sell/', views.sell_stock, name='sell_stock'),
     path('portfolio/', views.portfolio, name='portfolio'),
+    path('send-phone-verification/', views.send_phone_verification, name='send_phone_verification'),
+    path('verify-phone-otp/', views.verify_phone_otp, name='verify_phone_otp'),
 ]
 
 if settings.DEBUG:
