@@ -21,6 +21,8 @@ import random
 from datetime import datetime
 from twilio.rest import Client
 from django.views.decorators.csrf import csrf_exempt
+import PyPDF2
+from io import BytesIO
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -651,148 +653,91 @@ def verify_phone_otp(request):
         return JsonResponse({'success': True, 'message': 'Phone verified successfully'})
     else:
         return JsonResponse({'success': False, 'error': 'Invalid verification code'})
-def generate_portfolio_report(request):
-    try:
-        # Get user's portfolio data
-        stock_transactions = StockTransaction.objects.filter(user=request.user)
-        
-        # Calculate holdings
-        holdings = {}
-        for transaction in stock_transactions:
-            symbol = transaction.symbol
-            if symbol not in holdings:
-                holdings[symbol] = {
-                    'symbol': symbol,
-                    'company_name': transaction.company_name,
-                    'quantity': 0,
-                    'total_cost': 0,
-                    'transactions': []
-                }
+
+@login_required
+def analyze_portfolio_pdf(request):
+    if request.method == 'POST' and request.FILES.get('portfolio_pdf'):
+        try:
+            pdf_file = request.FILES['portfolio_pdf']
             
-            if transaction.transaction_type == 'BUY':
-                holdings[symbol]['quantity'] += transaction.quantity
-                holdings[symbol]['total_cost'] += float(transaction.total_amount)
-            else:
-                holdings[symbol]['quantity'] -= transaction.quantity
+            # Read PDF content
+            pdf_reader = PyPDF2.PdfReader(BytesIO(pdf_file.read()))
+            text_content = ""
+            for page in pdf_reader.pages:
+                text_content += page.extract_text()
+
+            # Create prompt for Gemini
+            prompt = f"""As an investment analyst, analyze this portfolio data from a PDF and provide:
+            1. Current portfolio composition analysis
+            2. Investment opportunities based on the current holdings
+            3. Risk assessment and diversification suggestions
+            4. Specific stock recommendations for future investment
+
+            Portfolio Content:
+            {text_content}
+
+            Please provide a detailed, structured analysis with specific recommendations."""
+
+            # Use Gemini API for analysis
+            model = genai.GenerativeModel('gemini-2.0-flash')
+            response = model.generate_content(prompt)
             
-            holdings[symbol]['transactions'].append({
-                'type': transaction.transaction_type,
-                'quantity': transaction.quantity,
-                'price': float(transaction.price),
-                'date': transaction.created_at.strftime('%Y-%m-%d')
-            })
-
-        # Prepare portfolio data for Gemini
-        portfolio_data = []
-        total_value = 0
-        
-        for symbol, data in holdings.items():
-            if data['quantity'] > 0:  # Only include active holdings
-                portfolio_data.append({
-                    'symbol': symbol,
-                    'company': data['company_name'],
-                    'shares': data['quantity'],
-                    'cost_basis': data['total_cost'] / data['quantity'],
-                    'transaction_history': data['transactions']
-                })
-                total_value += data['total_cost']
-
-        # Create prompt for Gemini with markdown formatting
-        prompt = f"""As a professional financial analyst, provide a detailed analysis of this investment portfolio. Use markdown formatting with ** for bold text.
-
-**Portfolio Summary:**
-{json.dumps(portfolio_data, indent=2)}
-
-**Total Portfolio Value:** ${total_value:,.2f}
-
-Please include:
-
-**1. Overall Portfolio Performance**
-- Analyze total returns and performance trends
-- Compare with market benchmarks
-- Highlight key performance indicators
-
-**2. Risk Assessment**
-- Portfolio diversification analysis
-- Sector concentration risks
-- Market risk exposure evaluation
-
-**3. Key Portfolio Metrics**
-- Volatility measures
-- Sector distribution
-- Asset allocation breakdown
-
-**4. Strategic Recommendations**
-- Specific portfolio improvement suggestions
-- Rebalancing recommendations
-- Risk management strategies
-
-**5. Market Outlook**
-- Short-term market perspective
-- Long-term growth potential
-- Sector-specific opportunities
-
-Format the analysis in a clear, structured way using bullet points and bold headers."""
-
-        # Use Gemini API to generate analysis
-        model = genai.GenerativeModel('gemini-2.0-flash')
-        response = model.generate_content(prompt)
-        
-        # Process and structure the response
-        analysis_text = response.text
-        sections = analysis_text.split('\n\n')
-        
-        # Structure the response with proper formatting
-        report_data = {
-            'success': True,
-            'report': {
-                'totalValue': f"{total_value:,.2f}",
-                'totalReturn': calculate_total_return(holdings),
-                'riskScore': calculate_risk_score(holdings),
-                'riskAnalysis': next((s for s in sections if 'Risk Assessment' in s), 'Risk analysis not available.'),
-                'performanceMetrics': [
-                    {'name': 'Portfolio Diversity', 'value': len(holdings)},
-                    {'name': 'Total Holdings', 'value': sum(h['quantity'] for h in holdings.values())}
-                ],
-                'recommendations': [
-                    s.replace('*', '').strip() 
-                    for s in sections 
-                    if s.startswith('- ') or s.startswith('* ')
-                ]
+            # Get regular suggestions
+            suggestion_details = get_stock_suggestions(request.user)
+            
+            context = {
+                'suggestions': suggestion_details,
+                'analysis_results': response.text
             }
-        }
+            
+            messages.success(request, 'Portfolio analysis completed successfully!')
+            return render(request, 'User/suggestions.html', context)
+            
+        except Exception as e:
+            logger.error(f"Error analyzing PDF: {str(e)}")
+            messages.error(request, 'Error analyzing portfolio PDF. Please try again.')
+            return redirect('suggestions')
+    
+    return redirect('suggestions')
 
-        return JsonResponse(report_data)
-
-    except Exception as e:
-        logger.error(f"Error generating portfolio report: {str(e)}")
-        return JsonResponse({
-            'success': False,
-            'error': str(e)
-        }, status=500)
-
-def calculate_total_return(holdings):
+# Helper function to get stock suggestions
+def get_stock_suggestions(user):
+    user_transactions = StockTransaction.objects.filter(user=user)
+    user_stocks = set(transaction.symbol for transaction in user_transactions)
+    
+    finnhub_client = finnhub.Client(api_key='cvam92hr01qsapma5g6gcvam92hr01qsapma5g70')
+    suggestion_details = []
+    
     try:
-        total_cost = sum(h['total_cost'] for h in holdings.values())
-        if total_cost == 0:
-            return 0
-        current_value = sum(h['quantity'] * h['total_cost']/h['quantity'] for h in holdings.values() if h['quantity'] > 0)
-        return round(((current_value - total_cost) / total_cost) * 100, 2)
+        suggestions = []
+        for symbol in user_stocks:
+            company_profile = finnhub_client.company_profile2(symbol=symbol)
+            if company_profile:
+                similar_companies = finnhub_client.company_peers(symbol)
+                if similar_companies:
+                    suggestions.extend(similar_companies[:2])
+        
+        suggestions = list(set(suggestions) - user_stocks)[:5]
+        
+        for symbol in suggestions:
+            try:
+                company_data = finnhub_client.company_profile2(symbol=symbol)
+                if company_data:
+                    suggestion_details.append({
+                        'symbol': symbol,
+                        'name': company_data.get('name', ''),
+                        'industry': company_data.get('finnhubIndustry', ''),
+                        'logo': company_data.get('logo', ''),
+                        'weburl': company_data.get('weburl', '')
+                    })
+            except Exception as e:
+                logger.error(f"Error fetching data for {symbol}: {str(e)}")
+                continue
+                
     except Exception as e:
-        logger.error(f"Error calculating total return: {str(e)}")
-        return 0
-
-def calculate_risk_score(holdings):
-    try:
-        # Simple risk score based on diversification
-        num_holdings = len([h for h in holdings.values() if h['quantity'] > 0])
-        if num_holdings == 0:
-            return 0
-        # More holdings = lower risk score (up to 10 holdings)
-        return max(10, min(90, 100 - (num_holdings * 10)))
-    except Exception as e:
-        logger.error(f"Error calculating risk score: {str(e)}")
-        return 50
+        logger.error(f"Error generating suggestions: {str(e)}")
+    
+    return suggestion_details
 
 @login_required
 def suggestions(request):

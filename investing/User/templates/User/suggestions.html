@@ -4,7 +4,52 @@
 {% block content %}
 <div class="p-4 md:p-8">
     <div class="max-w-7xl mx-auto">
-        <!-- Header -->
+        <!-- Portfolio Upload Section -->
+        <div class="mb-12 bg-white/5 rounded-2xl p-6 backdrop-blur-lg border border-white/10">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="bg-[#BFE953]/20 p-2 rounded-lg">
+                    <i data-lucide="file-text" class="w-5 h-5 text-[#BFE953]"></i>
+                </div>
+                <h2 class="text-xl font-semibold text-[#F6F6F5]">Upload Your Investment Portfolio</h2>
+            </div>
+            
+            <p class="text-[#F6F6F5]/60 mb-6">Upload your investment portfolio PDF for AI-powered analysis and personalized recommendations.</p>
+            
+            <form action="{% url 'analyze_portfolio_pdf' %}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                {% csrf_token %}
+                <div class="flex items-center justify-center w-full">
+                    <label for="portfolio_pdf" class="flex flex-col items-center justify-center w-full h-32 border-2 border-[#BFE953]/30 border-dashed rounded-lg cursor-pointer bg-white/5 hover:bg-white/8 transition-all">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <i data-lucide="upload" class="w-8 h-8 mb-3 text-[#BFE953]"></i>
+                            <p class="mb-2 text-sm text-[#F6F6F5]"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                            <p class="text-xs text-[#F6F6F5]/60">PDF (MAX. 10MB)</p>
+                        </div>
+                        <input id="portfolio_pdf" name="portfolio_pdf" type="file" class="hidden" accept=".pdf" />
+                    </label>
+                </div>
+                
+                <div id="file_name" class="hidden">
+                    <p class="text-sm text-[#BFE953]">Selected file: <span id="selected_file"></span></p>
+                </div>
+
+                <button type="submit" class="w-full py-3 px-4 bg-[#BFE953] text-[#0F0F11] font-medium rounded-lg hover:bg-[#d6ff63] transition-all flex items-center justify-center gap-2">
+                    <i data-lucide="search" class="w-4 h-4"></i>
+                    Analyze Portfolio
+                </button>
+            </form>
+        </div>
+
+        <!-- Analysis Results Section -->
+        {% if analysis_results %}
+        <div class="mb-12 bg-white/5 rounded-2xl p-6 backdrop-blur-lg border border-white/10">
+            <h2 class="text-xl font-semibold text-[#F6F6F5] mb-4">Portfolio Analysis Results</h2>
+            <div class="prose prose-invert">
+                {{ analysis_results|safe }}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Original Suggestions Content -->
         <div class="mb-8">
             <h1 class="text-3xl font-bold text-[#F6F6F5] mb-2">AI-Powered Stock Suggestions</h1>
             <p class="text-[#F6F6F5]/60">Personalized stock recommendations based on your portfolio and market analysis.</p>
@@ -71,4 +116,14 @@
         {% endif %}
     </div>
 </div>
+
+<script>
+    document.getElementById('portfolio_pdf').addEventListener('change', function(e) {
+        const fileName = e.target.files[0]?.name;
+        if (fileName) {
+            document.getElementById('file_name').classList.remove('hidden');
+            document.getElementById('selected_file').textContent = fileName;
+        }
+    });
+</script>
 {% endblock %} 
