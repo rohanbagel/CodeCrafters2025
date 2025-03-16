@@ -226,44 +226,37 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <div class="bg-[#1A1A1A] p-6 rounded-xl border border-[#262626]">
             <h3 class="text-sm font-medium text-[#A3A3A3] mb-2">Total Profit</h3>
-            <p class="text-2xl font-bold text-[#F6F6F5]">$24,500</p>
-            <span class="inline-flex items-center text-sm text-[#BFE953] mt-2">
-                <i data-lucide="trending-up" class="h-4 w-4 mr-1"></i>
-                +12.5%
+            <p class="text-2xl font-bold text-[#F6F6F5]">${{ total_profit|default:"0.00"|floatformat:2 }}</p>
+            <span class="inline-flex items-center text-sm {% if total_profit >= 0 %}text-[#BFE953]{% else %}text-red-500{% endif %} mt-2">
+                <i data-lucide="{% if total_profit >= 0 %}trending-up{% else %}trending-down{% endif %}" class="h-4 w-4 mr-1"></i>
+                {{ total_profit_percentage|default:"0" }}%
             </span>
         </div>
 
         <div class="bg-[#1A1A1A] p-6 rounded-xl border border-[#262626]">
             <h3 class="text-sm font-medium text-[#A3A3A3] mb-2">Wallet Balance</h3>
-            <p class="text-2xl font-bold text-[#F6F6F5]">${{ request.user.profile.wallet_balance|default:"0.00" }}</p>
+            <p class="text-2xl font-bold text-[#F6F6F5]">${{ wallet_balance|default:"0.00"|floatformat:2 }}</p>
             <a href="{% url 'profile' %}" class="inline-flex items-center text-sm text-[#BFE953] mt-2 hover:text-[#d6ff63] transition-colors">
                 <i data-lucide="plus-circle" class="h-4 w-4 mr-1"></i>
                 Add Funds
             </a>
         </div>
 
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Total Portfolio Value</span>
-                <i class="fas fa-wallet card-icon"></i>
-            </div>
-            <div class="value">$124,500</div>
+        <div class="bg-[#1A1A1A] p-6 rounded-xl border border-[#262626]">
+            <h3 class="text-sm font-medium text-[#A3A3A3] mb-2">Total Portfolio Value</h3>
+            <p class="text-2xl font-bold text-[#F6F6F5]">${{ portfolio_value|default:"0.00"|floatformat:2 }}</p>
+            <span class="text-sm text-[#A3A3A3] mt-2">
+                {{ active_investments }} Active Investments
+            </span>
         </div>
 
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Today's Profit</span>
-                <i class="fas fa-chart-line card-icon"></i>
-            </div>
-            <div class="value positive">+$1,245</div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title">Active Investments</span>
-                <i class="fas fa-briefcase card-icon"></i>
-            </div>
-            <div class="value">12</div>
+        <div class="bg-[#1A1A1A] p-6 rounded-xl border border-[#262626]">
+            <h3 class="text-sm font-medium text-[#A3A3A3] mb-2">Today's Profit</h3>
+            <p class="text-2xl font-bold text-[#F6F6F5]">${{ todays_profit|default:"0.00"|floatformat:2 }}</p>
+            <span class="inline-flex items-center text-sm {% if todays_profit >= 0 %}text-[#BFE953]{% else %}text-red-500{% endif %} mt-2">
+                <i data-lucide="{% if todays_profit >= 0 %}trending-up{% else %}trending-down{% endif %}" class="h-4 w-4 mr-1"></i>
+                Daily Change
+            </span>
         </div>
     </div>
 
@@ -298,29 +291,31 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Portfolio chart
         const ctx = document.getElementById('portfolioChart').getContext('2d');
+        const performanceData = {{ portfolio_performance|safe }};
+        
+        // Process data for chart
+        const dates = performanceData.length > 0 ? performanceData[0].dates : [];
+        const datasets = performanceData.map(stock => ({
+            label: stock.symbol,
+            data: stock.values,
+            borderColor: '#BFE953',
+            borderWidth: 2,
+            tension: 0.4,
+            fill: false
+        }));
+
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                datasets: [{
-                    label: 'Portfolio Value',
-                    data: [65000, 75000, 72000, 90000, 85000, 124500],
-                    borderColor: '#BFE953',
-                    borderWidth: 3,
-                    tension: 0.4,
-                    fill: true,
-                    backgroundColor: 'rgba(191, 233, 83, 0.1)',
-                    pointBackgroundColor: '#BFE953',
-                    pointRadius: 4
-                }]
+                labels: dates,
+                datasets: datasets
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {
-                    legend: { display: false }
+                    legend: { display: true }
                 },
                 scales: {
                     y: {

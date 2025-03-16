@@ -18,7 +18,7 @@ from django.views.decorators.http import require_POST
 import logging
 import traceback
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 from twilio.rest import Client
 from django.views.decorators.csrf import csrf_exempt
 import PyPDF2
@@ -84,7 +84,7 @@ def login_view(request):
 
 @login_required
 def home(request):
-    # Default stocks to track
+    # Define default stocks outside try block
     default_stocks = [
         {'symbol': 'AAPL', 'name': 'Apple Inc.'},
         {'symbol': 'GOOGL', 'name': 'Alphabet Inc.'},
@@ -92,10 +92,101 @@ def home(request):
         {'symbol': 'AMZN', 'name': 'Amazon.com Inc.'},
     ]
     
-    context = {
-        'api_key': 'cvam92hr01qsapma5g6gcvam92hr01qsapma5g70',
-        'stocks': default_stocks,
-    }
+    try:
+        # Get user's profile and transactions
+        profile = request.user.profile
+        transactions = StockTransaction.objects.filter(user=request.user)
+        
+        # Calculate total profit/loss and today's profit
+        total_profit = Decimal('0')
+        portfolio_value = Decimal('0')
+        todays_profit = Decimal('0')
+        active_investments = 0
+        total_profit_percentage = 0
+        
+        # Get holdings data
+        holdings_dict = {}
+        for transaction in transactions:
+            symbol = transaction.symbol
+            if symbol not in holdings_dict:
+                holdings_dict[symbol] = {
+                    'quantity': 0,
+                    'total_cost': Decimal('0')
+                }
+            
+            if transaction.transaction_type == 'BUY':
+                holdings_dict[symbol]['quantity'] += transaction.quantity
+                holdings_dict[symbol]['total_cost'] += transaction.total_amount
+            else:  # SELL
+                holdings_dict[symbol]['quantity'] -= transaction.quantity
+                holdings_dict[symbol]['total_cost'] -= transaction.total_amount
+        
+        # Initialize Finnhub client
+        finnhub_client = finnhub.Client(api_key='cvam92hr01qsapma5g6gcvam92hr01qsapma5g70')
+        
+        # Calculate current values and profits
+        portfolio_performance = []
+        initial_investment = Decimal('0')
+        
+        for symbol, data in holdings_dict.items():
+            if data['quantity'] > 0:
+                active_investments += 1
+                try:
+                    quote = finnhub_client.quote(symbol)
+                    current_price = Decimal(str(quote['c']))
+                    previous_close = Decimal(str(quote['pc']))
+                    current_value = current_price * data['quantity']
+                    profit = current_value - data['total_cost']
+                    
+                    # Calculate today's profit for this stock
+                    today_profit_for_stock = (current_price - previous_close) * data['quantity']
+                    todays_profit += today_profit_for_stock
+                    
+                    # Add today's profit to total profit
+                    total_profit += profit + today_profit_for_stock
+                    portfolio_value += current_value
+                    initial_investment += data['total_cost']
+                    
+                    # Get historical data for performance graph
+                    candles = finnhub_client.stock_candles(
+                        symbol, 'D', 
+                        int((datetime.now() - timedelta(days=180)).timestamp()), 
+                        int(datetime.now().timestamp())
+                    )
+                    if candles['s'] == 'ok':
+                        portfolio_performance.append({
+                            'symbol': symbol,
+                            'dates': [datetime.fromtimestamp(t).strftime('%Y-%m-%d') for t in candles['t']],
+                            'values': candles['c']
+                        })
+                        
+                except Exception as e:
+                    logger.error(f"Error fetching data for {symbol}: {e}")
+        
+        # Calculate total profit percentage
+        if initial_investment > 0:
+            total_profit_percentage = (total_profit / initial_investment) * 100
+
+        context = {
+            'api_key': 'cvam92hr01qsapma5g6gcvam92hr01qsapma5g70',
+            'stocks': default_stocks,
+            'wallet_balance': profile.wallet_balance,
+            'total_profit': total_profit,
+            'total_profit_percentage': round(total_profit_percentage, 2),
+            'portfolio_value': portfolio_value,
+            'todays_profit': todays_profit,
+            'active_investments': active_investments,
+            'portfolio_performance': portfolio_performance
+        }
+        
+    except Exception as e:
+        logger.error(f"Error in home view: {e}")
+        context = {
+            'api_key': 'cvam92hr01qsapma5g6gcvam92hr01qsapma5g70',
+            'stocks': default_stocks,
+            'error': 'Error loading dashboard data'
+        }
+    
     return render(request, 'User/home.html', context)
 
 @login_required
@@ -711,14 +802,19 @@ def get_stock_suggestions(user):
     try:
         suggestions = []
         for symbol in user_stocks:
-            company_profile = finnhub_client.company_profile2(symbol=symbol)
-            if company_profile:
-                similar_companies = finnhub_client.company_peers(symbol)
-                if similar_companies:
-                    suggestions.extend(similar_companies[:2])
-        
-        suggestions = list(set(suggestions) - user_stocks)[:5]
-        
+            try:
+                company_profile = finnhub_client.company_profile2(symbol=symbol)
+                if company_profile:
+                    similar_companies = finnhub_client.company_peers(symbol)
+                    if similar_companies:
+                        suggestions.extend(similar_companies[:2])
+            except Exception as e:
+                logger.error(f"Error fetching peers for {symbol}: {str(e)}")
+                pass  # Continue execution even if fetching peers fails
+
+        # Ensure suggestions do not contain already owned stocks
+        suggestions = list(set(suggestions) - set(user_stocks))[:5]
+
         for symbol in suggestions:
             try:
                 company_data = finnhub_client.company_profile2(symbol=symbol)
@@ -731,11 +827,11 @@ def get_stock_suggestions(user):
                         'weburl': company_data.get('weburl', '')
                     })
             except Exception as e:
-                logger.error(f"Error fetching data for {symbol}: {str(e)}")
-                continue
-                
+                logger.error(f"Error fetching company data for {symbol}: {str(e)}")
+                pass  # Continue execution even if a company's data cannot be fetched
+    
     except Exception as e:
-        logger.error(f"Error generating suggestions: {str(e)}")
+        logger.error(f"Error generating stock suggestions: {str(e)}")
     
     return suggestion_details
 
