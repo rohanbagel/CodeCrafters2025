@@ -799,6 +799,19 @@
             </ul>
         </div>
         
+        <!-- Add Risk Analysis button -->
+        <div class="nav-category">
+            <div class="category-title">Risk Analysis</div>
+            <ul class="nav-links">
+                <li>
+                    <a href="{% url 'risk_dashboard' %}" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/5 transition-all {% if request.path == '/risk/dashboard/' %}bg-white/5 text-[#BFE953]{% endif %}">
+                        <i data-lucide="bar-chart-2" class="h-5 w-5"></i>
+                        <span>Risk Analysis</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
         <div class="sidebar-footer">
             <a href="#"><i class="fas fa-question-circle"></i> Help</a>
             <a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
