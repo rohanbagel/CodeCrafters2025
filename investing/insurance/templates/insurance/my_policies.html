@@ -1,0 +1,89 @@
+{% extends 'User/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="p-4 sm:p-6 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-2xl md:text-3xl font-bold text-[#F6F6F5] mb-2">My Insurance Policies</h1>
+            <p class="text-[#F6F6F5]/60">View and manage your insurance policies</p>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white/5 rounded-xl p-6 backdrop-blur-lg border border-white/10">
+                <h3 class="text-[#F6F6F5]/60 text-sm mb-2">Active Policies</h3>
+                <p class="text-2xl font-bold text-[#F6F6F5]">{{ active_policies }}</p>
+            </div>
+            <div class="bg-white/5 rounded-xl p-6 backdrop-blur-lg border border-white/10">
+                <h3 class="text-[#F6F6F5]/60 text-sm mb-2">Total Monthly Premium</h3>
+                <p class="text-2xl font-bold text-[#F6F6F5]">${{ total_premium|floatformat:2 }}</p>
+            </div>
+            <div class="bg-white/5 rounded-xl p-6 backdrop-blur-lg border border-white/10">
+                <h3 class="text-[#F6F6F5]/60 text-sm mb-2">Total Coverage</h3>
+                <p class="text-2xl font-bold text-[#F6F6F5]">${{ total_coverage|floatformat:2 }}M</p>
+            </div>
+        </div>
+
+        <!-- Policies List -->
+        {% if policies %}
+        <div class="bg-white/5 rounded-xl backdrop-blur-lg border border-white/10 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="border-b border-white/10">
+                        <tr>
+                            <th class="py-4 px-6 text-left text-[#F6F6F5]/60">Policy Name</th>
+                            <th class="py-4 px-6 text-left text-[#F6F6F5]/60">Type</th>
+                            <th class="py-4 px-6 text-left text-[#F6F6F5]/60">Provider</th>
+                            <th class="py-4 px-6 text-left text-[#F6F6F5]/60">Coverage</th>
+                            <th class="py-4 px-6 text-left text-[#F6F6F5]/60">Premium</th>
+                            <th class="py-4 px-6 text-left text-[#F6F6F5]/60">Term</th>
+                            <th class="py-4 px-6 text-left text-[#F6F6F5]/60">Status</th>
+                            <th class="py-4 px-6 text-left text-[#F6F6F5]/60">Valid Until</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/10">
+                        {% for policy in policies %}
+                        <tr>
+                            <td class="py-4 px-6 text-[#F6F6F5]">{{ policy.insurance_plan.name }}</td>
+                            <td class="py-4 px-6 text-[#F6F6F5]">{{ policy.insurance_plan.get_insurance_type_display }}</td>
+                            <td class="py-4 px-6 text-[#F6F6F5]">{{ policy.insurance_plan.provider }}</td>
+                            <td class="py-4 px-6 text-[#F6F6F5]">${{ policy.insurance_plan.coverage_amount|floatformat:2 }}M</td>
+                            <td class="py-4 px-6 text-[#F6F6F5]">${{ policy.insurance_plan.monthly_premium|floatformat:2 }}</td>
+                            <td class="py-4 px-6 text-[#F6F6F5]">{{ policy.insurance_plan.term_years }} years</td>
+                            <td class="py-4 px-6">
+                                <span class="px-2 py-1 rounded-full text-xs 
+                                    {% if policy.status == 'ACTIVE' %}
+                                        bg-green-500/20 text-green-500
+                                    {% else %}
+                                        bg-red-500/20 text-red-500
+                                    {% endif %}">
+                                    {{ policy.status }}
+                                </span>
+                            </td>
+                            <td class="py-4 px-6 text-[#F6F6F5]">{{ policy.end_date|date:"M d, Y" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %}
+            {% if error %}
+            <div class="text-center py-12">
+                <p class="text-[#F6F6F5]/60">{{ error }}</p>
+            </div>
+            {% else %}
+            <div class="text-center py-12">
+                <p class="text-[#F6F6F5]/60">You haven't applied for any insurance policies yet.</p>
+                <a href="{% url 'insurance:insurance' %}" 
+                   class="inline-block mt-4 px-4 py-2 bg-[#BFE953] text-[#0F0F11] rounded-lg hover:bg-[#d6ff63]">
+                    Browse Insurance Plans
+                </a>
+            </div>
+            {% endif %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

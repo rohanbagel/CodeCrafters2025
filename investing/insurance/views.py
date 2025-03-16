@@ -146,3 +146,73 @@ def apply_insurance(request):
         'success': False,
         'message': 'Invalid request method.'
     }, status=405)
+
+@login_required
+def compare_insurance(request):
+    if request.method == 'POST':
+        try:
+            plan_ids = request.POST.getlist('plan_ids[]')
+            plans = []
+            
+            for plan_id in plan_ids:
+                plan_data = {
+                    'company': request.POST.get(f'company_{plan_id}'),
+                    'plan_name': request.POST.get(f'plan_name_{plan_id}'),
+                    'coverage': request.POST.get(f'coverage_{plan_id}'),
+                    'premium': request.POST.get(f'premium_{plan_id}'),
+                    'term': request.POST.get(f'term_{plan_id}'),
+                    'type': request.POST.get(f'type_{plan_id}')
+                }
+                plans.append(plan_data)
+            
+            return JsonResponse({
+                'success': True,
+                'plans': plans
+            })
+            
+        except Exception as e:
+            logger.error(f"Error in compare_insurance: {str(e)}")
+            return JsonResponse({
+                'success': False,
+                'message': 'Failed to compare insurance plans.'
+            }, status=400)
+    
+    return JsonResponse({
+        'success': False,
+        'message': 'Invalid request method.'
+    }, status=405)
+
+@login_required
+def comparison_page(request):
+    try:
+        # Get plans from session storage
+        selected_plans = request.session.get('selected_plans', [])
+        if not selected_plans:
+            # If not in Django session, template will handle sessionStorage
+            return render(request, 'insurance/comparison_page.html', {'selected_plans': []})
+        
+        context = {
+            'selected_plans': selected_plans,
+            'insurance_types': InsurancePlan.INSURANCE_TYPES
+        }
+        return render(request, 'insurance/comparison_page.html', context)
+    except Exception as e:
+        logger.error(f"Error in comparison page: {str(e)}")
+        return redirect('insurance:insurance')
+
+@login_required
+def my_policies(request):
+    try:
+        # Get user's insurance policies
+        user_policies = UserInsurance.objects.filter(user=request.user).select_related('insurance_plan').order_by('-start_date')
+        
+        context = {
+            'policies': user_policies,
+            'active_policies': user_policies.filter(status='ACTIVE').count(),
+            'total_premium': sum(policy.insurance_plan.monthly_premium for policy in user_policies.filter(status='ACTIVE')),
+            'total_coverage': sum(policy.insurance_plan.coverage_amount for policy in user_policies.filter(status='ACTIVE'))
+        }
+        return render(request, 'insurance/my_policies.html', context)
+    except Exception as e:
+        logger.error(f"Error in my policies view: {str(e)}")
+        return render(request, 'insurance/my_policies.html', {'error': 'Unable to load policies at this time.'})

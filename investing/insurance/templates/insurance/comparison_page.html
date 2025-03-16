@@ -1,0 +1,221 @@
+{% extends 'User/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="p-4 sm:p-6 md:p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-[#F6F6F5] mb-2">Insurance Plan Comparison</h1>
+                    <p class="text-[#F6F6F5]/60">Compare and apply for insurance plans</p>
+                </div>
+                <a href="{% url 'insurance:insurance' %}" 
+                   class="px-4 py-2 text-[#F6F6F5] bg-white/10 rounded-lg hover:bg-white/20">
+                    Back to Plans
+                </a>
+            </div>
+        </div>
+
+        <!-- Add this script at the top to load plans -->
+        <script>
+            // Load plans from sessionStorage
+            let selectedPlans = [];
+            try {
+                const storedPlans = sessionStorage.getItem('selected_plans');
+                if (storedPlans) {
+                    selectedPlans = JSON.parse(storedPlans);
+                }
+            } catch (error) {
+                console.error('Error loading plans:', error);
+            }
+        </script>
+
+        <!-- Comparison Table -->
+        <div class="bg-white/5 rounded-xl p-6 backdrop-blur-lg border border-white/10 mb-8">
+            <div class="overflow-x-auto">
+                <table class="w-full" id="comparisonTable">
+                    <!-- Table content will be populated by JavaScript -->
+                </table>
+            </div>
+        </div>
+
+        <!-- Application Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="applicationCards">
+            <!-- Cards will be populated by JavaScript -->
+        </div>
+    </div>
+</div>
+
+<script>
+// Function to populate the comparison table
+function populateComparisonTable() {
+    const table = document.getElementById('comparisonTable');
+    if (!selectedPlans || selectedPlans.length === 0) {
+        table.innerHTML = '<p class="text-center text-[#F6F6F5]/60 py-4">No plans selected for comparison.</p>';
+        return;
+    }
+
+    let html = `
+        <thead class="border-b border-white/10">
+            <tr>
+                <th class="py-4 px-4 text-left text-[#F6F6F5]/60">Features</th>
+                ${selectedPlans.map(plan => `
+                    <th class="py-4 px-4 text-left text-[#F6F6F5]">${plan.company}</th>
+                `).join('')}
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-white/10">
+            <tr>
+                <td class="py-4 px-4 text-[#F6F6F5]/60">Plan Name</td>
+                ${selectedPlans.map(plan => `
+                    <td class="py-4 px-4 text-[#F6F6F5]">${plan.planName}</td>
+                `).join('')}
+            </tr>
+            <tr>
+                <td class="py-4 px-4 text-[#F6F6F5]/60">Insurance Type</td>
+                ${selectedPlans.map(plan => `
+                    <td class="py-4 px-4 text-[#F6F6F5]">${plan.type}</td>
+                `).join('')}
+            </tr>
+            <tr>
+                <td class="py-4 px-4 text-[#F6F6F5]/60">Coverage Amount</td>
+                ${selectedPlans.map(plan => `
+                    <td class="py-4 px-4 text-[#F6F6F5]">${plan.coverage}</td>
+                `).join('')}
+            </tr>
+            <tr>
+                <td class="py-4 px-4 text-[#F6F6F5]/60">Monthly Premium</td>
+                ${selectedPlans.map(plan => `
+                    <td class="py-4 px-4 text-[#F6F6F5]">${plan.premium}</td>
+                `).join('')}
+            </tr>
+            <tr>
+                <td class="py-4 px-4 text-[#F6F6F5]/60">Term</td>
+                ${selectedPlans.map(plan => `
+                    <td class="py-4 px-4 text-[#F6F6F5]">${plan.term}</td>
+                `).join('')}
+            </tr>
+        </tbody>
+    `;
+    table.innerHTML = html;
+}
+
+// Function to populate application cards
+function populateApplicationCards() {
+    const cardsContainer = document.getElementById('applicationCards');
+    if (!selectedPlans || selectedPlans.length === 0) {
+        cardsContainer.innerHTML = '<p class="text-center text-[#F6F6F5]/60 col-span-full">No plans selected for comparison.</p>';
+        return;
+    }
+
+    cardsContainer.innerHTML = selectedPlans.map(plan => `
+        <div class="bg-white/5 rounded-xl p-6 backdrop-blur-lg border border-white/10">
+            <h3 class="text-lg font-semibold text-[#F6F6F5] mb-4">${plan.planName}</h3>
+            <div class="space-y-2 mb-6">
+                <p class="text-[#F6F6F5]/60">Provider: <span class="text-[#F6F6F5]">${plan.company}</span></p>
+                <p class="text-[#F6F6F5]/60">Type: <span class="text-[#F6F6F5]">${plan.type}</span></p>
+                <p class="text-[#F6F6F5]/60">Coverage: <span class="text-[#F6F6F5]">${plan.coverage}</span></p>
+            </div>
+            <button onclick="applyForInsurance(this)" 
+                    data-plan='${JSON.stringify(plan)}'
+                    class="w-full px-4 py-2 bg-[#BFE953] text-[#0F0F11] rounded-lg hover:bg-[#d6ff63] transition-all">
+                Apply Now
+            </button>
+        </div>
+    `).join('');
+}
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', () => {
+    populateComparisonTable();
+    populateApplicationCards();
+    lucide.createIcons();
+});
+
+async function applyForInsurance(button) {
+    try {
+        button.disabled = true;
+        const originalText = button.innerHTML;
+        button.innerHTML = '<span class="inline-flex items-center"><i data-lucide="loader" class="animate-spin mr-2 h-4 w-4"></i>Applying...</span>';
+        lucide.createIcons();
+
+        const planData = JSON.parse(button.dataset.plan);
+        
+        const response = await fetch('{% url "insurance:apply_insurance" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: new URLSearchParams({
+                'company': planData.company,
+                'plan_type': planData.type.toUpperCase(),
+                'plan_name': planData.planName,
+                'coverage': planData.coverage.replace('$', '').replace('M', ''),
+                'premium': planData.premium.replace('$', ''),
+                'term': planData.term.replace(' years', '')
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            showNotification('success', data.message);
+            button.innerHTML = '<i data-lucide="check" class="w-5 h-5 mr-2"></i>Applied';
+            button.classList.add('bg-green-500', 'hover:bg-green-600');
+            button.disabled = true;
+        } else {
+            throw new Error(data.message);
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+        button.disabled = false;
+        button.innerHTML = originalText;
+        showNotification('error', error.message || 'Failed to apply for insurance.');
+    }
+    
+    lucide.createIcons();
+}
+
+function showNotification(type, message) {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg ${
+        type === 'success' ? 'bg-green-500' : 'bg-red-500'
+    } text-white z-50 animate-fade-in-down`;
+    
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" 
+               class="w-5 h-5 mr-3"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    lucide.createIcons();
+    
+    setTimeout(() => {
+        notification.classList.add('animate-fade-out');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %} 

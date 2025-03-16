@@ -6,8 +6,17 @@
     <div class="max-w-7xl mx-auto">
         <!-- Header -->
         <div class="mb-8">
-            <h1 class="text-2xl md:text-3xl font-bold text-[#F6F6F5] mb-2">Insurance Plans</h1>
-            <p class="text-[#F6F6F5]/60">Compare insurance plans from top providers</p>
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-[#F6F6F5] mb-2">Insurance Plans</h1>
+                    <p class="text-[#F6F6F5]/60">Compare insurance plans from top providers</p>
+                </div>
+                <a href="{% url 'insurance:my_policies' %}" 
+                   class="flex items-center space-x-2 px-4 py-2 bg-white/10 text-[#F6F6F5] rounded-lg hover:bg-white/20 transition-all">
+                    <i data-lucide="shield" class="w-4 h-4"></i>
+                    <span>My Applied Policies</span>
+                </a>
+            </div>
         </div>
 
         <!-- Insurance Type Tabs -->
@@ -31,37 +40,45 @@
             </div>
         </div>
 
+        <!-- Add this button at the top of the plans section -->
+        <div class="flex justify-end mb-4">
+            <button id="compareButton" 
+                    onclick="compareSelectedPlans()" 
+                    class="px-4 py-2 bg-[#BFE953] text-[#0F0F11] rounded-lg hover:bg-[#d6ff63] hidden">
+                Compare Selected Plans
+            </button>
+        </div>
+
         <!-- Insurance Plans Grid -->
         {% if companies %}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for company in companies %}
             <!-- Life Insurance Plans -->
             <div class="insurance-plan life-plan">
-                <div class="bg-white/5 rounded-xl p-6 backdrop-blur-lg border border-white/10">
-                    <div class="flex items-center gap-4 mb-4">
-                        {% if company.logo %}
-                        <img src="{{ company.logo }}" alt="{{ company.name }}" class="w-12 h-12 rounded-lg">
-                        {% endif %}
-                        <div>
-                            <h3 class="text-lg font-semibold text-[#F6F6F5]">{{ company.plans.life.name }}</h3>
-                            <p class="text-sm text-[#F6F6F5]/60">{{ company.name }}</p>
-                        </div>
+                <div class="bg-white/5 rounded-xl p-6 backdrop-blur-lg border border-white/10 relative">
+                    <div class="absolute top-4 right-4">
+                        <input type="checkbox" 
+                               onchange="handlePlanSelection(this)" 
+                               class="w-5 h-5 rounded border-white/10 bg-white/5 text-[#BFE953]">
                     </div>
-                    <div class="space-y-3">
-                        <div class="flex justify-between text-sm">
+                    <p class="text-sm text-[#F6F6F5]/60">{{ company.name }}</p>
+                    <h3 class="text-lg font-semibold text-[#F6F6F5] mt-2">{{ company.plans.life.name }}</h3>
+                    <div class="mt-4 space-y-2">
+                        <div class="flex justify-between">
                             <span class="text-[#F6F6F5]/60">Coverage</span>
-                            <span class="text-[#F6F6F5]">${{ company.plans.life.coverage|floatformat:2 }}M</span>
+                            <span data-coverage class="text-[#F6F6F5]">${{ company.plans.life.coverage|floatformat:2 }}M</span>
                         </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-[#F6F6F5]/60">Monthly Premium</span>
-                            <span class="text-[#F6F6F5]">${{ company.plans.life.premium|floatformat:2 }}</span>
+                        <div class="flex justify-between">
+                            <span class="text-[#F6F6F5]/60">Premium</span>
+                            <span data-premium class="text-[#F6F6F5]">${{ company.plans.life.premium|floatformat:2 }}</span>
                         </div>
-                        <div class="flex justify-between text-sm">
+                        <div class="flex justify-between">
                             <span class="text-[#F6F6F5]/60">Term</span>
-                            <span class="text-[#F6F6F5]">{{ company.plans.life.term }} years</span>
+                            <span data-term class="text-[#F6F6F5]">{{ company.plans.life.term }} years</span>
                         </div>
                     </div>
-                    <button onclick="applyForInsurance(this)" class="w-full mt-6 px-4 py-2 bg-[#BFE953] text-[#0F0F11] rounded-lg hover:bg-[#d6ff63] transition-all">
+                    <button onclick="handlePlanAction(this)" 
+                            class="w-full mt-6 px-4 py-2 bg-[#BFE953] text-[#0F0F11] rounded-lg hover:bg-[#d6ff63]">
                         Compare & Apply
                     </button>
                 </div>
@@ -93,7 +110,8 @@
                             <span class="text-[#F6F6F5]">{{ company.plans.health.term }} years</span>
                         </div>
                     </div>
-                    <button onclick="applyForInsurance(this)" class="w-full mt-6 px-4 py-2 bg-[#BFE953] text-[#0F0F11] rounded-lg hover:bg-[#d6ff63] transition-all">
+                    <button onclick="handlePlanAction(this)" 
+                            class="w-full mt-6 px-4 py-2 bg-[#BFE953] text-[#0F0F11] rounded-lg hover:bg-[#d6ff63] transition-all">
                         Compare & Apply
                     </button>
                 </div>
@@ -125,7 +143,8 @@
                             <span class="text-[#F6F6F5]">{{ company.plans.asset.term }} years</span>
                         </div>
                     </div>
-                    <button onclick="applyForInsurance(this)" class="w-full mt-6 px-4 py-2 bg-[#BFE953] text-[#0F0F11] rounded-lg hover:bg-[#d6ff63] transition-all">
+                    <button onclick="handlePlanAction(this)" 
+                            class="w-full mt-6 px-4 py-2 bg-[#BFE953] text-[#0F0F11] rounded-lg hover:bg-[#d6ff63] transition-all">
                         Compare & Apply
                     </button>
                 </div>
@@ -165,6 +184,23 @@
     </div>
 </div>
 
+<!-- Add comparison modal -->
+<div id="comparisonModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50">
+    <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-6xl">
+        <div class="bg-[#1C1C1E] rounded-2xl p-6 shadow-xl">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-[#F6F6F5]">Compare Insurance Plans</h3>
+                <button onclick="closeComparisonModal()" class="text-[#F6F6F5]/60 hover:text-[#F6F6F5]">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div id="comparisonTable" class="overflow-x-auto">
+                <!-- Comparison table will be inserted here -->
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 function showInsuranceType(type) {
     // Hide all plans
@@ -191,120 +227,84 @@ document.addEventListener('DOMContentLoaded', () => {
     showInsuranceType('life');
 });
 
-let selectedPlan = null;
+let selectedPlans = [];
 
-function applyForInsurance(button) {
-    const planCard = button.closest('.insurance-plan');
-    const planType = planCard.classList.contains('life-plan') ? 'LIFE' :
-                    planCard.classList.contains('health-plan') ? 'HEALTH' : 'ASSET';
-    
-    selectedPlan = {
-        company: planCard.querySelector('p.text-sm').textContent.trim(),
+function handlePlanSelection(checkbox) {
+    const planCard = checkbox.closest('.insurance-plan');
+    const planData = {
+        company: planCard.querySelector('.text-sm').textContent.trim(),
         planName: planCard.querySelector('h3').textContent.trim(),
-        coverage: planCard.querySelector('div:contains("Coverage") span:last-child').textContent.trim().replace('$', '').replace('M', ''),
-        premium: planCard.querySelector('div:contains("Premium") span:last-child').textContent.trim().replace('$', ''),
-        term: planCard.querySelector('div:contains("Term") span:last-child').textContent.trim().replace(' years', ''),
-        planType: planType
+        coverage: planCard.querySelector('[data-coverage]').textContent.trim(),
+        premium: planCard.querySelector('[data-premium]').textContent.trim(),
+        term: planCard.querySelector('[data-term]').textContent.trim(),
+        type: planCard.classList.contains('life-plan') ? 'Life' : 
+              planCard.classList.contains('health-plan') ? 'Health' : 'Asset'
     };
 
-    // Show plan details in modal
-    const planDetails = document.getElementById('planDetails');
-    planDetails.innerHTML = `
-        <div class="bg-white/5 rounded-lg p-4 space-y-4">
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <p class="text-[#F6F6F5]/60 text-sm">Insurance Provider</p>
-                    <p class="text-[#F6F6F5] font-medium">${selectedPlan.company}</p>
-                </div>
-                <div>
-                    <p class="text-[#F6F6F5]/60 text-sm">Plan Name</p>
-                    <p class="text-[#F6F6F5] font-medium">${selectedPlan.planName}</p>
-                </div>
-                <div>
-                    <p class="text-[#F6F6F5]/60 text-sm">Coverage Amount</p>
-                    <p class="text-[#F6F6F5] font-medium">$${selectedPlan.coverage}M</p>
-                </div>
-                <div>
-                    <p class="text-[#F6F6F5]/60 text-sm">Monthly Premium</p>
-                    <p class="text-[#F6F6F5] font-medium">$${selectedPlan.premium}</p>
-                </div>
-                <div>
-                    <p class="text-[#F6F6F5]/60 text-sm">Term</p>
-                    <p class="text-[#F6F6F5] font-medium">${selectedPlan.term} years</p>
-                </div>
-                <div>
-                    <p class="text-[#F6F6F5]/60 text-sm">Insurance Type</p>
-                    <p class="text-[#F6F6F5] font-medium">${selectedPlan.planType}</p>
-                </div>
-            </div>
-        </div>
-    `;
-
-    // Show modal
-    document.getElementById('compareModal').classList.remove('hidden');
-}
-
-function closeCompareModal() {
-    document.getElementById('compareModal').classList.add('hidden');
-    selectedPlan = null;
-}
-
-async function submitApplication() {
-    if (!selectedPlan) return;
-
-    const submitBtn = document.getElementById('submitBtn');
-    const originalText = submitBtn.innerHTML;
-    
-    try {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span class="inline-flex items-center"><i data-lucide="loader" class="animate-spin mr-2 h-4 w-4"></i>Applying...</span>';
-        lucide.createIcons();
-
-        const response = await fetch('{% url "insurance:apply_insurance" %}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-                'X-CSRFToken': getCookie('csrftoken')
-            },
-            body: new URLSearchParams({
-                'company': selectedPlan.company,
-                'plan_type': selectedPlan.planType,
-                'plan_name': selectedPlan.planName,
-                'coverage': selectedPlan.coverage,
-                'premium': selectedPlan.premium,
-                'term': selectedPlan.term
-            })
-        });
-
-        const data = await response.json();
-        
-        if (data.success) {
-            showNotification('success', data.message);
-            closeCompareModal();
-            
-            // Update original button
-            const planCards = document.querySelectorAll('.insurance-plan');
-            planCards.forEach(card => {
-                if (card.querySelector('h3').textContent.trim() === selectedPlan.planName) {
-                    const btn = card.querySelector('button');
-                    btn.innerHTML = '<i data-lucide="check" class="w-5 h-5 mr-2"></i>Applied';
-                    btn.classList.add('bg-green-500', 'hover:bg-green-600');
-                    btn.disabled = true;
-                }
-            });
+    if (checkbox.checked) {
+        if (selectedPlans.length < 3) {
+            selectedPlans.push(planData);
         } else {
-            throw new Error(data.message);
+            checkbox.checked = false;
+            showNotification('error', 'You can compare up to 3 plans at a time');
+            return;
         }
+    } else {
+        selectedPlans = selectedPlans.filter(plan => plan.planName !== planData.planName);
+    }
 
-    } catch (error) {
-        console.error('Error:', error);
-        showNotification('error', error.message || 'Failed to apply for insurance.');
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-        lucide.createIcons();
+    // Update compare button visibility
+    const compareButton = document.getElementById('compareButton');
+    if (compareButton) {
+        compareButton.style.display = selectedPlans.length >= 2 ? 'block' : 'none';
     }
 }
+
+function handlePlanAction(button) {
+    const planCard = button.closest('.insurance-plan');
+    const planData = {
+        company: planCard.querySelector('.text-sm').textContent.trim(),
+        planName: planCard.querySelector('h3').textContent.trim(),
+        coverage: planCard.querySelector('[data-coverage]').textContent.trim(),
+        premium: planCard.querySelector('[data-premium]').textContent.trim(),
+        term: planCard.querySelector('[data-term]').textContent.trim(),
+        type: planCard.classList.contains('life-plan') ? 'Life' : 
+              planCard.classList.contains('health-plan') ? 'Health' : 'Asset'
+    };
+
+    // Store in session storage and redirect
+    try {
+        sessionStorage.setItem('selected_plans', JSON.stringify([planData]));
+        window.location.href = '{% url "insurance:comparison_page" %}';
+    } catch (error) {
+        console.error('Error storing plan data:', error);
+        showNotification('error', 'Failed to compare plans. Please try again.');
+    }
+}
+
+function compareSelectedPlans() {
+    if (selectedPlans.length < 2) {
+        showNotification('error', 'Please select at least 2 plans to compare');
+        return;
+    }
+    
+    try {
+        // Store in session storage and redirect
+        sessionStorage.setItem('selected_plans', JSON.stringify(selectedPlans));
+        window.location.href = '{% url "insurance:comparison_page" %}';
+    } catch (error) {
+        console.error('Error storing plans:', error);
+        showNotification('error', 'Failed to compare plans. Please try again.');
+    }
+}
+
+// Add this to ensure the compare button is properly initialized
+document.addEventListener('DOMContentLoaded', () => {
+    const compareButton = document.getElementById('compareButton');
+    if (compareButton) {
+        compareButton.style.display = 'none';
+    }
+});
 
 function showNotification(type, message) {
     const notification = document.createElement('div');
@@ -350,5 +350,14 @@ document.addEventListener('DOMContentLoaded', () => {
     showInsuranceType('life');
     lucide.createIcons();
 });
+
+function closeCompareModal() {
+    document.getElementById('compareModal').classList.add('hidden');
+    selectedPlans = [];
+}
+
+function closeComparisonModal() {
+    document.getElementById('comparisonModal').classList.add('hidden');
+}
 </script>
 {% endblock %} 
