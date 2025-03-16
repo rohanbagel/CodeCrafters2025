@@ -22,6 +22,8 @@ urlpatterns = [
     path('portfolio/', views.portfolio, name='portfolio'),
     path('send-phone-verification/', views.send_phone_verification, name='send_phone_verification'),
     path('verify-phone-otp/', views.verify_phone_otp, name='verify_phone_otp'),
+    path('generate-portfolio-report/', views.generate_portfolio_report, name='generate_portfolio_report'),
+    path('suggestions/', views.suggestions, name='suggestions'),
 ]
 
 if settings.DEBUG:

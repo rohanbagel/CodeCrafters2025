@@ -53,6 +53,7 @@
 
         /* Sidebar styles */
         .sidebar {
+            display: none; /* Hide sidebar on mobile */
             height: calc(100vh - 64px);
             width: 270px;
             position: fixed;
@@ -217,7 +218,7 @@
 
         /* Main content - changed to pure black */
         .main-content {
-            margin-left: 270px;
+            margin-left: 0;
             margin-top: 0;
             padding: 30px;
             min-height: calc(100vh - 64px);
@@ -226,49 +227,19 @@
         }
 
         /* Responsive adjustments */
-        @media (max-width: 992px) {
+        @media (min-width: 1024px) {
             .sidebar {
-                width: 70px;
-                padding: 0;
-            }
-            
-            .sidebar-header h2 {
-                display: none;
-            }
-            
-            .category-title {
-                display: none;
-            }
-            
-            .nav-links li a {
-                padding: 12px;
-                justify-content: center;
-            }
-            
-            .nav-links i {
-                margin-right: 0;
-                font-size: 1.3rem;
-            }
-            
-            .nav-links i[data-lucide] {
-                margin-right: 0;
-            }
-            
-            .nav-links span {
-                display: none;
-            }
-            
-            .sidebar-footer {
-                flex-direction: column;
-            }
-            
-            .sidebar-footer a {
-                margin: 5px 0;
+                display: block; /* Show sidebar on desktop */
             }
             
             .main-content {
-                margin-left: 70px;
-                margin-top: 0;
+                margin-left: 270px;
+            }
+        }
+
+        @media (max-width: 1023px) {
+            .main-content {
+                margin-left: 0;
             }
         }
 
@@ -304,8 +275,8 @@
         }
 
         .chatbot-button {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             background: linear-gradient(135deg, #d6ff63 0%, #96c718 100%);
             box-shadow: 0 4px 20px rgba(191, 233, 83, 0.4);
@@ -323,7 +294,7 @@
 
         .chatbot-panel {
             position: fixed;
-            bottom: 90px;
+            bottom: 80px;
             right: 20px;
             width: 380px;
             height: 500px;
@@ -548,6 +519,85 @@
             font-style: italic;
             opacity: 0.9;
         }
+
+        /* Mobile responsive styles for chatbot */
+        @media (max-width: 640px) {
+            .chatbot-button {
+                width: 45px;
+                height: 45px;
+                bottom: 15px;
+                right: 15px;
+            }
+
+            .chatbot-button i {
+                width: 20px;
+                height: 20px;
+            }
+
+            .chatbot-panel {
+                width: 100%;
+                height: 100%;
+                bottom: 0;
+                right: 0;
+                border-radius: 0;
+                transform-origin: bottom center;
+            }
+
+            .chatbot-header {
+                border-radius: 0;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+
+            .chatbot-input {
+                padding: 12px;
+                border-radius: 0;
+            }
+
+            .chatbot-input input {
+                padding: 10px 14px;
+            }
+
+            .chatbot-send {
+                width: 36px;
+                height: 36px;
+            }
+
+            .chatbot-send i {
+                width: 18px;
+                height: 18px;
+            }
+        }
+
+        /* Tablet responsive styles */
+        @media (min-width: 641px) and (max-width: 1024px) {
+            .chatbot-panel {
+                width: 340px;
+                height: 450px;
+                bottom: 85px;
+            }
+        }
+
+        /* Animation for mobile view */
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(0);
+            }
+            to {
+                transform: translateY(100%);
+            }
+        }
     </style>
 </head>
 <body class="flex min-h-screen flex-col bg-[#0F0F11] text-[#F6F6F5]">
@@ -562,12 +612,104 @@
                 <span class="text-xl font-black tracking-tight text-white">Profit<span class="bg-gradient-to-r from-[#d6ff63] to-[#BFE953] bg-clip-text text-transparent">Pulse</span></span>
             </div>
             
-            <div class="flex items-center gap-4">
+            <button id="mobile-menu-button" class="lg:hidden rounded-lg bg-white/5 p-2 hover:bg-white/10">
+                <i data-lucide="menu" class="h-6 w-6"></i>
+            </button>
+
+            <div class="hidden lg:flex items-center gap-4">
                 <span class="text-sm text-[#F6F6F5]/60">Welcome, {{ user.username }}</span>
+                
+                <a href="{% url 'simulation:home' %}" class="inline-flex items-center gap-2 rounded-full border border-[#BFE953]/20 bg-[#BFE953]/10 px-4 py-2 text-sm font-bold text-[#BFE953] transition-all duration-300 hover:bg-[#BFE953]/20">
+                    <i data-lucide="gamepad-2" class="h-4 w-4"></i>
+                    Enter Simulation
+                </a>
+                
                 <a href="{% url 'logout' %}" class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white transition-all duration-300 hover:bg-white/10">
                     Logout
                     <i data-lucide="log-out" class="h-4 w-4 text-[#BFE953]"></i>
                 </a>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="lg:hidden hidden">
+            <div class="border-t border-white/10 bg-[#0F0F11]/95 backdrop-blur-lg">
+                <div class="container mx-auto px-4 py-3">
+                    <div class="flex flex-col gap-4">
+                        <span class="text-sm text-[#F6F6F5]/60">Welcome, {{ user.username }}</span>
+                        
+                        <!-- Mobile Navigation Menu -->
+                        <nav class="space-y-6">
+                            <!-- Overview Section -->
+                            <div>
+                                <h3 class="text-xs font-semibold uppercase tracking-wider text-[#F6F6F5]/40 mb-3">Overview</h3>
+                                <div class="space-y-2">
+                                    <a href="{% url 'home' %}" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/5 transition-all {% if request.resolver_match.url_name == 'home' %}bg-white/5 text-[#BFE953]{% endif %}">
+                                        <i data-lucide="layout-dashboard" class="h-5 w-5"></i>
+                                        <span>Dashboard</span>
+                                    </a>
+                                    <a href="{% url 'market_analytics' %}" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/5 transition-all {% if request.resolver_match.url_name == 'market_analytics' %}bg-white/5 text-[#BFE953]{% endif %}">
+                                        <i data-lucide="bar-chart-2" class="h-5 w-5"></i>
+                                        <span>Market Analytics</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Investments Section -->
+                            <div>
+                                <h3 class="text-xs font-semibold uppercase tracking-wider text-[#F6F6F5]/40 mb-3">Investments</h3>
+                                <div class="space-y-2">
+                                    <a href="{% url 'portfolio' %}" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/5 transition-all {% if request.resolver_match.url_name == 'portfolio' %}bg-white/5 text-[#BFE953]{% endif %}">
+                                        <i data-lucide="briefcase" class="h-5 w-5"></i>
+                                        <span>Portfolio</span>
+                                    </a>
+                                    <a href="{% url 'suggestions' %}" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/5 transition-all {% if request.resolver_match.url_name == 'suggestions' %}bg-white/5 text-[#BFE953]{% endif %} relative">
+                                        <i data-lucide="lightbulb" class="h-5 w-5 text-[#BFE953]"></i>
+                                        <span>AI Suggestions</span>
+                                        <span class="absolute -right-1 -top-1 flex h-2 w-2">
+                                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#BFE953] opacity-75"></span>
+                                            <span class="relative inline-flex rounded-full h-2 w-2 bg-[#BFE953]"></span>
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Account Section -->
+                            <div>
+                                <h3 class="text-xs font-semibold uppercase tracking-wider text-[#F6F6F5]/40 mb-3">Account</h3>
+                                <div class="space-y-2">
+                                    <a href="{% url 'profile' %}" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/5 transition-all {% if request.resolver_match.url_name == 'profile' %}bg-white/5 text-[#BFE953]{% endif %}">
+                                        <i data-lucide="user" class="h-5 w-5"></i>
+                                        <span>Profile</span>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Market Stocks Section -->
+                            <div>
+                                <h3 class="text-xs font-semibold uppercase tracking-wider text-[#F6F6F5]/40 mb-3">Market Stocks</h3>
+                                <div class="space-y-2">
+                                    <a href="{% url 'market_stocks' %}" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/5 transition-all {% if request.resolver_match.url_name == 'market_stocks' %}bg-white/5 text-[#BFE953]{% endif %}">
+                                        <i data-lucide="trending-up" class="h-5 w-5"></i>
+                                        <span>Market Stocks</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </nav>
+
+                        <!-- Mobile Action Buttons -->
+                        <div class="flex flex-col gap-2 pt-4 border-t border-white/10">
+                            <a href="{% url 'simulation:home' %}" class="inline-flex items-center gap-2 rounded-full border border-[#BFE953]/20 bg-[#BFE953]/10 px-4 py-2 text-sm font-bold text-[#BFE953] transition-all duration-300 hover:bg-[#BFE953]/20 justify-center">
+                                <i data-lucide="gamepad-2" class="h-4 w-4"></i>
+                                Enter Simulation
+                            </a>
+                            
+                            <a href="{% url 'logout' %}" class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-white transition-all duration-300 hover:bg-white/10 justify-center">
+                                Logout
+                                <i data-lucide="log-out" class="h-4 w-4 text-[#BFE953]"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -587,7 +729,7 @@
             <h2>Investment Portal</h2>
         </div>
         
-        <!-- Replace the Overview section in the sidebar -->
+        <!-- Overview section -->
         <div class="nav-category">
             <div class="category-title">Overview</div>
             <ul class="nav-links">
@@ -606,84 +748,56 @@
             </ul>
         </div>
         
+        <!-- Investments section -->
         <div class="nav-category">
             <div class="category-title">Investments</div>
+            <ul class="nav-links">
+                <li>
+                    <a href="{% url 'portfolio' %}">
+                        <i data-lucide="briefcase"></i>
+                        <span>Portfolio</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'suggestions' %}" class="group relative">
+                        <div class="absolute -right-1 -top-1">
+                            <span class="flex h-2 w-2">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#BFE953] opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-[#BFE953]"></span>
+                            </span>
+                        </div>
+                        <i data-lucide="lightbulb" class="h-5 w-5 text-[#BFE953]"></i>
+                        <span>AI Suggestions</span>
+                    </a>
+                </li>
+            </ul>
         </div>
-        <ul class="nav-links">
-            <li>
-                <a href="#">
-                    <i data-lucide="trending-up"></i>
-                    <span>Market Trends</span>
-                </a>
-            </li>
-            <li>
-                <a href="{% url 'portfolio' %}">
-                    <i data-lucide="briefcase"></i>
-                    <span>Portfolio</span>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <i data-lucide="wallet"></i>
-                    <span>Wallet</span>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <i data-lucide="repeat"></i>
-                    <span>Transactions</span>
-                </a>
-            </li>
-        </ul>
         
-        <div class="nav-category">
-            <div class="category-title">Services</div>
-        </div>
-        <ul class="nav-links">
-            <li>
-                <a href="#">
-                    <i data-lucide="lightbulb"></i>
-                    <span>Suggestions</span>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                    <i data-lucide="shield"></i>
-                    <span>Insurance</span>
-                </a>
-            </li>
-        </ul>
-        
+        <!-- Account section -->
         <div class="nav-category">
             <div class="category-title">Account</div>
+            <ul class="nav-links">
+                <li>
+                    <a href="{% url 'profile' %}">
+                        <i data-lucide="user"></i>
+                        <span>Profile</span>
+                    </a>
+                </li>
+            </ul>
         </div>
-        <ul class="nav-links">
-            <li>
-                <a href="{% url 'profile' %}">
-                    <i data-lucide="user"></i>
-                    <span>Profile</span>
-                </a>
-            </li>
-            <!-- Find and replace the Settings link in the Account section -->
-            <li>
-                <a href="#">
-                    <i data-lucide="settings" class="h-5 w-5"></i>
-                    <span>Settings</span>
-                </a>
-            </li>
-        </ul>
         
+        <!-- Market Stocks section -->
         <div class="nav-category">
             <div class="category-title">Market Stocks</div>
+            <ul class="nav-links">
+                <li>
+                    <a href="{% url 'market_stocks' %}" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/5 transition-all {% if request.resolver_match.url_name == 'market_stocks' %}bg-white/5 text-[#BFE953]{% endif %}">
+                        <i data-lucide="trending-up" class="h-5 w-5"></i>
+                        <span>Market Stocks</span>
+                    </a>
+                </li>
+            </ul>
         </div>
-        <ul class="nav-links">
-            <li>
-                <a href="{% url 'market_stocks' %}" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/5 transition-all {% if request.resolver_match.url_name == 'market_stocks' %}bg-white/5 text-[#BFE953]{% endif %}">
-                    <i data-lucide="trending-up" class="h-5 w-5"></i>
-                    <span>Market Stocks</span>
-                </a>
-            </li>
-        </ul>
         
         <div class="sidebar-footer">
             <a href="#"><i class="fas fa-question-circle"></i> Help</a>
@@ -746,22 +860,65 @@
             const chatbotMessages = document.getElementById('chatbotMessages');
             const chatbotInput = document.getElementById('chatbotInput');
             const chatbotSend = document.getElementById('chatbotSend');
+            let isMobile = window.innerWidth <= 640;
+            
+            function updateMobileState() {
+                isMobile = window.innerWidth <= 640;
+                if (!isMobile && chatbotPanel.classList.contains('mobile-open')) {
+                    chatbotPanel.classList.remove('mobile-open');
+                }
+            }
+
+            window.addEventListener('resize', updateMobileState);
             
             // Toggle chatbot panel
             chatbotButton.addEventListener('click', function() {
+                if (isMobile) {
+                    chatbotPanel.style.animation = 'slideUp 0.3s forwards';
+                    chatbotPanel.classList.add('mobile-open');
+                }
                 chatbotPanel.classList.toggle('hidden');
                 setTimeout(() => {
-                    chatbotPanel.classList.toggle('scale-out');
+                    if (!isMobile) {
+                        chatbotPanel.classList.toggle('scale-out');
+                    }
                 }, 10);
+                
+                // Focus input on open
+                setTimeout(() => {
+                    chatbotInput.focus();
+                }, 300);
             });
             
             // Close chatbot panel
             chatbotClose.addEventListener('click', function() {
-                chatbotPanel.classList.add('scale-out');
-                setTimeout(() => {
-                    chatbotPanel.classList.add('hidden');
-                }, 300);
+                if (isMobile) {
+                    chatbotPanel.style.animation = 'slideDown 0.3s forwards';
+                    setTimeout(() => {
+                        chatbotPanel.classList.add('hidden');
+                        chatbotPanel.classList.remove('mobile-open');
+                    }, 300);
+                } else {
+                    chatbotPanel.classList.add('scale-out');
+                    setTimeout(() => {
+                        chatbotPanel.classList.add('hidden');
+                    }, 300);
+                }
             });
+
+            // Handle back button for mobile
+            window.addEventListener('popstate', function() {
+                if (isMobile && chatbotPanel.classList.contains('mobile-open')) {
+                    chatbotClose.click();
+                }
+            });
+
+            // Prevent body scroll when chatbot is open on mobile
+            chatbotPanel.addEventListener('touchmove', function(e) {
+                if (isMobile && !chatbotMessages.contains(e.target)) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
             
             // Send message on Enter key
             chatbotInput.addEventListener('keypress', function(e) {
@@ -857,6 +1014,36 @@
             navLinks.forEach(link => {
                 if(link.getAttribute('href') === currentLocation) {
                     link.parentElement.classList.add('active');
+                }
+            });
+        });
+
+        // Update mobile menu toggle script
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            let isMenuOpen = false;
+
+            mobileMenuButton.addEventListener('click', () => {
+                isMenuOpen = !isMenuOpen;
+                mobileMenu.classList.toggle('hidden');
+                
+                // Update icon based on menu state
+                const icon = mobileMenuButton.querySelector('[data-lucide]');
+                icon.setAttribute('data-lucide', isMenuOpen ? 'x' : 'menu');
+                
+                // Re-initialize Lucide icons
+                lucide.createIcons();
+            });
+
+            // Close mobile menu on window resize
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 1024 && !mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                    isMenuOpen = false;
+                    const icon = mobileMenuButton.querySelector('[data-lucide]');
+                    icon.setAttribute('data-lucide', 'menu');
+                    lucide.createIcons();
                 }
             });
         });

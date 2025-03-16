@@ -26,7 +26,13 @@ SECRET_KEY = 'django-insecure-5yx$ua4@!)jo#1hqq44gaw%-vm*6xu#k&&es#ba$tj2+3*_gw*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+
+# Add this setting below ALLOWED_HOSTS
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+    'http://127.0.0.1:8000'
+]
 
 
 # Application definition
@@ -93,7 +99,8 @@ SOCIALACCOUNT_PROVIDERS = {
         ],
         'AUTH_PARAMS': {
             'access_type': 'online',
-        }
+        },
+        'VERIFIED_EMAIL': True,
     }
 }
 

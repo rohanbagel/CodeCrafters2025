@@ -115,3 +115,352 @@ INFO 2025-03-16 00:53:11,093 basehttp "GET /portfolio/ HTTP/1.1" 200 35107
 INFO 2025-03-16 00:53:17,365 basehttp "GET /market-analytics/ HTTP/1.1" 200 36207
 INFO 2025-03-16 00:53:27,147 basehttp "GET / HTTP/1.1" 200 22009
 INFO 2025-03-16 00:53:33,176 basehttp "GET /risk/dashboard/ HTTP/1.1" 200 35237
+INFO 2025-03-16 03:28:33,927 autoreload Watching for file changes with StatReloader
+INFO 2025-03-16 03:28:37,915 basehttp "GET /simulation/available-stocks/ HTTP/1.1" 302 0
+INFO 2025-03-16 03:28:38,076 basehttp "GET /accounts/login/?next=/simulation/available-stocks/ HTTP/1.1" 200 3162
+INFO 2025-03-16 03:28:41,811 basehttp "GET / HTTP/1.1" 200 25422
+WARNING 2025-03-16 03:28:42,309 log Not Found: /favicon.ico
+INFO 2025-03-16 03:28:42,310 basehttp - Broken pipe from ('127.0.0.1', 49325)
+INFO 2025-03-16 03:28:43,899 basehttp "GET /login/ HTTP/1.1" 200 31866
+INFO 2025-03-16 03:28:45,344 basehttp "GET /accounts/google/login/ HTTP/1.1" 200 1416
+INFO 2025-03-16 03:28:46,984 basehttp "POST /accounts/google/login/ HTTP/1.1" 302 0
+INFO 2025-03-16 03:28:50,472 basehttp "GET /accounts/google/login/callback/?state=0iRovbelPfP2Wxz5&code=4%2F0AQSTgQGeoGmYGhVWqOAJHohC5YNPD90WICP9WI9Q5R0xa0fqehHevBLHFiPhLtP1ibyvXA&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&authuser=0&prompt=none HTTP/1.1" 302 0
+INFO 2025-03-16 03:28:50,482 basehttp "GET /home/ HTTP/1.1" 200 41500
+INFO 2025-03-16 03:29:12,451 basehttp "GET /simulation/ HTTP/1.1" 200 7772
+WARNING 2025-03-16 03:29:12,580 log Not Found: /favicon.ico
+INFO 2025-03-16 03:29:12,581 basehttp - Broken pipe from ('127.0.0.1', 49327)
+INFO 2025-03-16 03:29:15,566 basehttp "GET /simulation/available-stocks/ HTTP/1.1" 200 21068
+INFO 2025-03-16 03:29:26,021 basehttp "GET /simulation/predict/AAPL/ HTTP/1.1" 302 0
+INFO 2025-03-16 03:29:27,459 basehttp "GET /simulation/prediction/AAPL/ HTTP/1.1" 200 3608903
+WARNING 2025-03-16 03:29:27,884 log Not Found: /favicon.ico
+INFO 2025-03-16 03:29:27,885 basehttp - Broken pipe from ('127.0.0.1', 49355)
+INFO 2025-03-16 03:29:37,839 basehttp "GET /simulation/available-stocks/ HTTP/1.1" 200 21068
+INFO 2025-03-16 03:35:54,659 basehttp "GET /simulation/predict/AAPL/ HTTP/1.1" 302 0
+INFO 2025-03-16 03:35:55,206 basehttp "GET /simulation/prediction/AAPL/ HTTP/1.1" 200 3608902
+INFO 2025-03-16 03:36:27,352 basehttp "GET /simulation/predict/MSFT/ HTTP/1.1" 302 0
+INFO 2025-03-16 03:36:27,625 basehttp "GET /simulation/prediction/MSFT/ HTTP/1.1" 200 3608819
+INFO 2025-03-16 03:54:24,440 autoreload Watching for file changes with StatReloader
+ERROR 2025-03-16 03:55:16,907 exception Invalid HTTP_HOST header: 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app'. You may need to add 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app'. You may need to add 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app' to ALLOWED_HOSTS.
+WARNING 2025-03-16 03:55:17,050 log Bad Request: /
+WARNING 2025-03-16 03:55:17,051 basehttp "GET / HTTP/1.1" 400 72171
+ERROR 2025-03-16 03:55:30,943 exception Invalid HTTP_HOST header: 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app'. You may need to add 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app'. You may need to add 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app' to ALLOWED_HOSTS.
+WARNING 2025-03-16 03:55:30,958 log Bad Request: /
+WARNING 2025-03-16 03:55:30,959 basehttp "GET / HTTP/1.1" 400 74676
+ERROR 2025-03-16 03:55:31,339 exception Invalid HTTP_HOST header: 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app'. You may need to add 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app'. You may need to add 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app' to ALLOWED_HOSTS.
+WARNING 2025-03-16 03:55:31,364 log Bad Request: /favicon.ico
+WARNING 2025-03-16 03:55:31,366 basehttp "GET /favicon.ico HTTP/1.1" 400 74403
+INFO 2025-03-16 03:55:55,311 autoreload C:\Gitnew\CodeCrafters2025\investing\investing\settings.py changed, reloading.
+INFO 2025-03-16 03:55:56,425 autoreload Watching for file changes with StatReloader
+ERROR 2025-03-16 03:56:06,689 exception Invalid HTTP_HOST header: 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app'. You may need to add 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app'. You may need to add 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app' to ALLOWED_HOSTS.
+WARNING 2025-03-16 03:56:06,708 log Bad Request: /
+WARNING 2025-03-16 03:56:06,709 basehttp "GET / HTTP/1.1" 400 74866
+ERROR 2025-03-16 03:56:07,344 exception Invalid HTTP_HOST header: 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app'. You may need to add 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app'. You may need to add 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app' to ALLOWED_HOSTS.
+WARNING 2025-03-16 03:56:07,357 log Bad Request: /favicon.ico
+WARNING 2025-03-16 03:56:07,358 basehttp "GET /favicon.ico HTTP/1.1" 400 74593
+ERROR 2025-03-16 03:56:38,897 exception Invalid HTTP_HOST header: 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app'. You may need to add 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app'. You may need to add 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app' to ALLOWED_HOSTS.
+WARNING 2025-03-16 03:56:38,907 log Bad Request: /
+WARNING 2025-03-16 03:56:38,908 basehttp "GET / HTTP/1.1" 400 74179
+ERROR 2025-03-16 03:56:39,085 exception Invalid HTTP_HOST header: 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app'. You may need to add 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\utils\deprecation.py", line 128, in __call__
+    response = self.process_request(request)
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\http\request.py", line 151, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app'. You may need to add 'fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app' to ALLOWED_HOSTS.
+WARNING 2025-03-16 03:56:39,095 log Bad Request: /favicon.ico
+WARNING 2025-03-16 03:56:39,096 basehttp "GET /favicon.ico HTTP/1.1" 400 74124
+INFO 2025-03-16 03:56:52,454 autoreload C:\Gitnew\CodeCrafters2025\investing\investing\settings.py changed, reloading.
+INFO 2025-03-16 03:56:53,640 autoreload Watching for file changes with StatReloader
+INFO 2025-03-16 03:57:14,562 basehttp "GET / HTTP/1.1" 200 25422
+INFO 2025-03-16 03:57:22,224 basehttp "GET / HTTP/1.1" 200 25422
+WARNING 2025-03-16 03:57:23,682 log Not Found: /favicon.ico
+WARNING 2025-03-16 03:57:23,683 basehttp "GET /favicon.ico HTTP/1.1" 404 7949
+INFO 2025-03-16 03:57:44,867 basehttp "GET / HTTP/1.1" 200 25422
+INFO 2025-03-16 03:58:00,110 basehttp "GET / HTTP/1.1" 200 25422
+WARNING 2025-03-16 03:58:02,220 log Not Found: /favicon.ico
+WARNING 2025-03-16 03:58:02,221 basehttp "GET /favicon.ico HTTP/1.1" 404 7949
+INFO 2025-03-16 03:58:16,308 basehttp "GET /signup/ HTTP/1.1" 200 31753
+INFO 2025-03-16 03:58:20,026 basehttp "GET / HTTP/1.1" 200 25422
+INFO 2025-03-16 03:58:21,386 basehttp "GET /accounts/google/login/ HTTP/1.1" 200 1416
+WARNING 2025-03-16 03:58:22,617 log Forbidden (Origin checking failed - https://fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app does not match any trusted origins.): /accounts/google/login/
+WARNING 2025-03-16 03:58:22,618 basehttp "POST /accounts/google/login/ HTTP/1.1" 403 2600
+WARNING 2025-03-16 03:58:25,901 log Forbidden (Origin checking failed - https://fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app does not match any trusted origins.): /accounts/google/login/
+WARNING 2025-03-16 03:58:25,902 basehttp "POST /accounts/google/login/ HTTP/1.1" 403 2600
+WARNING 2025-03-16 03:58:26,462 log Not Found: /favicon.ico
+WARNING 2025-03-16 03:58:26,462 basehttp "GET /favicon.ico HTTP/1.1" 404 7949
+INFO 2025-03-16 03:58:30,381 basehttp "GET /signup/ HTTP/1.1" 200 31753
+INFO 2025-03-16 03:58:31,579 basehttp "GET /accounts/google/login/ HTTP/1.1" 200 1416
+WARNING 2025-03-16 03:58:32,537 log Forbidden (Origin checking failed - https://fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app does not match any trusted origins.): /accounts/google/login/
+WARNING 2025-03-16 03:58:32,538 basehttp "POST /accounts/google/login/ HTTP/1.1" 403 2600
+INFO 2025-03-16 03:58:45,327 basehttp "GET / HTTP/1.1" 200 25422
+WARNING 2025-03-16 03:58:46,109 log Not Found: /favicon.ico
+WARNING 2025-03-16 03:58:46,110 basehttp "GET /favicon.ico HTTP/1.1" 404 7949
+INFO 2025-03-16 03:58:49,421 basehttp "GET /signup/ HTTP/1.1" 200 31753
+INFO 2025-03-16 03:58:50,983 basehttp "GET /accounts/google/login/ HTTP/1.1" 200 1416
+WARNING 2025-03-16 03:58:52,212 log Forbidden (Origin checking failed - https://fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app does not match any trusted origins.): /accounts/google/login/
+WARNING 2025-03-16 03:58:52,213 basehttp "POST /accounts/google/login/ HTTP/1.1" 403 2600
+WARNING 2025-03-16 03:59:03,338 log Forbidden (Origin checking failed - https://fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app does not match any trusted origins.): /accounts/google/login/
+WARNING 2025-03-16 03:59:03,338 basehttp "POST /accounts/google/login/ HTTP/1.1" 403 2600
+INFO 2025-03-16 03:59:03,944 basehttp "GET /signup/ HTTP/1.1" 200 31753
+INFO 2025-03-16 03:59:06,979 basehttp "GET /accounts/google/login/ HTTP/1.1" 200 1416
+WARNING 2025-03-16 03:59:07,424 log Forbidden (Origin checking failed - https://fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app does not match any trusted origins.): /accounts/google/login/
+WARNING 2025-03-16 03:59:07,425 basehttp "POST /accounts/google/login/ HTTP/1.1" 403 2600
+WARNING 2025-03-16 03:59:09,570 log Forbidden (Origin checking failed - https://fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app does not match any trusted origins.): /accounts/google/login/
+WARNING 2025-03-16 03:59:09,571 basehttp "POST /accounts/google/login/ HTTP/1.1" 403 2600
+WARNING 2025-03-16 03:59:54,076 log Forbidden (Origin checking failed - https://fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app does not match any trusted origins.): /signup/
+WARNING 2025-03-16 03:59:54,076 basehttp "POST /signup/ HTTP/1.1" 403 2600
+INFO 2025-03-16 04:00:01,714 basehttp "GET /login/ HTTP/1.1" 200 31866
+INFO 2025-03-16 04:00:03,983 basehttp "GET /accounts/google/login/ HTTP/1.1" 200 1416
+WARNING 2025-03-16 04:00:05,341 log Forbidden (Origin checking failed - https://fe0c-2401-4900-7dd7-89da-b8b4-b895-3091-703f.ngrok-free.app does not match any trusted origins.): /accounts/google/login/
+WARNING 2025-03-16 04:00:05,342 basehttp "POST /accounts/google/login/ HTTP/1.1" 403 2600
+INFO 2025-03-16 04:00:07,792 basehttp "GET / HTTP/1.1" 200 25422
+INFO 2025-03-16 04:01:22,021 autoreload C:\Gitnew\CodeCrafters2025\investing\investing\settings.py changed, reloading.
+INFO 2025-03-16 04:01:23,185 autoreload Watching for file changes with StatReloader
+INFO 2025-03-16 04:01:48,772 basehttp "GET /accounts/google/login/ HTTP/1.1" 200 1416
+INFO 2025-03-16 04:01:50,480 basehttp "POST /accounts/google/login/ HTTP/1.1" 302 0
+INFO 2025-03-16 04:02:39,528 basehttp "POST /accounts/google/login/ HTTP/1.1" 302 0
+INFO 2025-03-16 04:02:47,584 basehttp "GET / HTTP/1.1" 200 25422
+INFO 2025-03-16 04:02:50,012 basehttp "GET /login/ HTTP/1.1" 200 31866
+INFO 2025-03-16 04:02:51,569 basehttp "GET /accounts/google/login/ HTTP/1.1" 200 1416
+INFO 2025-03-16 04:02:53,052 basehttp "POST /accounts/google/login/ HTTP/1.1" 302 0
+INFO 2025-03-16 04:05:28,793 basehttp "GET /admin/ HTTP/1.1" 302 0
+INFO 2025-03-16 04:05:28,891 basehttp "GET /admin/login/?next=/admin/ HTTP/1.1" 200 4160
+INFO 2025-03-16 04:05:28,912 basehttp "GET /static/admin/css/dark_mode.css HTTP/1.1" 200 2804
+INFO 2025-03-16 04:05:28,912 basehttp "GET /static/admin/css/base.css HTTP/1.1" 200 22092
+INFO 2025-03-16 04:05:28,929 basehttp "GET /static/admin/js/theme.js HTTP/1.1" 200 1653
+INFO 2025-03-16 04:05:28,934 basehttp "GET /static/admin/css/login.css HTTP/1.1" 200 951
+INFO 2025-03-16 04:05:28,934 basehttp "GET /static/admin/css/nav_sidebar.css HTTP/1.1" 200 2810
+INFO 2025-03-16 04:05:28,946 basehttp "GET /static/admin/css/responsive.css HTTP/1.1" 200 17972
+INFO 2025-03-16 04:05:28,949 basehttp "GET /static/admin/js/nav_sidebar.js HTTP/1.1" 200 3063
+WARNING 2025-03-16 04:05:29,459 log Not Found: /favicon.ico
+WARNING 2025-03-16 04:05:29,460 basehttp "GET /favicon.ico HTTP/1.1" 404 7904
+INFO 2025-03-16 04:05:32,390 basehttp "POST /admin/login/?next=/admin/ HTTP/1.1" 302 0
+INFO 2025-03-16 04:05:32,446 basehttp "GET /admin/ HTTP/1.1" 200 19840
+INFO 2025-03-16 04:05:32,471 basehttp "GET /static/admin/img/icon-addlink.svg HTTP/1.1" 200 331
+INFO 2025-03-16 04:05:32,474 basehttp "GET /static/admin/css/dashboard.css HTTP/1.1" 200 441
+INFO 2025-03-16 04:05:32,476 basehttp "GET /static/admin/img/icon-changelink.svg HTTP/1.1" 200 380
+INFO 2025-03-16 04:05:37,057 basehttp "GET /admin/socialaccount/socialapp/ HTTP/1.1" 200 18557
+INFO 2025-03-16 04:05:37,080 basehttp "GET /static/admin/css/changelists.css HTTP/1.1" 200 6878
+INFO 2025-03-16 04:05:37,084 basehttp "GET /static/admin/js/jquery.init.js HTTP/1.1" 200 347
+INFO 2025-03-16 04:05:37,096 basehttp "GET /static/admin/js/actions.js HTTP/1.1" 200 8076
+INFO 2025-03-16 04:05:37,099 basehttp "GET /static/admin/js/urlify.js HTTP/1.1" 200 7887
+INFO 2025-03-16 04:05:37,101 basehttp "GET /static/admin/js/admin/RelatedObjectLookups.js HTTP/1.1" 200 9097
+INFO 2025-03-16 04:05:37,110 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-03-16 04:05:37,110 basehttp "GET /static/admin/js/prepopulate.js HTTP/1.1" 200 1531
+INFO 2025-03-16 04:05:37,111 basehttp "GET /static/admin/js/core.js HTTP/1.1" 200 6208
+INFO 2025-03-16 04:05:37,117 basehttp "GET /static/admin/js/vendor/jquery/jquery.js HTTP/1.1" 200 285314
+INFO 2025-03-16 04:05:37,132 basehttp "GET /static/admin/js/filters.js HTTP/1.1" 200 978
+INFO 2025-03-16 04:05:37,278 basehttp "GET /static/admin/js/vendor/xregexp/xregexp.js HTTP/1.1" 200 325171
+INFO 2025-03-16 04:05:37,298 basehttp "GET /static/admin/img/tooltag-add.svg HTTP/1.1" 200 331
+INFO 2025-03-16 04:05:38,763 basehttp "GET /admin/socialaccount/socialapp/1/change/ HTTP/1.1" 200 24151
+INFO 2025-03-16 04:05:38,778 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-03-16 04:05:38,783 basehttp "GET /static/admin/css/forms.css HTTP/1.1" 200 8794
+INFO 2025-03-16 04:05:38,786 basehttp "GET /static/admin/js/prepopulate_init.js HTTP/1.1" 200 586
+INFO 2025-03-16 04:05:38,789 basehttp "GET /static/admin/js/SelectFilter2.js HTTP/1.1" 200 15502
+INFO 2025-03-16 04:05:38,791 basehttp "GET /static/admin/js/SelectBox.js HTTP/1.1" 200 4530
+INFO 2025-03-16 04:05:38,794 basehttp "GET /static/admin/css/widgets.css HTTP/1.1" 200 11564
+INFO 2025-03-16 04:05:38,811 basehttp "GET /static/admin/js/change_form.js HTTP/1.1" 200 606
+INFO 2025-03-16 04:05:38,830 basehttp "GET /static/admin/img/search.svg HTTP/1.1" 200 458
+INFO 2025-03-16 04:05:38,831 basehttp "GET /static/admin/img/icon-unknown-alt.svg HTTP/1.1" 200 655
+INFO 2025-03-16 04:05:38,832 basehttp "GET /static/admin/img/selector-icons.svg HTTP/1.1" 200 3291
+INFO 2025-03-16 04:05:38,837 basehttp "GET /static/admin/img/icon-unknown.svg HTTP/1.1" 200 655
+INFO 2025-03-16 04:05:41,974 basehttp "GET /admin/sites/site/add/?_to_field=id&_popup=1 HTTP/1.1" 200 4993
+INFO 2025-03-16 04:05:41,985 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-03-16 04:05:56,865 basehttp "POST /admin/sites/site/add/?_to_field=id&_popup=1 HTTP/1.1" 200 387
+INFO 2025-03-16 04:05:56,881 basehttp "GET /static/admin/js/popup_response.js HTTP/1.1" 200 532
+INFO 2025-03-16 04:06:01,623 basehttp "POST /admin/socialaccount/socialapp/1/change/ HTTP/1.1" 302 0
+INFO 2025-03-16 04:06:01,639 basehttp "GET /admin/socialaccount/socialapp/ HTTP/1.1" 200 18779
+INFO 2025-03-16 04:06:01,651 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-03-16 04:06:01,670 basehttp "GET /static/admin/img/icon-yes.svg HTTP/1.1" 200 436
+INFO 2025-03-16 04:06:10,911 basehttp "GET / HTTP/1.1" 200 25422
+INFO 2025-03-16 04:06:17,873 basehttp "GET /login/ HTTP/1.1" 200 31866
+INFO 2025-03-16 04:06:19,600 basehttp "GET /accounts/google/login/ HTTP/1.1" 200 1416
+INFO 2025-03-16 04:06:20,918 basehttp "POST /accounts/google/login/ HTTP/1.1" 302 0
+INFO 2025-03-16 04:09:55,461 basehttp "GET /admin/sites/site/ HTTP/1.1" 200 19730
+INFO 2025-03-16 04:09:55,474 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-03-16 04:09:55,495 basehttp "GET /static/admin/img/sorting-icons.svg HTTP/1.1" 200 1097
+INFO 2025-03-16 04:09:56,994 basehttp "GET /admin/sites/site/3/change/ HTTP/1.1" 200 18861
+INFO 2025-03-16 04:09:57,007 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-03-16 04:10:01,290 basehttp "POST /admin/sites/site/3/change/ HTTP/1.1" 302 0
+INFO 2025-03-16 04:10:01,302 basehttp "GET /admin/sites/site/ HTTP/1.1" 200 19962
+INFO 2025-03-16 04:10:01,314 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-03-16 04:10:12,501 basehttp "GET /admin/sites/site/ HTTP/1.1" 200 19714
+INFO 2025-03-16 04:10:12,512 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-03-16 04:10:14,627 basehttp "GET /admin/socialaccount/socialapp/ HTTP/1.1" 200 18557
+INFO 2025-03-16 04:10:14,637 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-03-16 04:10:16,088 basehttp "GET /admin/socialaccount/socialapp/1/change/ HTTP/1.1" 200 24250
+INFO 2025-03-16 04:10:16,098 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-03-16 04:10:21,220 basehttp "POST /admin/socialaccount/socialapp/1/change/ HTTP/1.1" 302 0
+INFO 2025-03-16 04:10:21,231 basehttp "GET /admin/socialaccount/socialapp/ HTTP/1.1" 200 18779
+INFO 2025-03-16 04:10:21,246 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-03-16 04:11:24,851 basehttp "GET / HTTP/1.1" 200 25422
+INFO 2025-03-16 04:11:26,852 basehttp "GET /login/ HTTP/1.1" 200 31866
+INFO 2025-03-16 04:11:28,429 basehttp "GET /accounts/google/login/ HTTP/1.1" 200 1416
+INFO 2025-03-16 04:11:30,268 basehttp "POST /accounts/google/login/ HTTP/1.1" 302 0
+INFO 2025-03-16 04:12:04,059 basehttp "GET / HTTP/1.1" 200 25422
+WARNING 2025-03-16 04:12:05,114 log Not Found: /favicon.ico
+WARNING 2025-03-16 04:12:05,115 basehttp "GET /favicon.ico HTTP/1.1" 404 7949
+INFO 2025-03-16 04:12:06,312 basehttp "GET /login/ HTTP/1.1" 200 31866
+INFO 2025-03-16 04:12:07,834 basehttp "GET /accounts/google/login/ HTTP/1.1" 200 1416
+INFO 2025-03-16 04:12:09,346 basehttp "POST /accounts/google/login/ HTTP/1.1" 302 0
+INFO 2025-03-16 04:13:07,319 basehttp "GET /admin/ HTTP/1.1" 200 21379
+WARNING 2025-03-16 04:13:07,927 log Not Found: /favicon.ico
+WARNING 2025-03-16 04:13:07,928 basehttp "GET /favicon.ico HTTP/1.1" 404 7904
+INFO 2025-03-16 04:13:11,212 basehttp "GET /admin/sites/site/ HTTP/1.1" 200 19714
+INFO 2025-03-16 04:13:11,230 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-03-16 04:13:14,602 basehttp "GET /admin/auth/user/ HTTP/1.1" 200 22297
+INFO 2025-03-16 04:13:14,614 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-03-16 04:13:14,620 basehttp "GET /static/admin/img/icon-no.svg HTTP/1.1" 200 560
+INFO 2025-03-16 04:13:14,638 basehttp "GET /static/admin/img/icon-viewlink.svg HTTP/1.1" 200 581
+INFO 2025-03-16 04:13:17,193 basehttp "GET /admin/auth/user/3/change/ HTTP/1.1" 200 37320
+INFO 2025-03-16 04:13:17,207 basehttp "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-03-16 04:13:17,220 basehttp "GET /static/admin/js/admin/DateTimeShortcuts.js HTTP/1.1" 200 19319
+INFO 2025-03-16 04:13:17,222 basehttp "GET /static/admin/js/calendar.js HTTP/1.1" 200 9141
+INFO 2025-03-16 04:13:17,255 basehttp "GET /static/admin/img/icon-clock.svg HTTP/1.1" 200 677
+INFO 2025-03-16 04:13:17,257 basehttp "GET /static/admin/img/icon-calendar.svg HTTP/1.1" 200 1086
+INFO 2025-03-16 04:13:33,130 basehttp "POST /login/ HTTP/1.1" 200 32292
+INFO 2025-03-16 04:13:37,673 basehttp "GET /login/ HTTP/1.1" 200 31866
+INFO 2025-03-16 04:13:40,839 basehttp "GET /signup/ HTTP/1.1" 200 31753
+INFO 2025-03-16 04:13:42,436 basehttp "GET /accounts/google/login/ HTTP/1.1" 200 1416
+INFO 2025-03-16 04:13:43,923 basehttp "POST /accounts/google/login/ HTTP/1.1" 302 0
+ERROR 2025-03-16 04:13:55,683 log Internal Server Error: /signup/
+Traceback (most recent call last):
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\contrib\auth\__init__.py", line 129, in login
+    backend = backend or user.backend
+                         ^^^^^^^^^^^^
+AttributeError: 'User' object has no attribute 'backend'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\core\handlers\base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Gitnew\CodeCrafters2025\investing\User\views.py", line 49, in signup_view
+    login(request, user)
+    ~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\rohan\AppData\Roaming\Python\Python313\site-packages\django\contrib\auth\__init__.py", line 135, in login
+    raise ValueError(
+    ...<3 lines>...
+    )
+ValueError: You have multiple authentication backends configured and therefore must provide the `backend` argument or set the `backend` attribute on the user.
+ERROR 2025-03-16 04:13:55,687 basehttp "POST /signup/ HTTP/1.1" 500 81476
+INFO 2025-03-16 04:16:37,455 autoreload Watching for file changes with StatReloader
+INFO 2025-03-16 04:16:48,414 basehttp "POST /signup/ HTTP/1.1" 200 32174
+INFO 2025-03-16 04:16:54,077 basehttp "GET /login/ HTTP/1.1" 200 31866
+INFO 2025-03-16 04:16:58,206 basehttp "POST /login/ HTTP/1.1" 200 32292
+INFO 2025-03-16 04:17:06,987 basehttp "GET /accounts/google/login/ HTTP/1.1" 200 1416
+INFO 2025-03-16 04:17:08,862 basehttp "POST /accounts/google/login/ HTTP/1.1" 302 0
+INFO 2025-03-16 04:18:04,613 autoreload C:\Gitnew\CodeCrafters2025\investing\investing\settings.py changed, reloading.
+INFO 2025-03-16 04:18:05,832 autoreload Watching for file changes with StatReloader
+INFO 2025-03-16 04:18:11,163 autoreload C:\Gitnew\CodeCrafters2025\investing\investing\settings.py changed, reloading.
+INFO 2025-03-16 04:18:12,304 autoreload Watching for file changes with StatReloader
+INFO 2025-03-16 04:18:34,434 basehttp "POST /accounts/google/login/ HTTP/1.1" 302 0
+INFO 2025-03-16 04:18:41,171 basehttp "GET /accounts/google/login/callback/?state=AM2SMi84315OdDHY&code=4%2F0AQSTgQH-GN1C70efJwIo5SJh_S97ATi6ktQa40RrdeyeOOGm_AWb9DIVGe0gSG_c8g-8mw&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&authuser=0&prompt=none HTTP/1.1" 302 0
+INFO 2025-03-16 04:18:41,257 basehttp "GET /home/ HTTP/1.1" 200 41500
+INFO 2025-03-16 04:18:46,958 basehttp "GET /market-analytics/ HTTP/1.1" 200 38337
+WARNING 2025-03-16 04:18:48,611 log Not Found: /favicon.ico
+INFO 2025-03-16 04:18:48,612 basehttp - Broken pipe from ('127.0.0.1', 51181)
+INFO 2025-03-16 04:19:05,991 basehttp "GET /portfolio/ HTTP/1.1" 200 43380
+INFO 2025-03-16 04:19:18,581 basehttp "GET /profile/ HTTP/1.1" 200 41390
+INFO 2025-03-16 04:19:18,786 basehttp "GET /static/images/default.png HTTP/1.1" 200 1551
+WARNING 2025-03-16 04:19:19,078 log Not Found: /favicon.ico
+INFO 2025-03-16 04:19:19,079 basehttp - Broken pipe from ('127.0.0.1', 51206)
+INFO 2025-03-16 04:19:21,783 basehttp "GET /home/ HTTP/1.1" 200 41500
+INFO 2025-03-16 04:19:29,164 basehttp "GET /simulation HTTP/1.1" 301 0
+INFO 2025-03-16 04:19:29,490 basehttp "GET /simulation/ HTTP/1.1" 200 7772
+INFO 2025-03-16 04:24:34,877 basehttp "GET / HTTP/1.1" 200 25422
+WARNING 2025-03-16 04:24:35,962 log Not Found: /favicon.ico
+WARNING 2025-03-16 04:24:35,962 basehttp "GET /favicon.ico HTTP/1.1" 404 7950
+INFO 2025-03-16 04:24:37,188 basehttp "GET /signup/ HTTP/1.1" 200 31753
+INFO 2025-03-16 04:24:38,749 basehttp "GET /accounts/google/login/ HTTP/1.1" 200 1416
+INFO 2025-03-16 04:24:40,171 basehttp "POST /accounts/google/login/ HTTP/1.1" 302 0
+INFO 2025-03-16 04:24:41,238 basehttp "POST /accounts/google/login/ HTTP/1.1" 302 0
+INFO 2025-03-16 04:24:45,452 basehttp "GET /accounts/google/login/callback/?state=E0VOPI3m2K3Ui0Qh&code=4%2F0AQSTgQEn5HUrjFyPK265mACH7WwsFX3WwNRCM9DnuJnXAJrbApEnSOesxdZ-AA8Fzgdwaw&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid&authuser=0&prompt=none HTTP/1.1" 302 0
+INFO 2025-03-16 04:24:45,833 basehttp "GET /home/ HTTP/1.1" 200 41502
+INFO 2025-03-16 04:27:59,065 basehttp "GET /simulation/available-stocks/ HTTP/1.1" 200 21068
+INFO 2025-03-16 04:28:01,460 basehttp "GET /simulation/predict/AAPL/ HTTP/1.1" 302 0
+INFO 2025-03-16 04:28:03,402 basehttp "GET /simulation/prediction/AAPL/ HTTP/1.1" 200 3608904
+INFO 2025-03-16 04:28:15,744 basehttp "GET /simulation/available-stocks/ HTTP/1.1" 200 21068
+INFO 2025-03-16 04:28:22,467 basehttp "GET /simulation/transactions/ HTTP/1.1" 200 16413
+INFO 2025-03-16 04:28:31,744 basehttp "GET /simulation/add-cash/ HTTP/1.1" 200 14344
+INFO 2025-03-16 04:28:35,263 basehttp "POST /simulation/reset-wallet/ HTTP/1.1" 302 0
+INFO 2025-03-16 04:28:35,354 basehttp "GET /simulation/add-cash/ HTTP/1.1" 200 14598
+INFO 2025-03-16 04:28:38,250 basehttp "GET /simulation/transactions/ HTTP/1.1" 200 16409
+INFO 2025-03-16 04:28:45,110 basehttp "GET /simulation/ HTTP/1.1" 200 7764
+INFO 2025-03-16 04:28:47,301 basehttp "GET /simulation/available-stocks/ HTTP/1.1" 200 21056
+INFO 2025-03-16 04:28:50,144 basehttp "GET /simulation/trade/AAPL/ HTTP/1.1" 200 9937
+INFO 2025-03-16 04:28:54,453 basehttp "POST /simulation/sell-stock/AAPL/ HTTP/1.1" 302 0
+INFO 2025-03-16 04:28:54,609 basehttp "GET /simulation/available-stocks/ HTTP/1.1" 200 21065
+INFO 2025-03-16 04:28:57,944 basehttp "GET /simulation/trade/MSFT/ HTTP/1.1" 200 10178
+INFO 2025-03-16 04:29:01,036 basehttp "POST /simulation/sell-stock/MSFT/ HTTP/1.1" 302 0
+INFO 2025-03-16 04:29:01,128 basehttp "GET /simulation/available-stocks/ HTTP/1.1" 200 21065
+INFO 2025-03-16 04:29:02,782 basehttp "GET /simulation/trade/GOOGL/ HTTP/1.1" 200 10172
+INFO 2025-03-16 04:29:04,841 basehttp "POST /simulation/sell-stock/GOOGL/ HTTP/1.1" 302 0
+INFO 2025-03-16 04:29:04,983 basehttp "GET /simulation/available-stocks/ HTTP/1.1" 200 21065
+INFO 2025-03-16 04:29:07,262 basehttp "GET /simulation/trade/AMZN/ HTTP/1.1" 200 7820

@@ -6,55 +6,121 @@
     <title>ProfitPulse Simulation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/lucide-static@latest/font/lucide.css" rel="stylesheet">
+    <style>
+        /* Mobile menu animation */
+        .mobile-menu {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+        .mobile-menu.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
 </head>
 <body class="flex min-h-screen flex-col bg-[#0F0F11] text-[#F6F6F5]">
     <!-- Navigation -->
     <header class="sticky top-0 z-40 w-full border-b border-white/10 bg-gradient-to-r from-[#0a0a0e] via-[#131417] to-[#0a0a0e] backdrop-blur-md">
-        <div class="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
-            <!-- Logo and Title -->
-            <div class="flex items-center gap-3">
-                <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#d6ff63] to-[#96c718] shadow-lg shadow-[#BFE953]/30 ring-4 ring-[#BFE953]/20">
-                    <i data-lucide="gamepad-2" class="h-5 w-5 text-[#0F0F11]"></i>
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="flex h-16 items-center justify-between">
+                <!-- Logo and Title -->
+                <div class="flex items-center gap-3">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#d6ff63] to-[#96c718] shadow-lg shadow-[#BFE953]/30 ring-4 ring-[#BFE953]/20">
+                        <i data-lucide="gamepad-2" class="h-5 w-5 text-[#0F0F11]"></i>
+                    </div>
+                    <span class="text-xl font-black tracking-tight text-white">
+                        Profit<span class="bg-gradient-to-r from-[#d6ff63] to-[#BFE953] bg-clip-text text-transparent">Pulse</span>
+                        <span class="ml-2 text-sm font-medium text-[#F6F6F5]/60">Simulation</span>
+                    </span>
                 </div>
-                <span class="text-xl font-black tracking-tight text-white">
-                    Profit<span class="bg-gradient-to-r from-[#d6ff63] to-[#BFE953] bg-clip-text text-transparent">Pulse</span>
-                    <span class="ml-2 text-sm font-medium text-[#F6F6F5]/60">Simulation</span>
-                </span>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-button" class="md:hidden flex items-center justify-center h-10 w-10 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
+                    <i data-lucide="menu" class="h-5 w-5"></i>
+                </button>
+
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden md:flex items-center gap-6">
+                    <a href="{% url 'simulation:home' %}" class="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-white/10">
+                        <i data-lucide="home" class="h-4 w-4 text-[#BFE953]"></i>
+                        Home
+                    </a>
+                    <a href="{% url 'simulation:available_stocks' %}" class="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-white/10">
+                        <i data-lucide="chart-line" class="h-4 w-4 text-[#BFE953]"></i>
+                        Stocks & Predictions
+                    </a>
+                    <a href="{% url 'simulation:add_cash' %}" class="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-white/10">
+                        <i data-lucide="wallet-plus" class="h-4 w-4 text-[#BFE953]"></i>
+                        Add Virtual Cash
+                    </a>
+                    <a href="{% url 'simulation:transactions' %}" class="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-white/10">
+                        <i data-lucide="history" class="h-4 w-4 text-[#BFE953]"></i>
+                        Transactions
+                    </a>
+                    <a href="{% url 'simulation:statistics' %}" class="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-white/10">
+                        <i data-lucide="bar-chart-2" class="h-4 w-4 text-[#BFE953]"></i>
+                        Statistics
+                    </a>
+                    <a href="/" class="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-white/10">
+                        <i data-lucide="arrow-left" class="h-4 w-4 text-[#BFE953]"></i>
+                        Exit Simulation
+                    </a>
+                </nav>
+
+                <!-- User Menu -->
+                <div class="hidden md:flex items-center gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="rounded-lg bg-[#BFE953]/10 px-4 py-2">
+                            <p class="text-xs text-[#BFE953]">Virtual Balance</p>
+                            <p class="text-sm font-bold text-[#BFE953]">${{ wallet.balance|default:"0.00"|floatformat:2 }}</p>
+                        </div>
+                        <div class="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center">
+                            <i data-lucide="user" class="h-5 w-5 text-[#BFE953]"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Navigation Links -->
-            <nav class="hidden md:flex items-center gap-6">
-                <a href="{% url 'simulation:home' %}" class="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-white/10">
-                    <i data-lucide="home" class="h-4 w-4 text-[#BFE953]"></i>
-                    Home
-                </a>
-                <a href="{% url 'simulation:add_cash' %}" class="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-white/10">
-                    <i data-lucide="wallet-plus" class="h-4 w-4 text-[#BFE953]"></i>
-                    Add Virtual Cash
-                </a>
-                <a href="{% url 'simulation:transactions' %}" class="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-white/10">
-                    <i data-lucide="history" class="h-4 w-4 text-[#BFE953]"></i>
-                    Transactions
-                </a>
-                <a href="{% url 'simulation:statistics' %}" class="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-white/10">
-                    <i data-lucide="bar-chart-2" class="h-4 w-4 text-[#BFE953]"></i>
-                    Statistics
-                </a>
-                <a href="/" class="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-white/10">
-                    <i data-lucide="arrow-left" class="h-4 w-4 text-[#BFE953]"></i>
-                    Exit Simulation
-                </a>
-            </nav>
-
-            <!-- User Menu -->
-            <div class="flex items-center gap-4">
-                <div class="flex items-center gap-4">
-                    <div class="rounded-lg bg-[#BFE953]/10 px-4 py-2">
-                        <p class="text-xs text-[#BFE953]">Virtual Balance</p>
-                        <p class="text-sm font-bold text-[#BFE953]">${{ wallet.balance|default:"0.00"|floatformat:2 }}</p>
+            <!-- Mobile Menu (Hidden by default) -->
+            <div id="mobile-menu" class="mobile-menu md:hidden absolute left-0 right-0 top-16 bg-[#0F0F11] border-b border-white/10 hidden">
+                <div class="px-4 py-6 space-y-4">
+                    <!-- Mobile Navigation Links -->
+                    <a href="{% url 'simulation:home' %}" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:bg-white/5">
+                        <i data-lucide="home" class="h-5 w-5 text-[#BFE953]"></i>
+                        Home
+                    </a>
+                    <a href="{% url 'simulation:available_stocks' %}" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:bg-white/5">
+                        <i data-lucide="chart-line" class="h-5 w-5 text-[#BFE953]"></i>
+                        Stocks & Predictions
+                    </a>
+                    <a href="{% url 'simulation:add_cash' %}" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:bg-white/5">
+                        <i data-lucide="wallet-plus" class="h-5 w-5 text-[#BFE953]"></i>
+                        Add Virtual Cash
+                    </a>
+                    <a href="{% url 'simulation:transactions' %}" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:bg-white/5">
+                        <i data-lucide="history" class="h-5 w-5 text-[#BFE953]"></i>
+                        Transactions
+                    </a>
+                    <a href="{% url 'simulation:statistics' %}" class="flex items-center gap-3 rounded-lg px-4 py-2.5 text-sm font-medium text-white hover:bg-white/5">
+                        <i data-lucide="bar-chart-2" class="h-5 w-5 text-[#BFE953]"></i>
+                        Statistics
+                    </a>
+                    
+                    <!-- Mobile Balance Display -->
+                    <div class="border-t border-white/10 pt-4 mt-4">
+                        <div class="rounded-lg bg-[#BFE953]/10 px-4 py-3">
+                            <p class="text-xs text-[#BFE953]">Virtual Balance</p>
+                            <p class="text-sm font-bold text-[#BFE953]">${{ wallet.balance|default:"0.00"|floatformat:2 }}</p>
+                        </div>
                     </div>
-                    <div class="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center">
-                        <i data-lucide="user" class="h-5 w-5 text-[#BFE953]"></i>
+                    
+                    <!-- Exit Button -->
+                    <div class="border-t border-white/10 pt-4">
+                        <a href="/" class="flex items-center justify-center gap-2 rounded-lg bg-white/5 px-4 py-2.5 text-sm font-medium text-white hover:bg-white/10">
+                            <i data-lucide="arrow-left" class="h-5 w-5 text-[#BFE953]"></i>
+                            Exit Simulation
+                        </a>
                     </div>
                 </div>
             </div>
@@ -84,6 +150,36 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         lucide.createIcons();
+
+        // Mobile menu functionality
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        let isMenuOpen = false;
+
+        mobileMenuButton.addEventListener('click', () => {
+            isMenuOpen = !isMenuOpen;
+            mobileMenu.classList.toggle('hidden');
+            setTimeout(() => {
+                mobileMenu.classList.toggle('show');
+            }, 10);
+            
+            // Update menu icon
+            const menuIcon = mobileMenuButton.querySelector('i');
+            menuIcon.dataset.lucideIcon = isMenuOpen ? 'x' : 'menu';
+            lucide.createIcons();
+        });
+
+        // Close mobile menu on window resize (if switching to desktop view)
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768 && isMenuOpen) { // 768px is the md breakpoint
+                isMenuOpen = false;
+                mobileMenu.classList.remove('show');
+                mobileMenu.classList.add('hidden');
+                const menuIcon = mobileMenuButton.querySelector('i');
+                menuIcon.dataset.lucideIcon = 'menu';
+                lucide.createIcons();
+            }
+        });
     </script>
 </body>
 </html>

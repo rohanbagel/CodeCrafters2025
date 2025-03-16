@@ -1,97 +1,161 @@
 {% extends 'simulation/simulation_base.html' %}
 
 {% block content %}
-<div class="flex flex-col gap-8">
+<div class="flex flex-col gap-4 sm:gap-6 md:gap-8 p-4 sm:p-6 md:p-8">
     <!-- Add Cash Form -->
-    <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10">
-        <div class="flex justify-between items-center mb-4">
+    <div class="rounded-xl bg-white/5 p-4 sm:p-6 backdrop-blur-lg border border-white/10 transition-all hover:border-white/20">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
             <div>
-                <h1 class="text-2xl font-bold text-[#F6F6F5]">Add Virtual Cash</h1>
-                <p class="text-[#F6F6F5]/80">Add virtual money to your simulation wallet to practice trading without risk.</p>
+                <h1 class="text-xl sm:text-2xl font-bold text-[#F6F6F5]">Add Virtual Cash</h1>
+                <p class="text-sm text-[#F6F6F5]/80 mt-1">Add virtual money to your simulation wallet to practice trading without risk.</p>
             </div>
             <form action="{% url 'simulation:reset_wallet' %}" method="POST" class="flex-shrink-0">
                 {% csrf_token %}
                 <button type="submit" 
                         onclick="return confirm('Are you sure you want to reset your virtual wallet balance to $0.00? This action cannot be undone.')"
-                        class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-all">
+                        class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-red-500/20 text-red-400 hover:bg-red-500/30 active:bg-red-500/40 transition-all focus:outline-none focus:ring-2 focus:ring-red-500/50">
                     <i data-lucide="refresh-ccw" class="h-4 w-4"></i>
-                    Reset Balance
+                    <span>Reset Balance</span>
                 </button>
             </form>
         </div>
         
         {% if messages %}
-        <div class="mb-6">
+        <div class="mb-4 sm:mb-6 animate-fadeIn">
             {% for message in messages %}
-            <div class="rounded-lg p-4 mb-4 {% if message.tags == 'success' %}bg-[#BFE953]/20 text-[#BFE953]{% elif message.tags == 'info' %}bg-blue-500/20 text-blue-400{% else %}bg-red-500/20 text-red-500{% endif %}">
-                {{ message }}
+            <div class="rounded-lg p-3 sm:p-4 mb-3 flex items-center gap-3 {% if message.tags == 'success' %}bg-[#BFE953]/20 text-[#BFE953]{% elif message.tags == 'info' %}bg-blue-500/20 text-blue-400{% else %}bg-red-500/20 text-red-500{% endif %}">
+                <i data-lucide="{% if message.tags == 'success' %}check-circle{% elif message.tags == 'info' %}info{% else %}alert-circle{% endif %}" class="h-5 w-5 flex-shrink-0"></i>
+                <span>{{ message }}</span>
             </div>
             {% endfor %}
         </div>
         {% endif %}
         
-        <form method="POST" class="space-y-6">
+        <form method="POST" class="space-y-5">
             {% csrf_token %}
             <div>
                 <label for="amount" class="block text-sm font-medium text-[#F6F6F5]/80 mb-2">Amount to Add ($)</label>
-                <div class="relative">
+                <div class="relative rounded-lg focus-within:ring-2 focus-within:ring-[#BFE953] focus-within:border-transparent">
                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-[#F6F6F5]/60">$</span>
                     <input type="number" name="amount" id="amount" step="0.01" min="0" max="1000000"
-                           class="block w-full pl-8 rounded-lg border border-white/10 bg-white/5 py-2 text-[#F6F6F5] placeholder-[#F6F6F5]/40 focus:outline-none focus:ring-2 focus:ring-[#BFE953] focus:border-transparent"
-                           placeholder="Enter amount">
+                           class="block w-full pl-8 rounded-lg border border-white/10 bg-white/5 py-3 text-[#F6F6F5] placeholder-[#F6F6F5]/40 focus:outline-none"
+                           placeholder="Enter amount"
+                           inputmode="decimal"
+                           autocomplete="off">
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-[#F6F6F5]/40">
+                        <i data-lucide="wallet" class="h-4 w-4"></i>
+                    </div>
                 </div>
-                <p class="mt-2 text-sm text-[#F6F6F5]/60">Maximum amount: $1,000,000</p>
+                <p class="mt-2 text-xs sm:text-sm text-[#F6F6F5]/60 flex items-center gap-1">
+                    <i data-lucide="info" class="h-3 w-3"></i>
+                    <span>Maximum amount: $1,000,000</span>
+                </p>
             </div>
             
             <button type="submit" 
-                    class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-[#0F0F11] bg-[#BFE953] hover:bg-[#d6ff63] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#BFE953] transition-all duration-300">
-                Add to Wallet
+                    class="w-full flex justify-center items-center gap-2 py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-[#0F0F11] bg-[#BFE953] hover:bg-[#d6ff63] active:bg-[#a8e031] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#BFE953] transition-all">
+                <i data-lucide="plus-circle" class="h-4 w-4"></i>
+                <span>Add to Wallet</span>
             </button>
         </form>
     </div>
 
     <!-- Recent Transactions -->
-    <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10">
-        <h2 class="text-xl font-bold text-[#F6F6F5] mb-4">Recent Transactions</h2>
+    <div class="rounded-xl bg-white/5 p-4 sm:p-6 backdrop-blur-lg border border-white/10 transition-all hover:border-white/20">
+        <div class="flex items-center justify-between mb-3 sm:mb-4">
+            <h2 class="text-lg sm:text-xl font-bold text-[#F6F6F5]">Recent Transactions</h2>
+            <span class="text-xs text-[#F6F6F5]/60 bg-white/10 px-2 py-1 rounded-full">
+                {{ recent_transactions|length }} transactions
+            </span>
+        </div>
+        
         {% if recent_transactions %}
-        <div class="space-y-4">
+        <div class="space-y-3 max-h-[500px] overflow-y-auto custom-scrollbar pr-1">
             {% for transaction in recent_transactions %}
-            <div class="flex items-center justify-between p-4 rounded-lg bg-white/5 border border-white/10">
-                <div class="flex items-center gap-4">
-                    <div class="h-8 w-8 rounded-full bg-[#BFE953]/20 flex items-center justify-center">
+            <div class="flex items-center justify-between p-3 sm:p-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all transform hover:translate-x-1">
+                <div class="flex items-center gap-3">
+                    <div class="h-10 w-10 rounded-full {% if transaction.transaction_type == 'DEPOSIT' %}bg-[#BFE953]/20{% elif transaction.transaction_type == 'STOCK_SELL' %}bg-[#BFE953]/20{% else %}bg-red-500/20{% endif %} flex items-center justify-center flex-shrink-0">
                         {% if transaction.transaction_type == 'DEPOSIT' %}
-                        <i data-lucide="plus-circle" class="h-4 w-4 text-[#BFE953]"></i>
+                        <i data-lucide="plus-circle" class="h-5 w-5 text-[#BFE953]"></i>
                         {% elif transaction.transaction_type == 'WITHDRAWAL' %}
-                        <i data-lucide="minus-circle" class="h-4 w-4 text-red-500"></i>
+                        <i data-lucide="minus-circle" class="h-5 w-5 text-red-500"></i>
                         {% elif transaction.transaction_type == 'STOCK_BUY' %}
-                        <i data-lucide="trending-up" class="h-4 w-4 text-[#BFE953]"></i>
+                        <i data-lucide="trending-up" class="h-5 w-5 text-red-500"></i>
                         {% else %}
-                        <i data-lucide="trending-down" class="h-4 w-4 text-red-500"></i>
+                        <i data-lucide="trending-down" class="h-5 w-5 text-[#BFE953]"></i>
                         {% endif %}
                     </div>
-                    <div>
-                        <p class="text-sm font-medium text-[#F6F6F5]">
+                    <div class="min-w-0">
+                        <p class="text-sm font-medium text-[#F6F6F5] truncate">
                             {{ transaction.get_transaction_type_display }}
+                            {% if transaction.transaction_type == 'STOCK_BUY' or transaction.transaction_type == 'STOCK_SELL' %}
+                            <span class="text-xs bg-white/10 rounded-full px-2 py-0.5 ml-1">{{ transaction.ticker }}</span>
+                            {% endif %}
                         </p>
-                        <p class="text-xs text-[#F6F6F5]/60">
-                            {{ transaction.created_at|date:"M d, Y H:i" }}
+                        <p class="text-xs text-[#F6F6F5]/60 flex items-center gap-1">
+                            <i data-lucide="clock" class="h-3 w-3"></i>
+                            <span>{{ transaction.created_at|date:"M d, Y H:i" }}</span>
                         </p>
                     </div>
                 </div>
-                <div class="text-right">
+                <div class="text-right flex-shrink-0 ml-2">
                     <p class="text-sm font-medium {% if transaction.transaction_type == 'DEPOSIT' or transaction.transaction_type == 'STOCK_SELL' %}text-[#BFE953]{% else %}text-red-500{% endif %}">
                         {% if transaction.transaction_type == 'DEPOSIT' or transaction.transaction_type == 'STOCK_SELL' %}+{% else %}-{% endif %}${{ transaction.amount|floatformat:2 }}
                     </p>
-                    <p class="text-xs text-[#F6F6F5]/60">
-                        Balance: ${{ transaction.balance_after|floatformat:2 }}
+                    <p class="text-xs text-[#F6F6F5]/60 flex items-center justify-end gap-1">
+                        <i data-lucide="wallet" class="h-3 w-3"></i>
+                        <span>Balance: ${{ transaction.balance_after|floatformat:2 }}</span>
                     </p>
                 </div>
             </div>
             {% endfor %}
         </div>
         {% else %}
-        <p class="text-[#F6F6F5]/60">No recent transactions</p>
+        <div class="py-12 text-center bg-white/5 rounded-lg border border-dashed border-white/10">
+            <i data-lucide="clipboard" class="h-12 w-12 mx-auto text-[#F6F6F5]/20 mb-3"></i>
+            <p class="text-[#F6F6F5]/60 mb-2">No recent transactions</p>
+            <p class="text-xs text-[#F6F6F5]/40">Add virtual cash to get started</p>
+        </div>
         {% endif %}
     </div>
 </div>
-{% endblock %} 
+
+<style>
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fadeIn {
+        animation: fadeIn 0.3s ease-out;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Focus amount input on page load
+        const amountInput = document.getElementById('amount');
+        if (amountInput) {
+            amountInput.focus();
+        }
+        
+        // Initialize Lucide icons
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    });
+</script>
+{% endblock %}
