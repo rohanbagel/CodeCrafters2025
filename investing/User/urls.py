@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
@@ -25,6 +25,7 @@ urlpatterns = [
     # path('generate-portfolio-report/', views.generate_portfolio_report, name='generate_portfolio_report'),
     path('suggestions/', views.suggestions, name='suggestions'),
     path('analyze-portfolio-pdf/', views.analyze_portfolio_pdf, name='analyze_portfolio_pdf'),
+    path('insurance/', include('insurance.urls')),
 ]
 
 if settings.DEBUG:
