@@ -7,18 +7,18 @@ The **AI-Powered Investment Platform** is a web-based application that enables u
 ✅ **User & Admin Dashboard** – Track investments, view analytics, and manage transactions.  
 ✅ **Market Insights** – Real-time stock updates, AI-based investment suggestions.  
 ✅ **Risk Management** – AI-powered alerts, exit strategies, and volatility detection.  
-✅ **Secure Wallet & Payments** – In-platform wallet with Stripe/Razorpay integration.  
+✅ **Secure Wallet & Payments** – In-platform wallet with Stripe/Razorpay integration.(Future purposes)  
 ✅ **Social & Community Features** – Copy trading, discussion forums, and leaderboards.  
 ✅ **Paper Trading Mode** – Simulated investing environment with virtual money.
-✅ **ML Stock Analyzer and Predictor** – Predicts the price of a selected stock for the next 7 days using Scikit-learn 
+✅ **ML Stock Price Predictor** – Predicts the price of a stock for the next 7 days using Scikit-learn.
 
 ## Tech Stack
 - **Backend:** Django (Python)
 - **Frontend:** HTML, CSS, JavaScript
 - **Machine Learning:** Scikit-learn, NumPy, Pandas
-- **Authentication:** Google OAuth, KYC Verification
+- **Authentication:** Google OAuth, KYC Verification by video call
 - **Payments:** Secure Wallet, Stripe/Razorpay Integration(In the near future) 
-- **Database:** PostgreSQL/MySQL
+- **Database:** PostgreSQL/MySQL/SQLite
 
 ## Installation
 1. **Clone the Repository:**  
@@ -29,6 +29,7 @@ The **AI-Powered Investment Platform** is a web-based application that enables u
 2. **Setup Database & Migrations:**  
    ```bash
    python manage.py makemigrations
+   (install all the required modules)
    python manage.py migrate
    ```
 3. **Run the Server:**  
