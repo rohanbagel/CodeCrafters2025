@@ -895,6 +895,19 @@
             </ul>
         </div>
         
+        <!-- Insurance section -->
+        <div class="nav-category">
+            <div class="category-title">Insurance</div>
+            <ul class="nav-links">
+                <li>
+                    <a href="{% url 'insurance:insurance' %}" class="flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-white/5 transition-all {% if request.resolver_match.url_name == 'insurance' %}bg-white/5 text-[#BFE953]{% endif %}">
+                        <i data-lucide="shield" class="h-5 w-5"></i>
+                        <span>Insurance Plans</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        
         <!-- Add Risk Analysis button -->
         <div class="nav-category">
             <div class="category-title">Risk Analysis</div>

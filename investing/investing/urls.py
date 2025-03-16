@@ -25,5 +25,7 @@ urlpatterns = [
     path('simulation/', include('simulation.urls')),
     path('risk/', include('risksystem.urls')),
     path('accounts/', include('allauth.urls')),
+    path('insurance/', include('insurance.urls', namespace='insurance')),
     path('videocall/', include('videocall.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 
+
