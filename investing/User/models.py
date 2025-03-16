@@ -11,19 +11,23 @@ class StockPreference(models.Model):
     is_active = models.BooleanField(default=True)
     
     def __str__(self):
-        return f"{self.company_name} ({self.symbol})"
+        return f"{self.symbol} - {self.company_name}"
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', null=True, blank=True)
+    full_name = models.CharField(max_length=100, blank=True)
     profile_photo = models.ImageField(upload_to='profile_photos/', default='images/default.png', blank=True)
     phone_number = models.CharField(max_length=15, blank=True)
+    is_phone_verified = models.BooleanField(default=False)
     address = models.CharField(max_length=255, blank=True)
+    age = models.PositiveIntegerField(null=True, blank=True)
+    government_id = models.FileField(upload_to='government_ids/', null=True, blank=True)
     wallet_balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    
     def __str__(self):
-        return f"{self.user.username}'s Profile"
+        return f"{self.user.username}'s Profile" if self.user else "Unassigned Profile"
 
 class StockTransaction(models.Model):
     TRANSACTION_TYPES = [
@@ -42,3 +46,16 @@ class StockTransaction(models.Model):
     
     def __str__(self):
         return f"{self.transaction_type} {self.quantity} {self.symbol} @ ${self.price}"
+
+# Signal to create user profile when a new user is created
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    if hasattr(instance, 'profile'):
+        instance.profile.save()
+    else:
+        UserProfile.objects.create(user=instance)

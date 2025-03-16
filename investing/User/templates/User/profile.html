@@ -104,32 +104,54 @@
                             </div>
                             
                             <div>
-                                <label for="username" class="block text-sm font-medium text-[#F6F6F5]/70 mb-2">Username</label>
+                                <label for="full_name" class="block text-sm font-medium text-[#F6F6F5]/70 mb-1">Full Name *</label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#F6F6F5]/40">
-                                        <i data-lucide="at-sign" class="w-4 h-4"></i>
+                                        <i data-lucide="user" class="w-4 h-4"></i>
                                     </div>
-                                    <input type="text" id="username" name="username" value="{{ user.username }}" class="w-full pl-10 px-4 py-2 rounded-md bg-white/5 border border-white/10 text-[#F6F6F5] focus:outline-none focus:ring-2 focus:ring-[#BFE953]/50 transition-all">
+                                    <input type="text" id="full_name" name="full_name" value="{{ user.profile.full_name }}" required class="w-full pl-10 px-4 py-2 rounded-md bg-white/5 border border-white/10 text-[#F6F6F5] focus:outline-none focus:ring-2 focus:ring-[#BFE953]/50 transition-all">
                                 </div>
                             </div>
 
                             <div>
-                                <label for="email" class="block text-sm font-medium text-[#F6F6F5]/70 mb-2">Email (Optional)</label>
+                                <label for="email" class="block text-sm font-medium text-[#F6F6F5]/70 mb-1">Email Address *</label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#F6F6F5]/40">
                                         <i data-lucide="mail" class="w-4 h-4"></i>
                                     </div>
-                                    <input type="email" id="email" name="email" value="{{ user.email }}" class="w-full pl-10 px-4 py-2 rounded-md bg-white/5 border border-white/10 text-[#F6F6F5] focus:outline-none focus:ring-2 focus:ring-[#BFE953]/50 transition-all">
+                                    <input type="email" id="email" name="email" value="{{ user.email }}" required class="w-full pl-10 px-4 py-2 rounded-md bg-white/5 border border-white/10 text-[#F6F6F5] focus:outline-none focus:ring-2 focus:ring-[#BFE953]/50 transition-all">
                                 </div>
                             </div>
 
                             <div>
-                                <label for="phone_number" class="block text-sm font-medium text-[#F6F6F5]/70 mb-2">Phone Number (Optional)</label>
+                                <label for="age" class="block text-sm font-medium text-[#F6F6F5]/70 mb-1">Age *</label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#F6F6F5]/40">
+                                        <i data-lucide="calendar" class="w-4 h-4"></i>
+                                    </div>
+                                    <input type="number" id="age" name="age" value="{{ user.profile.age }}" min="18" max="120" required class="w-full pl-10 px-4 py-2 rounded-md bg-white/5 border border-white/10 text-[#F6F6F5] focus:outline-none focus:ring-2 focus:ring-[#BFE953]/50 transition-all">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="phone_number" class="block text-sm font-medium text-[#F6F6F5]/70 mb-1">Phone Number *</label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#F6F6F5]/40">
                                         <i data-lucide="phone" class="w-4 h-4"></i>
                                     </div>
                                     <input type="tel" id="phone_number" name="phone_number" value="{{ user.profile.phone_number }}" class="w-full pl-10 px-4 py-2 rounded-md bg-white/5 border border-white/10 text-[#F6F6F5] focus:outline-none focus:ring-2 focus:ring-[#BFE953]/50 transition-all">
+                                    {% if user.profile.is_phone_verified %}
+                                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                                            <span class="flex items-center text-[#BFE953] text-sm">
+                                                <i data-lucide="check-circle" class="w-4 h-4 mr-1"></i>
+                                                Verified
+                                            </span>
+                                        </div>
+                                    {% else %}
+                                        <button type="button" id="verify_phone_btn" class="absolute inset-y-0 right-0 flex items-center pr-3 text-[#BFE953] hover:text-[#d6ff63] transition-all">
+                                            Verify
+                                        </button>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
@@ -144,12 +166,33 @@
                             </div>
                             
                             <div>
-                                <label for="address" class="block text-sm font-medium text-[#F6F6F5]/70 mb-2">Address (Optional)</label>
+                                <label for="address" class="block text-sm font-medium text-[#F6F6F5]/70 mb-1">Address *</label>
                                 <div class="relative">
                                     <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#F6F6F5]/40">
                                         <i data-lucide="map-pin" class="w-4 h-4"></i>
                                     </div>
-                                    <input type="text" id="address" name="address" value="{{ user.profile.address }}" class="w-full pl-10 px-4 py-2 rounded-md bg-white/5 border border-white/10 text-[#F6F6F5] focus:outline-none focus:ring-2 focus:ring-[#BFE953]/50 transition-all">
+                                    <input type="text" id="address" name="address" value="{{ user.profile.address }}" required class="w-full pl-10 px-4 py-2 rounded-md bg-white/5 border border-white/10 text-[#F6F6F5] focus:outline-none focus:ring-2 focus:ring-[#BFE953]/50 transition-all">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label for="government_id" class="block text-sm font-medium text-[#F6F6F5]/70 mb-1">Government ID *</label>
+                                <div class="relative">
+                                    <div class="flex items-center gap-3">
+                                        {% if user.profile.government_id %}
+                                            <div class="flex items-center gap-2 text-sm text-[#BFE953]">
+                                                <i data-lucide="check-circle" class="w-4 h-4"></i>
+                                                <span>ID Uploaded</span>
+                                            </div>
+                                        {% endif %}
+                                        <div class="relative flex-1">
+                                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-[#F6F6F5]/40">
+                                                <i data-lucide="id-card" class="w-4 h-4"></i>
+                                            </div>
+                                            <input type="file" id="government_id" name="government_id" accept="image/*, application/pdf" {% if not user.profile.government_id %}required{% endif %} class="w-full pl-10 px-4 py-2 rounded-md bg-white/5 border border-white/10 text-[#F6F6F5] focus:outline-none focus:ring-2 focus:ring-[#BFE953]/50 transition-all">
+                                        </div>
+                                    </div>
+                                    <p class="mt-1 text-xs text-[#F6F6F5]/50">Upload a valid government-issued ID (passport, driver's license, etc.)</p>
                                 </div>
                             </div>
 
@@ -181,6 +224,35 @@
     </div>
 </div>
 
+<!-- Phone Verification Modal -->
+<div id="phone_verification_modal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 hidden">
+    <div class="bg-[#1E1E1E] rounded-xl p-6 max-w-md w-full mx-4 border border-white/10">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-[#F6F6F5]">Verify Phone Number</h3>
+            <button id="close_modal_btn" class="text-[#F6F6F5]/60 hover:text-[#F6F6F5]">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+        <p class="text-[#F6F6F5]/80 mb-4">We've sent a verification code to <span id="phone_display" class="font-medium text-[#F6F6F5]"></span></p>
+        
+        <div class="mb-4">
+            <label for="otp_code" class="block text-sm font-medium text-[#F6F6F5]/60 mb-2">Enter verification code</label>
+            <div class="flex gap-2">
+                <input type="text" id="otp_code" maxlength="6" class="w-full px-4 py-2 rounded-md bg-white/5 border border-white/10 text-[#F6F6F5] focus:outline-none focus:ring-2 focus:ring-[#BFE953]/50 transition-all text-center tracking-widest font-mono text-lg" placeholder="000000">
+                <button id="resend_otp_btn" class="px-3 py-2 text-sm rounded-md bg-white/5 border border-white/10 text-[#F6F6F5] hover:bg-white/10 transition-all">
+                    Resend
+                </button>
+            </div>
+        </div>
+        
+        <div id="verification_message" class="mb-4 hidden rounded-md p-3 text-sm"></div>
+        
+        <button id="submit_otp_btn" class="w-full py-2 px-4 bg-[#BFE953] text-[#0F0F11] font-medium rounded-md hover:bg-[#d6ff63] transition-all">
+            Verify
+        </button>
+    </div>
+</div>
+
 <script>
     // Add smooth animation for messages
     document.addEventListener('DOMContentLoaded', function() {
@@ -193,6 +265,144 @@
                 }, 500);
             }, 200);
         });
+
+        // Phone verification functionality
+        const verifyPhoneBtn = document.getElementById('verify_phone_btn');
+        const phoneVerificationModal = document.getElementById('phone_verification_modal');
+        const closeModalBtn = document.getElementById('close_modal_btn');
+        const phoneInput = document.getElementById('phone_number');
+        const phoneDisplay = document.getElementById('phone_display');
+        const resendOtpBtn = document.getElementById('resend_otp_btn');
+        const submitOtpBtn = document.getElementById('submit_otp_btn');
+        const otpInput = document.getElementById('otp_code');
+        const verificationMessage = document.getElementById('verification_message');
+
+        // Show modal when verify button is clicked
+        if (verifyPhoneBtn) {
+            verifyPhoneBtn.addEventListener('click', function() {
+                const phoneNumber = phoneInput.value.trim();
+                if (!phoneNumber) {
+                    alert('Please enter a phone number first');
+                    return;
+                }
+                
+                phoneDisplay.textContent = phoneNumber;
+                phoneVerificationModal.classList.remove('hidden');
+                
+                // Send OTP request
+                sendOTP(phoneNumber);
+            });
+        }
+
+        // Close modal
+        if (closeModalBtn) {
+            closeModalBtn.addEventListener('click', function() {
+                phoneVerificationModal.classList.add('hidden');
+                otpInput.value = '';
+                verificationMessage.classList.add('hidden');
+            });
+        }
+
+        // Resend OTP
+        if (resendOtpBtn) {
+            resendOtpBtn.addEventListener('click', function() {
+                const phoneNumber = phoneInput.value.trim();
+                sendOTP(phoneNumber);
+                
+                // Disable button temporarily
+                resendOtpBtn.disabled = true;
+                resendOtpBtn.classList.add('opacity-50');
+                setTimeout(() => {
+                    resendOtpBtn.disabled = false;
+                    resendOtpBtn.classList.remove('opacity-50');
+                }, 30000); // 30 seconds cooldown
+            });
+        }
+
+        // Submit OTP
+        if (submitOtpBtn) {
+            submitOtpBtn.addEventListener('click', function() {
+                const otp = otpInput.value.trim();
+                if (!otp || otp.length !== 6) {
+                    showVerificationMessage('Please enter a valid 6-digit code', 'error');
+                    return;
+                }
+                
+                verifyOTP(otp);
+            });
+        }
+
+        // Function to send OTP
+        function sendOTP(phoneNumber) {
+            showVerificationMessage('Sending verification code...', 'info');
+            
+            fetch('{% url "send_phone_verification" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ phone_number: phoneNumber })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showVerificationMessage('Verification code sent successfully!', 'success');
+                } else {
+                    showVerificationMessage(data.error || 'Failed to send verification code', 'error');
+                }
+            })
+            .catch(error => {
+                showVerificationMessage('An error occurred. Please try again.', 'error');
+                console.error('Error:', error);
+            });
+        }
+
+        // Function to verify OTP
+        function verifyOTP(otp) {
+            showVerificationMessage('Verifying code...', 'info');
+            
+            fetch('{% url "verify_phone_otp" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({ 
+                    phone_number: phoneInput.value.trim(),
+                    otp: otp 
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showVerificationMessage('Phone number verified successfully!', 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    showVerificationMessage(data.error || 'Invalid verification code', 'error');
+                }
+            })
+            .catch(error => {
+                showVerificationMessage('An error occurred. Please try again.', 'error');
+                console.error('Error:', error);
+            });
+        }
+
+        // Function to show verification messages
+        function showVerificationMessage(message, type) {
+            verificationMessage.textContent = message;
+            verificationMessage.classList.remove('hidden', 'bg-green-500/20', 'text-green-500', 'bg-red-500/20', 'text-red-500', 'bg-blue-500/20', 'text-blue-500');
+            
+            if (type === 'success') {
+                verificationMessage.classList.add('bg-green-500/20', 'text-green-500');
+            } else if (type === 'error') {
+                verificationMessage.classList.add('bg-red-500/20', 'text-red-500');
+            } else if (type === 'info') {
+                verificationMessage.classList.add('bg-blue-500/20', 'text-blue-500');
+            }
+        }
     });
 </script>
 {% endblock %}
