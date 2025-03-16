@@ -1,0 +1,19 @@
+{% extends 'User/base.html' %}
+
+{% block content %}
+<div class="bg-[#161616] rounded-xl p-6 shadow-lg border border-white/10 max-w-2xl mx-auto">
+    <h2 class="text-2xl font-bold mb-6 text-[#BFE953]">Create Video Call Room</h2>
+    
+    <form method="POST" class="space-y-4">
+        {% csrf_token %}
+        <div>
+            <label for="room_name" class="block text-sm font-medium mb-2">Room Name:</label>
+            <input type="text" name="room_name" id="room_name" class="w-full bg-[#1E1E1E] border border-white/10 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-[#BFE953]/50" required placeholder="Enter a name for your room">
+        </div>
+        <button type="submit" class="inline-flex items-center gap-2 bg-gradient-to-r from-[#BFE953]/80 to-[#96c718]/80 text-[#0F0F11] font-bold py-3 px-6 rounded-full hover:from-[#BFE953] hover:to-[#96c718] transition-all duration-300">
+            <i data-lucide="video" class="h-5 w-5"></i>
+            Create Room
+        </button>
+    </form>
+</div>
+{% endblock %} 

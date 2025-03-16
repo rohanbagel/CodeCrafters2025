@@ -1,0 +1,54 @@
+{% extends 'User/base.html' %}
+
+{% block content %}
+<div class="bg-[#161616] rounded-xl p-6 shadow-lg border border-white/10">
+    <h2 class="text-2xl font-bold mb-6 text-[#BFE953]">Video Call Rooms</h2>
+    
+    {% if user.instructorprofile %}
+        <a href="{% url 'videocall:create_room' %}" class="inline-flex items-center gap-2 bg-gradient-to-r from-[#BFE953]/80 to-[#96c718]/80 text-[#0F0F11] font-bold py-3 px-6 rounded-full hover:from-[#BFE953] hover:to-[#96c718] transition-all duration-300 mb-6">
+            <i data-lucide="plus-circle" class="h-5 w-5"></i>
+            Create New Room
+        </a>
+    {% endif %}
+    
+    <div class="space-y-4">
+        {% if user.instructorprofile %}
+            <!-- Rooms created by instructor -->
+            {% for room in rooms %}
+                <div class="bg-[#1E1E1E] border border-white/10 rounded-lg p-4 flex justify-between items-center">
+                    <div>
+                        <h5 class="text-lg font-medium text-white">Room with {{ room.student.username }}</h5>
+                        <p class="text-sm text-white/60">Created: {{ room.created_at|date:"M d, Y H:i" }}</p>
+                    </div>
+                    <a href="{% url 'videocall:join_room' room_id=room.room_id %}" class="inline-flex items-center gap-2 bg-[#BFE953]/20 text-[#BFE953] font-medium py-2 px-4 rounded-lg border border-[#BFE953]/30 hover:bg-[#BFE953]/30 transition-all">
+                        <i data-lucide="video" class="h-4 w-4"></i>
+                        Join Room
+                    </a>
+                </div>
+            {% empty %}
+                <div class="bg-[#1E1E1E] border border-white/10 rounded-lg p-4 text-white/60">
+                    <p>No active rooms found.</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <!-- Rooms student is invited to -->
+            {% for room in rooms %}
+                <div class="bg-[#1E1E1E] border border-white/10 rounded-lg p-4 flex justify-between items-center">
+                    <div>
+                        <h5 class="text-lg font-medium text-white">Room with {{ room.instructor.username }}</h5>
+                        <p class="text-sm text-white/60">Created: {{ room.created_at|date:"M d, Y H:i" }}</p>
+                    </div>
+                    <a href="{% url 'videocall:join_room' room_id=room.room_id %}" class="inline-flex items-center gap-2 bg-[#BFE953]/20 text-[#BFE953] font-medium py-2 px-4 rounded-lg border border-[#BFE953]/30 hover:bg-[#BFE953]/30 transition-all">
+                        <i data-lucide="video" class="h-4 w-4"></i>
+                        Join Room
+                    </a>
+                </div>
+            {% empty %}
+                <div class="bg-[#1E1E1E] border border-white/10 rounded-lg p-4 text-white/60">
+                    <p>No active rooms found.</p>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 
