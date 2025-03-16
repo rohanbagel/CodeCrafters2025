@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'User',
     'simulation',
     'risksystem',
+    'videocall',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
