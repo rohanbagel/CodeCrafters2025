@@ -9,7 +9,8 @@ The **AI-Powered Investment Platform** is a web-based application that enables u
 ✅ **Risk Management** – AI-powered alerts, exit strategies, and volatility detection.  
 ✅ **Secure Wallet & Payments** – In-platform wallet with Stripe/Razorpay integration.  
 ✅ **Social & Community Features** – Copy trading, discussion forums, and leaderboards.  
-✅ **Paper Trading Mode** – Simulated investing environment with virtual money.  
+✅ **Paper Trading Mode** – Simulated investing environment with virtual money.
+✅ **ML Stock Analyzer and Predictor** – Predicts the price of a selected stock for the next 7 days using Scikit-learn 
 
 ## Tech Stack
 - **Backend:** Django (Python)
