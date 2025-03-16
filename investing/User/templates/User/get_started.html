@@ -62,31 +62,25 @@
     <div class="container mx-auto flex h-20 items-center justify-between px-4 sm:px-6">
       <!-- Logo section -->
       <div class="flex items-center gap-3">
-        <div class="flex h-16 w-16 items-center justify-center">
-          <img src="https://png.pngtree.com/png-clipart/20230922/original/pngtree-brilliant-neon-icon-featuring-a-hand-holding-a-money-bagperfect-for-png-image_12721807.png" alt="ProfitPulse Logo" class="h-14 w-14 rounded-full object-cover">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#d6ff63] to-[#96c718] shadow-lg shadow-[#BFE953]/30 ring-2 ring-[#BFE953]/20">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-5 w-5 text-[#0F0F11]">
+                <path d="m23 6-9.5 9.5-5-5L1 18"/>
+                <path d="M17 6h6v6"/>
+            </svg>
         </div>
-        <span class="text-2xl font-black tracking-tight text-white drop-shadow-md">Profit<span class="bg-gradient-to-r from-[#d6ff63] to-[#BFE953] bg-clip-text text-transparent">Pulse</span></span>
-      </div>
+        <span class="text-xl font-black tracking-tight text-white">Profit<span class="bg-gradient-to-r from-[#d6ff63] to-[#BFE953] bg-clip-text text-transparent">Pulse</span></span>
+    </div>
       
       <!-- Centered navigation -->
       <nav class="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 transform md:flex items-center gap-6">
-        <a href="#features" class="group flex items-center gap-3 rounded-full bg-white/5 px-5 py-2.5 text-sm font-bold text-white transition-all duration-300 hover:bg-white/10 hover:shadow-md hover:shadow-[#BFE953]/10 hover:translate-y-[-1px]">
-          <div class="flex h-6 w-6 items-center justify-center rounded-full bg-white/10">
-            <i data-lucide="layout-grid" class="h-4 w-4 text-white"></i>
-          </div>
-          Features
+        <a href="#features" class="group flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-bold text-white transition-all duration-300 hover:bg-white/10 hover:shadow-md hover:shadow-[#BFE953]/10 hover:translate-y-[-1px]">
+            Features
         </a>
-        <a href="#how-it-works" class="group flex items-center gap-3 rounded-full bg-white/5 px-5 py-2.5 text-sm font-bold text-white transition-all duration-300 hover:bg-white/10 hover:shadow-md hover:shadow-[#BFE953]/10 hover:translate-y-[-1px]">
-          <div class="flex h-6 w-6 items-center justify-center rounded-full bg-white/10">
-            <i data-lucide="lightbulb" class="h-4 w-4 text-white"></i>
-          </div>
-          How It Works
+        <a href="#how-it-works" class="group flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-bold text-white transition-all duration-300 hover:bg-white/10 hover:shadow-md hover:shadow-[#BFE953]/10 hover:translate-y-[-1px]">
+            How It Works
         </a>
-        <a href="#contact" class="group flex items-center gap-3 rounded-full bg-white/5 px-5 py-2.5 text-sm font-bold text-white transition-all duration-300 hover:bg-white/10 hover:shadow-md hover:shadow-[#BFE953]/10 hover:translate-y-[-1px]">
-          <div class="flex h-6 w-6 items-center justify-center rounded-full bg-white/10">
-            <i data-lucide="mail" class="h-4 w-4 text-white"></i>
-          </div>
-          Contact
+        <a href="#contact" class="group flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 text-sm font-bold text-white transition-all duration-300 hover:bg-white/10 hover:shadow-md hover:shadow-[#BFE953]/10 hover:translate-y-[-1px]">
+            Contact
         </a>
       </nav>
   
@@ -387,7 +381,10 @@
       <div class="grid gap-8 md:grid-cols-4">
         <div class="flex flex-col gap-4">
           <div class="flex items-center gap-2">
-            <i data-lucide="trending-up" class="h-6 w-6 text-[#BFE953]"></i>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6 text-[#BFE953]">
+                <path d="m23 6-9.5 9.5-5-5L1 18"/>
+                <path d="M17 6h6v6"/>
+            </svg>
             <span class="text-xl font-bold text-[#BFE953]">ProfitPulse</span>
           </div>
           <p class="text-sm text-[#F6F6F5]/80">Smart investing, simplified. Manage your investments and grow your wealth with ease.</p>
@@ -446,6 +443,7 @@
         // ...existing particle animation code...
     });
     
+    // Initialize Lucide icons
     lucide.createIcons();
 </script>
 </body>
