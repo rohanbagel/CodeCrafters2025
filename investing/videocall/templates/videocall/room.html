@@ -1,0 +1,95 @@
+{% extends 'User/base.html' %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-3">Video Call Room</h2>
+            <!-- Video container with larger height -->
+            <div id="meet" style="width: 100%; height: 85vh; background: #f8f9fa; border-radius: 8px;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Import the ZEGO UIKit CDN -->
+<script src="https://unpkg.com/@zegocloud/zego-uikit-prebuilt/zego-uikit-prebuilt.js"></script>
+
+<script>
+    window.onload = async function() {
+        const appID = 738381912;
+        const serverSecret = "44494b39b5ef5abb30d511569f368cfc";
+        const roomID = "{{ room_id }}";
+        const userID = "{{ user_id }}";
+        const userName = "{{ user_name }}";
+
+        try {
+            console.log("Initializing video call...");
+            
+            const kitToken = generateToken(appID, serverSecret, roomID, userID, userName);
+            console.log("Token generated");
+
+            const zc = ZegoUIKitPrebuilt.create(kitToken);
+            console.log("Zego instance created");
+
+            zc.joinRoom({
+                container: document.querySelector("#meet"),
+                sharedLinks: [{
+                    name: 'Copy link',
+                    url: window.location.href
+                }],
+                scenario: {
+                    mode: ZegoUIKitPrebuilt.OneONoneCall,
+                },
+                showScreenSharingButton: true,
+                showPreJoinView: true,
+                showRoomTimer: true,
+            });
+
+            console.log("Joined room successfully");
+
+        } catch (error) {
+            console.error("Error:", error);
+            document.getElementById('meet').innerHTML = `
+                <div class="alert alert-danger">
+                    <h4>Error Initializing Video Call</h4>
+                    <p>${error.message}</p>
+                    <p>Please ensure:</p>
+                    <ul>
+                        <li>You've allowed camera and microphone permissions</li>
+                        <li>Your camera and microphone are not being used by another application</li>
+                        <li>You're using a supported browser (Chrome, Firefox, or Safari)</li>
+                    </ul>
+                    <button onclick="window.location.reload()" class="btn btn-primary">Try Again</button>
+                </div>
+            `;
+        }
+    };
+
+    function generateToken(appID, serverSecret, roomID, userID, userName) {
+        return ZegoUIKitPrebuilt.generateKitTokenForTest(
+            appID,
+            serverSecret,
+            roomID,
+            userID,
+            userName
+        );
+    }
+</script>
+
+<!-- Loading indicator -->
+<div id="loading" class="text-center mt-3">
+    <p>Initializing video call... Please allow camera and microphone access when prompted.</p>
+</div>
+
+<!-- Error message container -->
+<div id="error-message" class="alert alert-danger mt-3" style="display: none;">
+</div>
+
+<!-- Debug information -->
+<div class="mt-3 small text-muted">
+    <p>Debug Information:</p>
+    <p>Room ID: {{ room_id }}</p>
+    <p>User ID: {{ user_id }}</p>
+    <p>User Name: {{ user_name }}</p>
+</div>
+{% endblock %} 
