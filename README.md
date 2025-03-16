@@ -16,7 +16,7 @@ The **AI-Powered Investment Platform** is a web-based application that enables u
 - **Frontend:** HTML, CSS, JavaScript
 - **Machine Learning:** Scikit-learn, NumPy, Pandas
 - **Authentication:** Google OAuth, KYC Verification
-- **Payments:** Secure Wallet, Stripe/Razorpay Integration
+- **Payments:** Secure Wallet, Stripe/Razorpay Integration(In the near future) 
 - **Database:** PostgreSQL/MySQL
 
 ## Installation
