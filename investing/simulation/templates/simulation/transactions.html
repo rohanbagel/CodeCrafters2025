@@ -1,38 +1,84 @@
 {% extends 'simulation/simulation_base.html' %}
 
 {% block content %}
-<div class="flex flex-col gap-8">
-    <!-- Portfolio Overview -->
-    <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10">
-        <h1 class="text-2xl font-bold text-[#F6F6F5] mb-6">Portfolio Overview</h1>
-        
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div class="rounded-lg bg-white/5 p-4">
-                <p class="text-sm text-[#F6F6F5]/60">Current Value</p>
-                <p class="text-xl font-bold text-[#F6F6F5]">${{ total_current_value|floatformat:2 }}</p>
+<div class="container mx-auto px-4 py-8">
+    <!-- Header Section -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-[#F6F6F5] mb-2">Portfolio Overview</h1>
+        <p class="text-[#F6F6F5]/60">Track your investments and transaction history</p>
+    </div>
+
+    <!-- Portfolio Overview Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Current Value -->
+        <div class="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                    <i data-lucide="wallet" class="h-5 w-5 text-[#BFE953]"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm text-[#F6F6F5]/60">Current Value</h3>
+                    <p class="text-2xl font-bold text-[#F6F6F5]">${{ total_current_value|floatformat:2 }}</p>
+                </div>
             </div>
-            <div class="rounded-lg bg-white/5 p-4">
-                <p class="text-sm text-[#F6F6F5]/60">Invested Value</p>
-                <p class="text-xl font-bold text-[#F6F6F5]">${{ total_invested_value|floatformat:2 }}</p>
+        </div>
+
+        <!-- Invested Value -->
+        <div class="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                    <i data-lucide="landmark" class="h-5 w-5 text-[#BFE953]"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm text-[#F6F6F5]/60">Invested Value</h3>
+                    <p class="text-2xl font-bold text-[#F6F6F5]">${{ total_invested_value|floatformat:2 }}</p>
+                </div>
             </div>
-            <div class="rounded-lg bg-white/5 p-4">
-                <p class="text-sm text-[#F6F6F5]/60">Total P/L</p>
-                <p class="text-xl font-bold {% if total_profit_loss >= 0 %}text-[#BFE953]{% else %}text-red-500{% endif %}">
-                    ${{ total_profit_loss|floatformat:2 }}
-                </p>
+        </div>
+
+        <!-- Total P/L -->
+        <div class="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                    <i data-lucide="trending-up" class="h-5 w-5 text-[#BFE953]"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm text-[#F6F6F5]/60">Total P/L</h3>
+                    <p class="text-2xl font-bold {% if total_profit_loss >= 0 %}text-[#BFE953]{% else %}text-red-500{% endif %}">
+                        ${{ total_profit_loss|floatformat:2 }}
+                    </p>
+                </div>
             </div>
-            <div class="rounded-lg bg-white/5 p-4">
-                <p class="text-sm text-[#F6F6F5]/60">P/L %</p>
-                <p class="text-xl font-bold {% if total_profit_loss_percentage >= 0 %}text-[#BFE953]{% else %}text-red-500{% endif %}">
-                    {{ total_profit_loss_percentage|floatformat:2 }}%
-                </p>
+        </div>
+
+        <!-- P/L % -->
+        <div class="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                    <i data-lucide="percent" class="h-5 w-5 text-[#BFE953]"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm text-[#F6F6F5]/60">P/L %</h3>
+                    <p class="text-2xl font-bold {% if total_profit_loss_percentage >= 0 %}text-[#BFE953]{% else %}text-red-500{% endif %}">
+                        {{ total_profit_loss_percentage|floatformat:2 }}%
+                    </p>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Current Holdings -->
-    <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10">
-        <h2 class="text-xl font-bold text-[#F6F6F5] mb-4">Current Holdings</h2>
+    <!-- Current Holdings Section -->
+    <div class="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10 mb-8">
+        <div class="flex items-center gap-3 mb-6">
+            <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                <i data-lucide="briefcase" class="h-5 w-5 text-[#BFE953]"></i>
+            </div>
+            <div>
+                <h2 class="text-xl font-bold text-[#F6F6F5]">Current Holdings</h2>
+                <p class="text-sm text-[#F6F6F5]/60">Your active investment positions</p>
+            </div>
+        </div>
+        
         <div class="overflow-x-auto">
             <table class="w-full">
                 <thead>
@@ -46,13 +92,18 @@
                         <th class="py-3 text-right text-sm font-medium text-[#F6F6F5]/60">P/L %</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-white/5">
                     {% for data in holdings_data %}
-                    <tr class="border-b border-white/5 hover:bg-white/5">
+                    <tr class="hover:bg-white/5 transition-all duration-200">
                         <td class="py-4">
-                            <div>
-                                <p class="text-sm font-medium text-[#F6F6F5]">{{ data.holding.stock.symbol }}</p>
-                                <p class="text-xs text-[#F6F6F5]/60">{{ data.holding.stock.name }}</p>
+                            <div class="flex items-center gap-3">
+                                <div class="h-8 w-8 rounded-lg bg-[#BFE953]/10 flex items-center justify-center">
+                                    <i data-lucide="trending-up" class="h-4 w-4 text-[#BFE953]"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-[#F6F6F5]">{{ data.holding.stock.symbol }}</p>
+                                    <p class="text-xs text-[#F6F6F5]/60">{{ data.holding.stock.name }}</p>
+                                </div>
                             </div>
                         </td>
                         <td class="py-4 text-right text-sm text-[#F6F6F5]">{{ data.holding.quantity }}</td>
@@ -68,7 +119,14 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="7" class="py-4 text-center text-[#F6F6F5]/60">No holdings yet</td>
+                        <td colspan="7" class="py-8 text-center">
+                            <div class="flex flex-col items-center gap-3">
+                                <div class="h-12 w-12 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                                    <i data-lucide="package" class="h-6 w-6 text-[#BFE953]"></i>
+                                </div>
+                                <p class="text-[#F6F6F5]/60">No holdings yet</p>
+                            </div>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -76,9 +134,18 @@
         </div>
     </div>
 
-    <!-- Recent Transactions -->
-    <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10">
-        <h2 class="text-xl font-bold text-[#F6F6F5] mb-4">Recent Transactions</h2>
+    <!-- Recent Transactions Section -->
+    <div class="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10">
+        <div class="flex items-center gap-3 mb-6">
+            <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                <i data-lucide="history" class="h-5 w-5 text-[#BFE953]"></i>
+            </div>
+            <div>
+                <h2 class="text-xl font-bold text-[#F6F6F5]">Recent Transactions</h2>
+                <p class="text-sm text-[#F6F6F5]/60">Your trading activity history</p>
+            </div>
+        </div>
+
         <div class="overflow-x-auto">
             <table class="w-full">
                 <thead>
@@ -91,18 +158,24 @@
                         <th class="py-3 text-right text-sm font-medium text-[#F6F6F5]/60">Total</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="divide-y divide-white/5">
                     {% for transaction in transactions %}
-                    <tr class="border-b border-white/5 hover:bg-white/5">
+                    <tr class="hover:bg-white/5 transition-all duration-200">
                         <td class="py-4 text-sm text-[#F6F6F5]/60">{{ transaction.created_at|date:"M d, Y H:i" }}</td>
                         <td class="py-4">
-                            <div>
-                                <p class="text-sm font-medium text-[#F6F6F5]">{{ transaction.stock.symbol }}</p>
-                                <p class="text-xs text-[#F6F6F5]/60">{{ transaction.stock.name }}</p>
+                            <div class="flex items-center gap-3">
+                                <div class="h-8 w-8 rounded-lg bg-[#BFE953]/10 flex items-center justify-center">
+                                    <i data-lucide="trending-up" class="h-4 w-4 text-[#BFE953]"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-medium text-[#F6F6F5]">{{ transaction.stock.symbol }}</p>
+                                    <p class="text-xs text-[#F6F6F5]/60">{{ transaction.stock.name }}</p>
+                                </div>
                             </div>
                         </td>
                         <td class="py-4 text-center">
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if transaction.transaction_type == 'BUY' %}bg-[#BFE953]/20 text-[#BFE953]{% else %}bg-red-500/20 text-red-500{% endif %}">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium {% if transaction.transaction_type == 'BUY' %}bg-[#BFE953]/20 text-[#BFE953]{% else %}bg-red-500/20 text-red-500{% endif %}">
+                                <i data-lucide="{% if transaction.transaction_type == 'BUY' %}arrow-down-right{% else %}arrow-up-right{% endif %}" class="h-3 w-3"></i>
                                 {{ transaction.transaction_type }}
                             </span>
                         </td>
@@ -112,7 +185,14 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6" class="py-4 text-center text-[#F6F6F5]/60">No transactions yet</td>
+                        <td colspan="6" class="py-8 text-center">
+                            <div class="flex flex-col items-center gap-3">
+                                <div class="h-12 w-12 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                                    <i data-lucide="history" class="h-6 w-6 text-[#BFE953]"></i>
+                                </div>
+                                <p class="text-[#F6F6F5]/60">No transactions yet</p>
+                            </div>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>

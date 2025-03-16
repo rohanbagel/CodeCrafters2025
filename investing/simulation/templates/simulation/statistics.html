@@ -1,76 +1,142 @@
 {% extends 'simulation/simulation_base.html' %}
 
 {% block content %}
-<div class="flex flex-col gap-8">
-    <!-- Statistics Overview -->
-    <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10">
-        <h1 class="text-2xl font-bold text-[#F6F6F5] mb-4">Portfolio Statistics</h1>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="p-4 rounded-lg bg-white/5 border border-white/10">
-                <h3 class="text-sm text-[#F6F6F5]/60 mb-1">Total Portfolio Value</h3>
-                <p class="text-2xl font-bold text-[#BFE953]">${{ total_value|floatformat:2 }}</p>
+<div class="container mx-auto px-4 py-8">
+    <!-- Header Section -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-[#F6F6F5] mb-2">Portfolio Statistics</h1>
+        <p class="text-[#F6F6F5]/60">Track your investment performance and analytics</p>
+    </div>
+
+    <!-- Statistics Overview Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Total Portfolio Value -->
+        <div class="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                    <i data-lucide="wallet" class="h-5 w-5 text-[#BFE953]"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm text-[#F6F6F5]/60">Total Portfolio Value</h3>
+                    <p class="text-2xl font-bold text-[#BFE953]">${{ total_value|floatformat:2 }}</p>
+                </div>
             </div>
-            <div class="p-4 rounded-lg bg-white/5 border border-white/10">
-                <h3 class="text-sm text-[#F6F6F5]/60 mb-1">Total Profit/Loss</h3>
-                <p class="text-2xl font-bold {% if total_profit_loss >= 0 %}text-[#BFE953]{% else %}text-red-500{% endif %}">
-                    ${{ total_profit_loss|floatformat:2 }}
-                </p>
+        </div>
+
+        <!-- Total Profit/Loss -->
+        <div class="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                    <i data-lucide="trending-up" class="h-5 w-5 text-[#BFE953]"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm text-[#F6F6F5]/60">Total Profit/Loss</h3>
+                    <p class="text-2xl font-bold {% if total_profit_loss >= 0 %}text-[#BFE953]{% else %}text-red-500{% endif %}">
+                        ${{ total_profit_loss|floatformat:2 }}
+                    </p>
+                </div>
             </div>
-            <div class="p-4 rounded-lg bg-white/5 border border-white/10">
-                <h3 class="text-sm text-[#F6F6F5]/60 mb-1">Return on Investment</h3>
-                <p class="text-2xl font-bold {% if total_roi >= 0 %}text-[#BFE953]{% else %}text-red-500{% endif %}">
-                    {{ total_roi|floatformat:2 }}%
-                </p>
+        </div>
+
+        <!-- ROI -->
+        <div class="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10 hover:bg-white/10 transition-all duration-300">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                    <i data-lucide="percent" class="h-5 w-5 text-[#BFE953]"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm text-[#F6F6F5]/60">Return on Investment</h3>
+                    <p class="text-2xl font-bold {% if total_roi >= 0 %}text-[#BFE953]{% else %}text-red-500{% endif %}">
+                        {{ total_roi|floatformat:2 }}%
+                    </p>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Charts -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <!-- Portfolio Value Over Time -->
-        <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10 h-[400px]">
-            <h2 class="text-xl font-bold text-[#F6F6F5] mb-4">Portfolio Value Over Time</h2>
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Portfolio Value Chart -->
+        <div class="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                        <i data-lucide="line-chart" class="h-5 w-5 text-[#BFE953]"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-[#F6F6F5]">Portfolio Value Over Time</h2>
+                </div>
+            </div>
             <div class="relative h-[300px] w-full">
-                <canvas id="portfolioValueChart" class="!h-full !w-full box-border"></canvas>
+                <canvas id="portfolioValueChart" class="!h-full !w-full"></canvas>
             </div>
         </div>
 
-        <!-- Profit/Loss Distribution -->
-        <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10 h-[400px]">
-            <h2 class="text-xl font-bold text-[#F6F6F5] mb-4">Profit/Loss by Stock</h2>
+        <!-- Profit/Loss Chart -->
+        <div class="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                        <i data-lucide="bar-chart-2" class="h-5 w-5 text-[#BFE953]"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-[#F6F6F5]">Profit/Loss by Stock</h2>
+                </div>
+            </div>
             <div class="relative h-[300px] w-full">
-                <canvas id="profitLossChart" class="!h-full !w-full box-border"></canvas>
+                <canvas id="profitLossChart" class="!h-full !w-full"></canvas>
             </div>
         </div>
 
-        <!-- Transaction History -->
-        <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10 h-[400px]">
-            <h2 class="text-xl font-bold text-[#F6F6F5] mb-4">Transaction History</h2>
+        <!-- Transaction History Chart -->
+        <div class="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                        <i data-lucide="history" class="h-5 w-5 text-[#BFE953]"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-[#F6F6F5]">Transaction History</h2>
+                </div>
+            </div>
             <div class="relative h-[300px] w-full">
-                <canvas id="transactionChart" class="!h-full !w-full box-border"></canvas>
+                <canvas id="transactionChart" class="!h-full !w-full"></canvas>
             </div>
         </div>
 
-        <!-- Asset Allocation -->
-        <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10 h-[400px]">
-            <h2 class="text-xl font-bold text-[#F6F6F5] mb-4">Asset Allocation</h2>
+        <!-- Asset Allocation Chart -->
+        <div class="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                        <i data-lucide="pie-chart" class="h-5 w-5 text-[#BFE953]"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-[#F6F6F5]">Asset Allocation</h2>
+                </div>
+            </div>
             <div class="relative h-[300px] w-full">
-                <canvas id="allocationChart" class="!h-full !w-full box-border"></canvas>
+                <canvas id="allocationChart" class="!h-full !w-full"></canvas>
             </div>
         </div>
     </div>
 
-    <!-- AI Analysis -->
-    <div class="rounded-xl bg-white/5 p-6 backdrop-blur-lg border border-white/10">
-        <div class="flex items-center justify-between mb-4">
-            <h2 class="text-xl font-bold text-[#F6F6F5]">AI Portfolio Analysis</h2>
-            <button id="refreshAnalysis" class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-[#BFE953]/20 text-[#BFE953] hover:bg-[#BFE953]/30 transition-all">
+    <!-- AI Analysis Section -->
+    <div class="mt-8 bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+            <div class="flex items-center gap-3">
+                <div class="h-10 w-10 rounded-xl bg-[#BFE953]/10 flex items-center justify-center">
+                    <i data-lucide="brain" class="h-5 w-5 text-[#BFE953]"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-[#F6F6F5]">AI Portfolio Analysis</h2>
+                    <p class="text-sm text-[#F6F6F5]/60">Get intelligent insights about your portfolio</p>
+                </div>
+            </div>
+            <button id="refreshAnalysis" 
+                    class="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#BFE953]/10 text-[#BFE953] hover:bg-[#BFE953]/20 transition-all duration-300">
                 <i data-lucide="refresh-cw" class="h-4 w-4"></i>
-                Refresh Analysis
+                <span>Refresh Analysis</span>
             </button>
         </div>
         <div id="aiAnalysis" class="prose prose-invert max-w-none">
-            <p class="text-[#F6F6F5]/80">Loading AI analysis...</p>
+            <p class="text-[#F6F6F5]/60">Loading AI analysis...</p>
         </div>
     </div>
 </div>
