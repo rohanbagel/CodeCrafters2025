@@ -1,6 +1,16 @@
+Django==5.1.2
 yfinance==0.2.18
 plotly==5.13.1
 scikit-learn==1.2.2
 numpy==1.24.2
 pandas==1.5.3
-python-dotenv==1.0.0 
+python-dotenv==1.0.0
+gunicorn==21.2.0
+psycopg2-binary==2.9.9
+whitenoise==6.6.0
+dj-database-url==2.1.0
+google-generativeai
+finnhub-python
+twilio
+PyPDF2
+django-allauth 
