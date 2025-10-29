@@ -12,21 +12,25 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Load environment variables from .env file
+load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5yx$ua4@!)jo#1hqq44gaw%-vm*6xu#k&&es#ba$tj2+3*_gw*'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-5yx$ua4@!)jo#1hqq44gaw%-vm*6xu#k&&es#ba$tj2+3*_gw*')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 # Add this setting below ALLOWED_HOSTS
 CSRF_TRUSTED_ORIGINS = [
@@ -202,27 +206,25 @@ LOGGING = {
 }
 
 # Gemini AI API settings
-GEMINI_API_KEY = 'AIzaSyASj7__4ETiwPyX_b38CUr5AS9ZoJEMycI'  # Replace with your actual Gemini API key
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
 
-# Add Finnhub API key
-FINNHUB_API_KEY = 'cvam92hr01qsapma5g6gcvam92hr01qsapma5g70'  # Replace with your actual Finnhub API key
 # Finnhub API settings
-FINNHUB_API_KEY = 'cvasa2hr01qgjh3u8sg0cvasa2hr01qgjh3u8sgg'
+FINNHUB_API_KEY = os.getenv('FINNHUB_API_KEY', '')
 
 # Email settings for alerts
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'  # Or your SMTP server
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'hxrsh1764@gmail.com'  # Replace with your email
-EMAIL_HOST_PASSWORD = 'oqfm hrdf mwdw mcta'  # Replace with your app password
-DEFAULT_FROM_EMAIL = 'ProfitPulse <hxrsh1764@gmail.com>'
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', f'ProfitPulse <{EMAIL_HOST_USER}>')
 
 # Twilio Configuration
-TWILIO_ACCOUNT_SID = 'ACb604cdff6ba558c3c2b0c563a69a9a02'  # Replace with your actual Twilio Account SID
-TWILIO_AUTH_TOKEN = 'e9646954742fe0a8aa3362b6772e8f12'    # Replace with your actual Twilio Auth Token
-TWILIO_PHONE_NUMBER = '+15417128857' 
-TWILIO_TRIAL_MODE = True # Replace with your actual Twilio phone number
+TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID', '')
+TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN', '')
+TWILIO_PHONE_NUMBER = os.getenv('TWILIO_PHONE_NUMBER', '')
+TWILIO_TRIAL_MODE = os.getenv('TWILIO_TRIAL_MODE', 'True') == 'True'
 
 
 

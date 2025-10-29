@@ -122,7 +122,7 @@ def home(request):
                 holdings_dict[symbol]['total_cost'] -= transaction.total_amount
         
         # Initialize Finnhub client
-        finnhub_client = finnhub.Client(api_key='cvam92hr01qsapma5g6gcvam92hr01qsapma5g70')
+        finnhub_client = finnhub.Client(api_key=settings.FINNHUB_API_KEY)
         
         # Calculate current values and profits
         portfolio_performance = []
@@ -168,7 +168,7 @@ def home(request):
             total_profit_percentage = (total_profit / initial_investment) * 100
 
         context = {
-            'api_key': 'cvam92hr01qsapma5g6gcvam92hr01qsapma5g70',
+            'api_key': settings.FINNHUB_API_KEY,
             'stocks': default_stocks,
             'wallet_balance': profile.wallet_balance,
             'total_profit': total_profit,
@@ -182,7 +182,7 @@ def home(request):
     except Exception as e:
         logger.error(f"Error in home view: {e}")
         context = {
-            'api_key': 'cvam92hr01qsapma5g6gcvam92hr01qsapma5g70',
+            'api_key': settings.FINNHUB_API_KEY,
             'stocks': default_stocks,
             'error': 'Error loading dashboard data'
         }
@@ -272,7 +272,7 @@ def market_analytics(request):
 @login_required
 def market_stocks(request):
     # Initialize Finnhub client
-    finnhub_client = finnhub.Client(api_key='cvam92hr01qsapma5g6gcvam92hr01qsapma5g70')
+    finnhub_client = finnhub.Client(api_key=settings.FINNHUB_API_KEY)
     
     # Get stock symbols from US market - limit to first 100 stocks for better performance
     stock_symbols = finnhub_client.stock_symbols('US')[:100]  # Limiting initial data load
@@ -515,7 +515,7 @@ def gemini_chat(request):
 @login_required
 def stock_detail(request, symbol):
     # Initialize Finnhub client
-    finnhub_client = finnhub.Client(api_key='cvam92hr01qsapma5g6gcvam92hr01qsapma5g70')
+    finnhub_client = finnhub.Client(api_key=settings.FINNHUB_API_KEY)
     
     # Get stock details
     quote = finnhub_client.quote(symbol)
@@ -535,7 +535,7 @@ def buy_stock(request, symbol):
     if request.method == 'POST':
         try:
             quantity = int(request.POST.get('quantity', 0))
-            finnhub_client = finnhub.Client(api_key='cvam92hr01qsapma5g6gcvam92hr01qsapma5g70')
+            finnhub_client = finnhub.Client(api_key=settings.FINNHUB_API_KEY)
             quote = finnhub_client.quote(symbol)
             company_profile = finnhub_client.company_profile2(symbol=symbol)
             
@@ -570,7 +570,7 @@ def sell_stock(request, symbol):
     if request.method == 'POST':
         try:
             quantity = int(request.POST.get('quantity', 0))
-            finnhub_client = finnhub.Client(api_key='cvam92hr01qsapma5g6gcvam92hr01qsapma5g70')
+            finnhub_client = finnhub.Client(api_key=settings.FINNHUB_API_KEY)
             quote = finnhub_client.quote(symbol)
             company_profile = finnhub_client.company_profile2(symbol=symbol)
             
@@ -611,7 +611,7 @@ def sell_stock(request, symbol):
 def portfolio(request):
     holdings = []
     transactions = []
-    finnhub_client = finnhub.Client(api_key='cvam92hr01qsapma5g6gcvam92hr01qsapma5g70')
+    finnhub_client = finnhub.Client(api_key=settings.FINNHUB_API_KEY)
     
     try:
         # Get all stock transactions for the user
@@ -796,7 +796,7 @@ def get_stock_suggestions(user):
     user_transactions = StockTransaction.objects.filter(user=user)
     user_stocks = set(transaction.symbol for transaction in user_transactions)
     
-    finnhub_client = finnhub.Client(api_key='cvam92hr01qsapma5g6gcvam92hr01qsapma5g70')
+    finnhub_client = finnhub.Client(api_key=settings.FINNHUB_API_KEY)
     suggestion_details = []
     
     try:
@@ -842,7 +842,7 @@ def suggestions(request):
     user_stocks = set(transaction.symbol for transaction in user_transactions)
     
     # Initialize Finnhub client
-    finnhub_client = finnhub.Client(api_key='cvam92hr01qsapma5g6gcvam92hr01qsapma5g70')
+    finnhub_client = finnhub.Client(api_key=settings.FINNHUB_API_KEY)
     
     # Get market data and generate suggestions
     suggestions = []
