@@ -13,4 +13,5 @@ google-generativeai
 finnhub-python
 twilio
 PyPDF2
-django-allauth 
+django-allauth
+Pillow==10.4.0 
