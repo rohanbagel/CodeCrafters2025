@@ -306,8 +306,6 @@ Visit: `http://127.0.0.1:8000/`
    - Render will automatically build and deploy
    - Visit your app at: `https://your-app-name.onrender.com`
 
-For detailed deployment instructions, see [RENDER_DEPLOYMENT_GUIDE.md](RENDER_DEPLOYMENT_GUIDE.md)
-
 ---
 
 ## 📖 Usage

@@ -30,10 +30,7 @@ logger = logging.getLogger(__name__)
 # Configure the Gemini API
 genai.configure(api_key=settings.GEMINI_API_KEY)
 
-# Add these settings to your settings.py
-# TWILIO_ACCOUNT_SID = 'your_account_sid'
-# TWILIO_AUTH_TOKEN = 'your_auth_token'
-# TWILIO_PHONE_NUMBER = 'your_twilio_phone_number'
+
 
 # Store OTPs temporarily (in a real app, use Redis or another cache)
 OTP_STORE = {}
