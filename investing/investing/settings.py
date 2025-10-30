@@ -215,6 +215,7 @@ GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
 
 # Finnhub API settings
 FINNHUB_API_KEY = os.getenv('FINNHUB_API_KEY', '')
+FINNHUB_INSURANCE_API_KEY = os.getenv('FINNHUB_INSURANCE_API_KEY', FINNHUB_API_KEY)
 
 # Email settings for alerts
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
