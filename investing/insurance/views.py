@@ -1,10 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 import finnhub
 from decimal import Decimal
 from .models import InsurancePlan, UserInsurance
 import logging
 from django.http import JsonResponse
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +13,7 @@ logger = logging.getLogger(__name__)
 def insurance(request):
     try:
         # Initialize Finnhub client
-        finnhub_client = finnhub.Client(api_key='cvb35ppr01qgjh3virtgcvb35ppr01qgjh3viru0')
+        finnhub_client = finnhub.Client(api_key=settings.FINNHUB_INSURANCE_API_KEY)
         
         # List of major insurance companies' symbols
         insurance_symbols = [
