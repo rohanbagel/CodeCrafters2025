@@ -60,7 +60,7 @@ def signup_view(request):
             return render(request, 'User/signup.html')
 
         user = User.objects.create_user(username=username, password=password1)
-        login(request, user)
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
         return redirect('home')
 
     return render(request, 'User/signup.html')
