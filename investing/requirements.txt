@@ -14,4 +14,4 @@ finnhub-python
 twilio
 PyPDF2
 django-allauth
-Pillow==10.4.0 
+Pillow==13.0.0 
